@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { AutoRefresh } from '@/components/AutoRefresh';
-import { CvDropZone } from '@/components/CvButton';
+import { LazyCvDropZone } from '@/components/LazyIslands';
 import { FreshRail } from '@/components/FreshRail';
 import { LiveLine } from '@/components/LiveLine';
 import { SearchBar } from '@/components/SearchBar';
@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <>
       <SiteHeader />
-      <main>
+      <main id="main">
         <section className="relative isolate z-0 flex flex-col items-center px-5 pb-20 pt-12 text-center sm:px-10 sm:pb-[136px] sm:pt-[96px]">
           <h1 className="m-0 text-[44px] font-[650] leading-[1.02] tracking-[-0.047em] sm:text-[64px] lg:text-[84px]">
             <span className="block">
@@ -86,7 +86,6 @@ export default function Home() {
                 <Link
                   key={c.label}
                   href={c.href}
-                  aria-label={`${c.label}, ${c.count.toLocaleString('en-NZ')} jobs`}
                   className={`relative flex flex-col justify-between overflow-hidden rounded-2xl bg-surface p-5 transition-[background,transform] duration-300 hover:-translate-y-0.5 hover:bg-surface-2 sm:px-[26px] sm:py-6 ${c.span === 2 ? 'col-span-2' : ''}`}
                 >
                   <div className="relative z-[1]">
@@ -100,7 +99,6 @@ export default function Home() {
                   <img
                     src={`/assets/icons/${c.icon}.webp`}
                     alt=""
-                    loading="lazy"
                     className="pointer-events-none absolute h-auto"
                     style={{
                       right: c.span === 2 ? '7%' : '8%',
@@ -117,7 +115,7 @@ export default function Home() {
         )}
       </main>
       <SiteFooter />
-      <CvDropZone />
+      <LazyCvDropZone />
     </>
   );
 }

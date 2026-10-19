@@ -38,7 +38,7 @@ export default function StatusPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-[960px] px-5 pb-24 pt-8 sm:px-10 sm:pt-14">
+      <main id="main" className="mx-auto max-w-[960px] px-5 pb-24 pt-8 sm:px-10 sm:pt-14">
         <h1 className="m-0 text-[34px] font-[650] tracking-[-0.04em] sm:text-[44px]">Status</h1>
         {store ? (
           <p className="mt-2 text-[15px] text-muted">

@@ -10,7 +10,7 @@ export default function NotFound() {
   return (
     <>
       <SiteHeader />
-      <main className="relative isolate flex min-h-[calc(100dvh-72px)] flex-col items-center overflow-hidden px-5 pt-20 text-center sm:pt-28">
+      <main id="main" className="relative isolate flex min-h-[calc(100dvh-72px)] flex-col items-center overflow-hidden px-5 pt-20 text-center sm:pt-28">
         <div className="pointer-events-none absolute left-1/2 top-[340px]">
           <RadarSweep on size={980} rings={[0.2, 0.4, 0.6, 0.8, 1]} blips={false} sweepSeconds={9} />
         </div>

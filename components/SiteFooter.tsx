@@ -21,12 +21,11 @@ export function SiteFooter() {
         </nav>
       </div>
       <div aria-hidden="true" className="mt-10 flex h-[130px] justify-center overflow-hidden sm:h-[220px] lg:mt-14 lg:h-[330px]">
-        <span
-          className="select-none whitespace-nowrap font-bold"
-          style={{ fontSize: 'clamp(200px, 36vw, 520px)', letterSpacing: '-0.075em', lineHeight: 0.8, color: 'var(--footer-word)' }}
-        >
-          Radar
-        </span>
+        <svg viewBox="0 0 1000 300" className="h-[160%] w-auto max-w-none select-none" role="presentation" focusable="false">
+          <text x="500" y="285" textAnchor="middle" fontWeight="700" fontSize="395" letterSpacing="-29" fill="var(--footer-word)" style={{ fontFamily: 'var(--font-geist-sans)' }}>
+            Radar
+          </text>
+        </svg>
       </div>
     </footer>
   );

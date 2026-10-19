@@ -17,7 +17,7 @@ export default function PrivacyPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-[720px] px-5 pb-24 pt-8 text-[16px] leading-[1.65] sm:px-10 sm:pt-14">
+      <main id="main" className="mx-auto max-w-[720px] px-5 pb-24 pt-8 text-[16px] leading-[1.65] sm:px-10 sm:pt-14">
         <h1 className="m-0 text-[34px] font-[650] tracking-[-0.04em] sm:text-[44px]">Privacy</h1>
         <p className="mt-4 text-[18px] text-ink-2">Short and true.</p>
         <dl className="mt-8 flex flex-col gap-6">

@@ -23,7 +23,7 @@ export default function AboutPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-[720px] px-5 pb-24 pt-8 text-[16px] leading-[1.65] sm:px-10 sm:pt-14">
+      <main id="main" className="mx-auto max-w-[720px] px-5 pb-24 pt-8 text-[16px] leading-[1.65] sm:px-10 sm:pt-14">
         <h1 className="m-0 text-[34px] font-[650] tracking-[-0.04em] sm:text-[44px]">About Radar</h1>
         <p className="mt-4 text-[18px] text-ink-2">Radar is a free search engine for every job in New Zealand. No account, no ads, no tracking. You search once, and Radar shows the best real listings from every board.</p>
 

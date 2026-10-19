@@ -47,7 +47,7 @@ export default async function JobPage({ params }: Props) {
     return (
       <>
         <SiteHeader />
-        <main className="mx-auto max-w-[880px] px-5 pb-24 pt-10 sm:px-10">
+        <main id="main" className="mx-auto max-w-[880px] px-5 pb-24 pt-10 sm:px-10">
           <div className="rounded-[20px] bg-surface p-6 sm:p-8">
             <h1 className="m-0 text-[26px] font-[650] tracking-[-0.035em] sm:text-[32px]">{old ? 'This job has closed.' : store ? 'We can’t find this job.' : 'Loading jobs…'}</h1>
             <p className="mb-0 mt-2 text-[16px] text-muted">
@@ -81,7 +81,7 @@ export default async function JobPage({ params }: Props) {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-[880px] px-5 pb-24 pt-6 sm:px-10 sm:pt-10">
+      <main id="main" className="mx-auto max-w-[880px] px-5 pb-24 pt-6 sm:px-10 sm:pt-10">
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1.5 text-[14px] text-muted">
           <Link href="/search" className="hover:text-ink">
             Jobs

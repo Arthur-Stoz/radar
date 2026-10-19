@@ -43,7 +43,7 @@ export const JobCard = forwardRef<HTMLAnchorElement, CardProps>(function JobCard
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="m-0 line-clamp-2 min-w-0 text-[16px] font-semibold leading-[1.3] tracking-[-0.015em]">{job.title}</h3>
+          <h2 className="m-0 line-clamp-2 min-w-0 text-[16px] font-semibold leading-[1.3] tracking-[-0.015em]">{job.title}</h2>
           {matchPill != null ? (
             <span className="flex-none rounded-full px-2 py-0.5 font-mono text-[12px] font-semibold" style={{ background: 'var(--accent)', color: 'var(--accent-ink)' }}>
               {matchPill}% match

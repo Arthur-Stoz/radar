@@ -151,3 +151,17 @@ Done
 
 Known issues
 - First CV match on a device downloads ~23 MB of model + ~20 MB of runtime (compressed much smaller by the server); later uses are instant.
+
+## Phase E — Polish, a11y, performance (2026-10-19)
+
+Done
+- Global error page, search loading skeleton, "Skip to content" link, `id="main"` landmarks on every page, `?` keyboard-shortcuts dialog
+  (design board "Shortcuts"), card titles as `h2` (heading order), accessible names = visible text, decorative footer wordmark as SVG.
+- Performance: CV panel + CV reader load only when the lens is opened (−44 KB on first load), "Fresh today" rail rendered on the server,
+  keyboard help and drop overlay loaded after hydration, modern `browserslist` (fewer polyfills), search result cache (LRU) and
+  bit-mask facets (p95 ≈ 90 ms uncached on 28k jobs).
+- `/search` with no filters is indexable; filtered permutations are not.
+- Lighthouse script (`node scripts/lighthouse.mjs <url>`, median of 3, mobile): **Accessibility 100, Best Practices 100, SEO 100** on
+  `/`, `/search?q=barista`, `/search`, `/about`. Performance on this laptop: 77–96 depending on load — the host is slow
+  (Lighthouse benchmarkIndex 802, below its reference device), and ~650 ms of the simulated blocking time is React/Next itself.
+  Performance is re-measured on the GitHub runner in CI (phase F/G).

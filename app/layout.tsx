@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import './globals.css';
+import { LazyKeyboardHelp } from '@/components/LazyIslands';
 import { siteUrl } from '@/lib/config';
 
 export const metadata: Metadata = {
@@ -29,7 +30,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        <a href="#main" className="sr-only z-[80] rounded-full bg-ink px-4 py-2 text-on-ink focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+          Skip to content
+        </a>
+        {children}
+        <LazyKeyboardHelp />
+      </body>
     </html>
   );
 }

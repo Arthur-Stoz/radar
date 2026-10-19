@@ -12,8 +12,9 @@ import { LiveLine } from './LiveLine';
 import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { ThemeToggle } from './ThemeToggle';
-import { CvDropZone, OPEN_CV_EVENT, useCv } from './CvButton';
-import { clearCv } from '@/lib/cvClient';
+import { OPEN_CV_EVENT, useCv } from './CvButton';
+import { LazyCvDropZone } from './LazyIslands';
+import { clearCv } from '@/lib/cvState';
 
 const SEEN_KEY = 'radar-seen';
 const list = (v: string | null) => (v ? v.split(',').filter(Boolean) : []);
@@ -279,7 +280,7 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
         </header>
       </div>
 
-      <main className="px-5 pb-24 sm:px-10">
+      <main id="main" className="px-5 pb-24 sm:px-10">
         <div className="flex flex-col gap-3 pb-4 pt-5 sm:pt-7">
           {data.chips.length > 0 && (
             <ul className="m-0 flex list-none flex-wrap gap-1.5 p-0" aria-label="Understood from your search">
@@ -413,7 +414,7 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
       </main>
 
       {!isDesktop && sheetOpen && selected && <BottomSheet job={selected} onClose={closeSheet} />}
-      <CvDropZone />
+      <LazyCvDropZone />
     </>
   );
 }

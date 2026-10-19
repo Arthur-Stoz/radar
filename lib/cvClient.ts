@@ -1,71 +1,14 @@
 'use client';
 
-import { chunkText, extractProfile, type ProfileChip } from './profile';
+import { chunkText, extractProfile } from './profile';
+import { saveProfile, setCvState as set, type CvProfile } from './cvState';
+
+export type { CvProfile };
 
 // Browser-side CV matching (BUILD.md §6). The CV is read and embedded on the device.
 // Only the mean vector and the confirmed chips are ever sent to /api/match; they live in sessionStorage.
 
-export interface CvProfile {
-  vector: number[];
-  chips: ProfileChip[];
-  /** Region id or "" for all of New Zealand. */
-  loc: string;
-  fileName: string;
-}
-
-export type CvStatus = 'idle' | 'reading' | 'loading-model' | 'embedding' | 'ready' | 'error';
-
-export interface CvState {
-  status: CvStatus;
-  progress: { loaded: number; total: number } | null;
-  error: string | null;
-  profile: CvProfile | null;
-}
-
-const KEY = 'radar-cv';
 const MAX_BYTES = 5 * 1024 * 1024;
-
-let state: CvState = { status: 'idle', progress: null, error: null, profile: null };
-let hydrated = false;
-const listeners = new Set<() => void>();
-
-function set(patch: Partial<CvState>) {
-  state = { ...state, ...patch };
-  listeners.forEach((l) => l());
-}
-
-export function subscribeCv(cb: () => void) {
-  listeners.add(cb);
-  return () => listeners.delete(cb);
-}
-
-export function getCvState(): CvState {
-  if (!hydrated && typeof window !== 'undefined') {
-    hydrated = true;
-    try {
-      const saved = sessionStorage.getItem(KEY);
-      if (saved) state = { ...state, status: 'ready', profile: JSON.parse(saved) };
-    } catch {}
-  }
-  return state;
-}
-
-const SERVER_STATE: CvState = { status: 'idle', progress: null, error: null, profile: null };
-export const getCvServerState = () => SERVER_STATE;
-
-export function saveProfile(p: CvProfile) {
-  try {
-    sessionStorage.setItem(KEY, JSON.stringify(p));
-  } catch {}
-  set({ profile: p, status: 'ready', error: null });
-}
-
-export function clearCv() {
-  try {
-    sessionStorage.removeItem(KEY);
-  } catch {}
-  set({ status: 'idle', progress: null, error: null, profile: null });
-}
 
 // ---------- Reading files (on the device) ----------
 

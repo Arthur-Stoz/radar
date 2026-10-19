@@ -18,7 +18,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   return {
     title: q ? `${q} jobs` : 'Search jobs',
     description: q ? `Every “${q}” job in New Zealand from Seek, Trade Me and more, in one search.` : 'Search every job in New Zealand in one place.',
-    robots: { index: !!q && Object.keys(sp).length === 1, follow: true },
+    // Plain searches are indexable; filtered permutations are not.
+    robots: { index: Object.keys(sp).length === 0 || (!!q && Object.keys(sp).length === 1), follow: true },
   };
 }
 

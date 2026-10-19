@@ -1,7 +1,5 @@
-'use client';
-
 import Link from 'next/link';
-import { useRef } from 'react';
+import { RailArrows } from './RailArrows';
 import type { CardJob } from '@/lib/search';
 import { ago, gradient, hueOf, payLabel, placePhoto } from '@/lib/format';
 import { Badge, badgesFor, SourceMark } from './Badges';
@@ -20,8 +18,6 @@ export function CompanyTile({ name, className = '' }: { name: string; className?
 }
 
 export function FreshRail({ jobs }: { jobs: CardJob[] }) {
-  const rail = useRef<HTMLDivElement>(null);
-  const scroll = (d: number) => rail.current?.scrollBy({ left: d * 640, behavior: 'smooth' });
   return (
     <section className="relative z-[1] pb-20 lg:pb-28" aria-labelledby="fresh-h">
       <div className="mb-[18px] flex items-end justify-between gap-4 px-5 sm:px-10 lg:px-20">
@@ -31,20 +27,9 @@ export function FreshRail({ jobs }: { jobs: CardJob[] }) {
           </h2>
           <p className="mt-1.5 text-[15px] text-muted">The newest listings across every source</p>
         </div>
-        <div className="hidden gap-2 sm:flex">
-          <button type="button" onClick={() => scroll(-1)} aria-label="Scroll back" className="flex h-10 w-10 items-center justify-center rounded-full bg-surface transition-colors hover:bg-surface-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-          <button type="button" onClick={() => scroll(1)} aria-label="Scroll forward" className="flex h-10 w-10 items-center justify-center rounded-full bg-surface transition-colors hover:bg-surface-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
-        </div>
+        <RailArrows target="fresh-rail" />
       </div>
-      <div ref={rail} className="no-scrollbar flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-4 pt-2 sm:scroll-px-10 sm:gap-5 sm:px-10 lg:scroll-px-20 lg:px-20">
+      <div id="fresh-rail" className="no-scrollbar flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-4 pt-2 sm:scroll-px-10 sm:gap-5 sm:px-10 lg:scroll-px-20 lg:px-20">
         {jobs.map((j) => {
           const photo = placePhoto(j.city, j.suburb);
           const pay = payLabel(j);
@@ -52,7 +37,6 @@ export function FreshRail({ jobs }: { jobs: CardJob[] }) {
             <Link
               key={j.id}
               href={`/job/${j.id}`}
-              aria-label={`${j.title}, ${j.company ?? ''}, ${j.location}${pay ? `, ${pay}` : ''}, on ${j.sourceName}`}
               className="flex flex-[0_0_260px] snap-start flex-col gap-3 rounded-2xl outline-offset-4 transition-transform duration-300 hover:-translate-y-[3px] sm:flex-[0_0_300px]"
             >
               <div className="relative aspect-[16/11] w-full overflow-hidden rounded-[14px] bg-surface">
@@ -77,7 +61,7 @@ export function FreshRail({ jobs }: { jobs: CardJob[] }) {
                 </div>
                 <div className="mt-1 flex items-center gap-[7px] text-[12.5px] text-muted">
                   <SourceMark source={j.source} name={j.sourceName} />
-                  <span suppressHydrationWarning>
+                  <span>
                     on {j.sourceName} · {ago(j.postedAt)} ago
                   </span>
                 </div>
