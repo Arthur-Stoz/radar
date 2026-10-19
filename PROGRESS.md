@@ -63,3 +63,63 @@ Left
 Known issues
 - Embedding all jobs from scratch takes ~35 min on a laptop CPU (12–14/s); later runs only embed new/changed jobs.
   Tokenizer now capped at 256 word pieces (MiniLM's training length) to speed this up.
+
+## Phase C — Search API + Home + Search + /job + /go (2026-10-19)
+
+Done
+- Search engine (`lib/search.ts`): query understanding into removable chips (place, pay, work type, tags; `lib/query.ts`),
+  ~205 synonym groups incl. French/German/Spanish backpacker words (`lib/synonyms.ts`), FTS5 bm25 with column weights; the typed
+  word matches anywhere, synonyms only in title/category (precision). Typo fallback: vocabulary spelling correction ("Showing results
+  for …") then trigram index. Score = 0.50 relevance (bm25 + title hits) + 0.25 semantic + 0.10 freshness + 0.10 location + 0.05 completeness;
+  duplicate collapse; max 3 in a row from one company. City with < 5 matches broadens to its region ("never a dead end").
+- Facets with live counts (each ignores its own filter): region → town, work type, minimum hourly pay, posted within, perks, source.
+  Typical pay line (p25–p75 + median of the results). Everything in the URL. 24 per page, infinite scroll + "Load more".
+- `/api/search`, `/api/suggest` (titles, companies, places, "barista in Auckland" combos), `/api/job/[id]`, `/api/health`.
+  `SEMANTIC_QUERY=on` embeds the query server-side (lazy, LRU, 1.5 s timeout); off by default.
+- Home (faithful to `design/Radar.dc.html`): header, H1 with the 3 icon tiles, rotating placeholder, radar sweep on focus, real live line
+  ("28,303 jobs from 7 sources · updated …"), quick chips that only show when they have results, "Fresh today" rail (real newest jobs;
+  real place photos from the design when the town matches, otherwise the design's gradient + initial), "Browse by type" with real counts,
+  dark footer with cropped wordmark. Honest subtitle built from the live sources (no Facebook/PickNZ claims).
+- Search page in the same language (design boards "Dark Results", "Radar Mobile"): sticky compact bar, removable chips, count heading,
+  filter pills with popovers (bottom panels on mobile), sort; desktop list + sticky 520 px preview (first result preselected);
+  mobile bottom sheet (drag to close, browser Back closes it); seen jobs dimmed (sessionStorage); keyboard `/`, `J`/`K`, `Enter`, `Esc`, `O`.
+- Preview / `/job/[id]`: title, company, place, normalized pay + original text, "Check pay rate" note under $23.95/h, type, posted, source,
+  "Also on …", summary, highlights, tags, start of the ad, big "View on Seek ↗" (dynamic), copy link / Web Share; OG image (`next/og`);
+  closed jobs say so and show similar live jobs; merged duplicates redirect to the canonical job; unknown ids → 404.
+- `/go/[id]`: 302 to the untouched original URL, only for hosts known for that source (no open redirect); `?via=` for "Also on" links.
+- Minimal `/about`, `/privacy`, `/status` (real per-source numbers), 404 (radar design), `robots.txt`, `sitemap.xml`.
+- No third-party requests from the visitor's browser (no favicons/logos hotlinked; monograms instead).
+- Performance on 28k jobs (local laptop): uncached p50 ≈ 30 ms, worst query ≈ 90 ms; cached 0 ms; autocomplete < 20 ms.
+
+Relevance eval (`npm run eval`, real DB, top 10 per query): **30/30 passed (100 %)**
+
+| Query | Results | Top-10 OK |
+|---|---:|---:|
+| barista auckland | 62 | 10/10 |
+| fruit picking | 190 | 10/10 |
+| kitchen hand no experience | 18 | 10/10 |
+| software engineer remote | 147 | 9/10 |
+| serveur queenstown (FR) | 31 | 10/10 |
+| barrista auckand (typos → "barista") | 72 | 10/10 |
+| chef wellington | 48 | 10/10 |
+| nurse christchurch | 144 | 10/10 |
+| truck driver | 1,432 | 10/10 |
+| forklift | 735 | 10/10 |
+| housekeeper queenstown | 51 | 10/10 |
+| retail assistant part time | 582 | 10/10 |
+| electrician / accountant auckland / teacher / caregiver | 753 / 784 / 751 / 1,177 | 10/10 each |
+| labourer christchurch / data analyst / receptionist | 234 / 122 / 366 | 10/10 each |
+| warehouse night shift / kellner (DE) / nanny / builder | 213 / 208 / 30 / 658 | 10/10 each |
+| customer service / mechanic / dairy farm / $30 an hour | 2,962 / 1,817 / 531 / 6,821 | 10/10 each |
+| plumber hamilton / policy advisor wellington / cleaner | 9 / 256 / 463 | 9/9, 10/10, 10/10 |
+
+Left (next prompt, phases D–G)
+- D: CV match (lens button, on-device reading + embedding worker, `/api/match`), optional Gemini rerank.
+- E: polish (secondary pages are minimal), a11y audit, Lighthouse.
+- F: GitHub Actions (ingest every 4 h + CI), release `data-latest`, runtime DB download/swap from `DATA_URL`, `DEPLOY_FR.md`, README.
+- G: Playwright E2E at 1440/390, CV fixture case in the eval.
+
+Known issues
+- The app reads `DATA_DIR/radar.db` (copied to `DATA_DIR/serve/` before opening). Downloading from `DATA_URL` comes in phase F, so a fresh
+  deploy currently shows "Loading jobs…" until a DB file is present.
+- Seek listings without a fetched detail page show Seek's teaser + bullet points instead of the full description (filled over next runs).
