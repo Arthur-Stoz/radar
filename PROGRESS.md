@@ -165,3 +165,49 @@ Done
   `/`, `/search?q=barista`, `/search`, `/about`. Performance on this laptop: 77–96 depending on load — the host is slow
   (Lighthouse benchmarkIndex 802, below its reference device), and ~650 ms of the simulated blocking time is React/Next itself.
   Performance is re-measured on the GitHub runner in CI (phase F/G).
+
+## Phase F — CI, release pipeline, runtime sync, deploy docs (2026-10-19)
+
+Done
+- Runtime data sync (`lib/dataSync.ts`, started by `instrumentation.ts`): on boot and every 10 min, downloads `radar.db.gz` from `DATA_URL`
+  (ETag; GitHub API + `DATA_TOKEN` for a private repo), verifies it, swaps it atomically; caches are warmed. An empty data dir shows
+  "Loading jobs…" and refreshes itself. `/api/health` → `{ ok, dbBuiltAt, jobs }`.
+- `ingest.yml`: cron every 4 h + manual run, concurrency group, 60-min timeout (ingest has its own 50-min budget: details stop 15 min
+  before, embeddings 4 min before), Node 22, npm + model cache, downloads the previous DB, −40 % safety check, `gh release upload
+  data-latest --clobber`, per-source summary table.
+- `ci.yml`: typecheck, lint, unit tests, `npm ci && npm run build` on ubuntu-latest Node 22; then a second job starts the app **with only
+  `DATA_URL`** and runs the relevance eval, Playwright (1440/390) and Lighthouse.
+- Repo **https://github.com/Arthur-Stoz/radar** (public, commits authored with the GitHub no-reply address), `data-latest` release.
+- Seek details now come from the site's GraphQL JSON endpoint (its HTML job pages are Cloudflare-challenged from GitHub's IPs);
+  a source stops asking after 5 bot-protection answers in a row. Bot protection is never bypassed (Backpacker Board stays blocked).
+- `README.md`, `DEPLOY_FR.md` (Hostinger, step by step), `GUIDE_FR.md` (complete product guide), `PITCH_FR.md`.
+
+Runs on GitHub (2026-10-19): Ingest ×3 green (2 manual, 1 **scheduled**), CI green. Latest published data: **28,550 live jobs** —
+Seek 16,431 · Trade Me 9,494 · NZ Government Jobs 1,706 · Ashby 199 · Greenhouse 113 · Lever 48 · SmartRecruiters 17 · jobs.co.nz 272 ·
+SeasonalJobs NZ 173 · PickNZ 97 · Backpacker Board 0 (blocked) · Workable 0 · Facebook off. Expiry works (e.g. Trade Me −150 in one run).
+
+## Phase G — Tests, eval, E2E (2026-10-19)
+
+- Unit + connector tests: **110 passing** (pay ×35 real strings, places, query parser, synonyms, tags, dedup, CV profile, connectors on
+  trimmed real fixtures incl. jobs.co.nz and SeasonalJobs).
+- Relevance eval: **31/31 (100 %)** locally and on the CI runner, incl. the CV fixture case (hospitality roles dominate the top 10).
+- Playwright: **21 passing** at 1440 px and 390 px (+1 mobile-only test skipped on desktop): home, autocomplete → results → preview →
+  "View on …" href, `/go` 302 + no open redirect, filters/sort in URL, typo + chip removal, **CV PDF upload → match pills, and a check
+  that no request ever contains CV text**, mobile sheet + Back, dark mode, `/job/[id]` + OG image, 404, `/status`, `/api/health`.
+- Lighthouse on the GitHub runner (mobile, median of 3): `/` 97 · 100 · 100 · 100, `/search?q=barista` 97 · 100 · 100 · 100,
+  `/search` 97 · 100 · 100 · 100 (Performance · Accessibility · Best practices · SEO).
+
+### Definition of done
+- [x] `npm ci && npm run build && npm start` on a clean Linux Node 22 machine with only `DATA_URL` set (CI job "e2e").
+- [x] Real jobs from Seek, Trade Me and every allowed Tier B source; counts on `/status` (Backpacker Board: blocked by its bot protection).
+- [x] Every job opens the correct original ad (`/go` tested; host allow-list).
+- [x] Search, filters, sort, autocomplete, typo fallback, synonyms; URL state shareable.
+- [x] CV match on the device (text never leaves it — asserted in E2E), alone or with a query.
+- [x] Desktop + mobile in the design language; dark mode; AA; Lighthouse ≥ 90.
+- [x] Ingest workflow green and publishing every 4 h; CI green.
+- [x] Eval ≥ 90 %; unit and E2E tests green.
+- [x] No fake data in production.
+
+Left / ideas
+- Ask Backpacker Board to allow `RadarNZ/1.0` (or GitHub Actions IPs). More ATS companies (`ingest/ats-companies.json`).
+- Hostinger setup itself is a manual step for the owner (DEPLOY_FR.md); `SITE_URL` / `CONTACT_EMAIL` to fill once the domain is known.

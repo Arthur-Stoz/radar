@@ -2,7 +2,7 @@
 
 Ce document explique **tout** Radar : ce que voit un visiteur, comment chaque fonction marche, d'où viennent les
 données, comment le système tourne, et comment l'administrer sans écrire de code. Les chiffres cités sont ceux de la
-collecte réelle du 19 octobre 2026.
+collecte automatique du 19 octobre 2026 (18 h 30 UTC).
 
 ---
 
@@ -26,18 +26,18 @@ pas de pub, pas de newsletter, pas de cookies de suivi.
 
 | Source | Annonces en ligne | Comment Radar les lit |
 |---|---:|---|
-| Seek | 16 318 | Données JSON du site + pages d'annonce (permission écrite) |
-| Trade Me Jobs | 9 678 | Données JSON du site, description complète (permission écrite) |
-| NZ Government Jobs (jobs.govt.nz, dont Te Whatu Ora / Health NZ) | 1 839 | Pages de résultats + données structurées |
-| jobs.co.nz | 274 | Plan du site + données structurées (permission écrite) |
-| Pages carrières d'entreprises (Ashby, Greenhouse, Lever, SmartRecruiters) | 391 | API publiques prévues pour ça (Xero, Rocket Lab, Halter, ZURU, Air New Zealand, Foodstuffs, KPMG…) |
+| Seek | 16 431 | Données JSON du site + pages d'annonce (permission écrite) |
+| Trade Me Jobs | 9 494 | Données JSON du site, description complète (permission écrite) |
+| NZ Government Jobs (jobs.govt.nz, dont Te Whatu Ora / Health NZ) | 1 706 | Pages de résultats + données structurées |
+| jobs.co.nz | 272 | Plan du site + données structurées (permission écrite) |
+| Pages carrières d'entreprises (Ashby, Greenhouse, Lever, SmartRecruiters) | 377 | API publiques prévues pour ça (Xero, Rocket Lab, Halter, ZURU, Air New Zealand, Foodstuffs, KPMG…) |
 | SeasonalJobs NZ | 173 | Plan du site + page d'annonce (permission écrite) |
 | PickNZ | 97 | Plan du site + données structurées (permission écrite) |
 | Backpacker Board | 0 pour l'instant | Connecteur prêt (permission écrite), mais le site bloque les robots (Cloudflare) |
 | Facebook | — | Désactivé : Meta ne propose plus aucun flux public |
 | LinkedIn, Indeed | — | Exclus |
 
-**Total : 28 770 annonces actives**, mises à jour toutes les 4 heures. Le détail à jour est sur la page `/status` du site.
+**Total : 28 550 annonces actives**, mises à jour toutes les 4 heures. Le détail à jour est sur la page `/status` du site.
 
 ## 4. Le parcours du visiteur
 
@@ -49,7 +49,7 @@ pas de pub, pas de newsletter, pas de cookies de suivi.
   « barista in Auckland ». Navigation au clavier (flèches, Entrée, Échap).
 - **Le bouton CV** (icône document avec une étincelle) à droite de la barre — voir §6.
 - **Raccourcis** : Live-in, Hospitality, Fruit picking, No experience, Starts this week, $30+/h (affichés seulement s'il y a des résultats).
-- **La ligne en direct** : « 28 770 jobs from 10 sources · updated 14 min ago » — chiffres réels.
+- **La ligne en direct** : « 28,550 jobs from 10 sources · updated 14 min ago » — chiffres réels.
 - **Fresh today** : les annonces les plus récentes, avec une vraie photo du lieu quand Radar en a une (Queenstown, Wānaka,
   Franz Josef, Milford Sound, Te Puke…), sinon un dégradé avec l'initiale de l'employeur.
 - **Browse by type** : Hospitality, Farm & fruit, Live-in, Tourism, Events, Seasonal, avec le **vrai nombre** d'offres.
@@ -142,7 +142,7 @@ courte par offre. Seules les puces et les titres/résumés des offres sont envoy
 
 - **Aucune donnée inventée** : chaque offre vient d'une source réelle, chaque chiffre affiché est calculé.
 - **Dédoublonnage** : une même offre publiée sur Seek et Trade Me n'apparaît qu'une fois (la version la plus complète),
-  avec « Also on … ». 1 384 doublons fusionnés lors de la collecte complète.
+  avec « Also on … ». environ 1 500 doublons fusionnés à chaque collecte (1 488 le 19 octobre au soir).
 - **Expiration** : une offre disparue deux collectes de suite est retirée ; plafond de 60 jours ; les offres dont la date de
   clôture est passée disparaissent.
 - **Étiquettes automatiques** (règles testées, avec gestion des négations comme « no sponsorship ») :

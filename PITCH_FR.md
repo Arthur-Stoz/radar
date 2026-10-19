@@ -25,12 +25,12 @@ sites ni le vocabulaire local, c'est pire : il cherche « serveur » ou « cueil
 **La confiance.** Aucune fausse offre, aucun faux chiffre, la source et la fraîcheur de chaque annonce sont affichées, et
 une page publique montre l'état de chaque source en temps réel. Pas de compte, pas de pub, pas de cookie de suivi.
 
-## Les chiffres (réels, collecte du 19 octobre 2026)
+## Les chiffres (réels, collecte automatique du 19 octobre 2026)
 
-- **28 770 offres actives** en Nouvelle-Zélande, issues de **10 sources**.
-- Seek 16 318 · Trade Me 9 678 · NZ Government Jobs 1 839 · pages carrières d'entreprises 391 · jobs.co.nz 274 ·
+- **28 550 offres actives** en Nouvelle-Zélande, issues de **10 sources**.
+- Seek 16 431 · Trade Me 9 494 · NZ Government Jobs 1 706 · pages carrières d'entreprises 377 · jobs.co.nz 272 ·
   SeasonalJobs NZ 173 · PickNZ 97.
-- 1 384 doublons fusionnés automatiquement.
+- Environ 1 500 doublons fusionnés automatiquement à chaque collecte (1 488 le 19 octobre au soir).
 - Mise à jour **toutes les 4 heures**, réponse de recherche en quelques dizaines de millisecondes.
 - 31 requêtes de test sur 31 réussies (pertinence des 10 premiers résultats vérifiée).
 
