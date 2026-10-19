@@ -1,7 +1,7 @@
 node_modules/
 .next/
 out/
-.data/
+.data*/
 *.db
 *.db-*
 *.db.gz
@@ -13,3 +13,4 @@ test-results/
 .cache/
 *.tsbuildinfo
 next-env.d.ts
+*.zip

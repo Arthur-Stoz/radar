@@ -1,0 +1,361 @@
+{
+ "totalCount": 17882,
+ "data": [
+  {
+   "advertiser": {
+    "id": "45288967",
+    "description": "Heilala Vanilla"
+   },
+   "bulletPoints": [
+    "A premium NZ vanilla brand with a genuine story, growing into new markets",
+    "BRC GS audit expertise required",
+    "Full-time role based in Te Puna, Bay of Plenty with flexibility & real purpose"
+   ],
+   "branding": {
+    "serpLogoUrl": "https://bx-branding-gateway.cloud.seek.com.au/6d9d34ac-5833-4eab-8725-f7522341db6b.1/jdpLogo"
+   },
+   "classifications": [
+    {
+     "classification": {
+      "id": "6092",
+      "description": "Manufacturing, Transport & Logistics"
+     },
+     "subclassification": {
+      "id": "6106",
+      "description": "Quality Assurance & Control"
+     }
+    }
+   ],
+   "companyName": "Heilala Vanilla",
+   "companyProfileStructuredDataId": 258521,
+   "displayStyle": {
+    "search": "sourcrProfile"
+   },
+   "displayType": "promoted",
+   "employer": {
+    "id": "258521",
+    "name": "Heilala Vanilla"
+   },
+   "id": "94812002",
+   "isFeatured": true,
+   "listingDate": "2026-09-22T21:13:24Z",
+   "listingDateDisplay": "26d ago",
+   "locations": [
+    {
+     "label": "Te Puna, Bay of Plenty",
+     "countryCode": "NZ",
+     "seoHierarchy": [
+      {
+       "contextualName": "Te Puna Bay of Plenty"
+      },
+      {
+       "contextualName": "All Bay of Plenty"
+      }
+     ]
+    }
+   ],
+   "roleId": "quality-and-compliance-manager",
+   "salaryLabel": "",
+   "solMetadata": {
+    "searchRequestToken": "dc221b07-9373-4606-8611-9f9d0bfbc61b",
+    "token": "0~dc221b07-9373-4606-8611-9f9d0bfbc61b",
+    "jobId": "94812002",
+    "section": "MAIN",
+    "sectionRank": 1,
+    "jobAdType": "SPONSORED",
+    "tags": {
+     "mordor__flights": "mordor_1182",
+     "mordor__flight_retrieval_and_relevance_ranking": "mordor_1182",
+     "mordor__flight_performance_signal": "mordor_1183",
+     "mordor__flight_performance": "mordor_1184",
+     "mordor__flight_candidate_fit_plugin": "mordor_1185",
+     "mordor__s": "0"
+    }
+   },
+   "tags": [
+    {
+     "type": "EXPIRES_SOON",
+     "label": "Expiring soon"
+    }
+   ],
+   "teaser": "Own and lead Food Safety, Quality and H&S programmes for a premium NZ vanilla brand.",
+   "title": "Food Safety, Quality & Compliance Manager",
+   "tracking": "ewogICJ0b2tlbiI6ICI0YjJkZmYzYi02MTcwLTQ2NmItYWM0Ni00ZTczZmUzYTJkN2ZfMSIKfQ==",
+   "workTypes": [
+    "Full time"
+   ],
+   "workArrangements": {
+    "data": [
+     {
+      "id": "1",
+      "label": {
+       "text": "On-site"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "advertiser": {
+    "id": "62880830",
+    "description": "White Bros Panelworks"
+   },
+   "bulletPoints": [
+    "Reputable & Established Company",
+    "Quality Equipment & Facilities",
+    "Supportive Team Environment"
+   ],
+   "branding": {
+    "serpLogoUrl": "https://bx-branding-gateway.cloud.seek.com.au/03185a75-c74f-4918-a98f-72cfd37e9c62.1/jdpLogo"
+   },
+   "classifications": [
+    {
+     "classification": {
+      "id": "1225",
+      "description": "Trades & Services"
+     },
+     "subclassification": {
+      "id": "1328",
+      "description": "Automotive Trades"
+     }
+    }
+   ],
+   "companyName": "White Bros Panelworks",
+   "companyProfileStructuredDataId": 3385643,
+   "displayStyle": {
+    "search": "sourcrProfile"
+   },
+   "displayType": "promoted",
+   "employer": {
+    "id": "3385643",
+    "name": "White Bros Panelworks"
+   },
+   "id": "95218329",
+   "isFeatured": true,
+   "listingDate": "2026-10-12T19:36:36Z",
+   "listingDateDisplay": "6d ago",
+   "locations": [
+    {
+     "label": "Hamilton Central, Waikato",
+     "countryCode": "NZ",
+     "seoHierarchy": [
+      {
+       "contextualName": "Hamilton Central Waikato"
+      },
+      {
+       "contextualName": "All Waikato"
+      }
+     ]
+    }
+   ],
+   "roleId": "diesel-mechanic",
+   "salaryLabel": "",
+   "solMetadata": {
+    "searchRequestToken": "dc221b07-9373-4606-8611-9f9d0bfbc61b",
+    "token": "0~dc221b07-9373-4606-8611-9f9d0bfbc61b",
+    "jobId": "95218329",
+    "section": "MAIN",
+    "sectionRank": 2,
+    "jobAdType": "SPONSORED",
+    "tags": {
+     "mordor__flights": "mordor_1182",
+     "mordor__flight_retrieval_and_relevance_ranking": "mordor_1182",
+     "mordor__flight_performance_signal": "mordor_1183",
+     "mordor__flight_performance": "mordor_1184",
+     "mordor__flight_candidate_fit_plugin": "mordor_1185",
+     "mordor__s": "0"
+    }
+   },
+   "teaser": "White Brothers are seeking a skilled mechanic to join our team!",
+   "title": "Diesel Mechanic",
+   "tracking": "ewogICJ0b2tlbiI6ICI0YjJkZmYzYi02MTcwLTQ2NmItYWM0Ni00ZTczZmUzYTJkN2ZfMiIKfQ==",
+   "workTypes": [
+    "Full time"
+   ],
+   "workArrangements": {
+    "data": [
+     {
+      "id": "1",
+      "label": {
+       "text": "On-site"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "advertiser": {
+    "id": "45012980",
+    "description": "Petdirect"
+   },
+   "bulletPoints": [
+    "Own the store: Run the Mt Wellington flagship like your own mini-business",
+    "Great rewards: Set 40-hour week, mgmt incentives and a generous staff discount",
+    "Lead the pack: Coach a passionate team and shape a growing NZ brand"
+   ],
+   "branding": {
+    "serpLogoUrl": "https://bx-branding-gateway.cloud.seek.com.au/785a3e0c-78f8-4556-9101-a412aa2dec89.1/jdpLogo"
+   },
+   "classifications": [
+    {
+     "classification": {
+      "id": "6043",
+      "description": "Retail & Consumer Products"
+     },
+     "subclassification": {
+      "id": "6047",
+      "description": "Management - Store"
+     }
+    }
+   ],
+   "companyName": "Petdirect",
+   "companyProfileStructuredDataId": 693066,
+   "displayStyle": {
+    "search": "sourcrProfile"
+   },
+   "displayType": "standard",
+   "employer": {
+    "id": "693066",
+    "name": "Petdirect",
+    "companyId": "175391151991308",
+    "companyUrl": "https://nz.seek.com/companies/petdirect-175391151991308"
+   },
+   "id": "95335626",
+   "isFeatured": false,
+   "listingDate": "2026-10-18T20:35:41Z",
+   "listingDateDisplay": "6h ago",
+   "locations": [
+    {
+     "label": "Mount Wellington, Auckland",
+     "countryCode": "NZ",
+     "seoHierarchy": [
+      {
+       "contextualName": "Mount Wellington Auckland"
+      },
+      {
+       "contextualName": "All Auckland"
+      }
+     ]
+    }
+   ],
+   "roleId": "store-manager",
+   "salaryLabel": "",
+   "solMetadata": {
+    "searchRequestToken": "dc221b07-9373-4606-8611-9f9d0bfbc61b",
+    "token": "0~dc221b07-9373-4606-8611-9f9d0bfbc61b",
+    "jobId": "95335626",
+    "section": "MAIN",
+    "sectionRank": 3,
+    "jobAdType": "ORGANIC",
+    "tags": {
+     "mordor__flights": "mordor_1182",
+     "mordor__flight_retrieval_and_relevance_ranking": "mordor_1182",
+     "mordor__flight_performance_signal": "mordor_1183",
+     "mordor__flight_performance": "mordor_1184",
+     "mordor__flight_candidate_fit_plugin": "mordor_1185",
+     "mordor__s": "0"
+    }
+   },
+   "teaser": "Run your own mini-business at Petdirect's Mt Wellington flagship! Build a pet-loving community, enjoy great perks, and shape our retail future.",
+   "title": "Retail Store Manager - Mt Wellington",
+   "tracking": "ewogICJ0b2tlbiI6ICI0YjJkZmYzYi02MTcwLTQ2NmItYWM0Ni00ZTczZmUzYTJkN2ZfMyIKfQ==",
+   "workTypes": [
+    "Full time"
+   ],
+   "workArrangements": {
+    "data": [
+     {
+      "id": "1",
+      "label": {
+       "text": "On-site"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "advertiser": {
+    "id": "60097652",
+    "description": "Dimitris Greek Food"
+   },
+   "bulletPoints": [],
+   "branding": {
+    "serpLogoUrl": "https://bx-branding-gateway.cloud.seek.com.au/ef0ebb44-f2c5-4df4-80a4-65252d4375fb.1/jdpLogo"
+   },
+   "classifications": [
+    {
+     "classification": {
+      "id": "1212",
+      "description": "Hospitality & Tourism"
+     },
+     "subclassification": {
+      "id": "6057",
+      "description": "Other"
+     }
+    }
+   ],
+   "companyName": "Dimitris Greek Food",
+   "companyProfileStructuredDataId": 731758,
+   "displayStyle": {
+    "search": "sourcrProfile"
+   },
+   "displayType": "standard",
+   "employer": {
+    "id": "731758",
+    "name": "Dimitris Greek Food"
+   },
+   "id": "95337137",
+   "isFeatured": false,
+   "listingDate": "2026-10-18T23:17:47Z",
+   "listingDateDisplay": "4h ago",
+   "locations": [
+    {
+     "label": "Christchurch Central, Canterbury",
+     "countryCode": "NZ",
+     "seoHierarchy": [
+      {
+       "contextualName": "Christchurch Central Canterbury"
+      },
+      {
+       "contextualName": "All Canterbury"
+      }
+     ]
+    }
+   ],
+   "roleId": "team-member",
+   "salaryLabel": "",
+   "solMetadata": {
+    "searchRequestToken": "dc221b07-9373-4606-8611-9f9d0bfbc61b",
+    "token": "0~dc221b07-9373-4606-8611-9f9d0bfbc61b",
+    "jobId": "95337137",
+    "section": "MAIN",
+    "sectionRank": 4,
+    "jobAdType": "ORGANIC",
+    "tags": {
+     "mordor__flights": "mordor_1182",
+     "mordor__flight_retrieval_and_relevance_ranking": "mordor_1182",
+     "mordor__flight_performance_signal": "mordor_1183",
+     "mordor__flight_performance": "mordor_1184",
+     "mordor__flight_candidate_fit_plugin": "mordor_1185",
+     "mordor__s": "0"
+    }
+   },
+   "teaser": "Vibrant small team that works well together. Part of a Christchurch legacy.",
+   "title": "Team Member",
+   "tracking": "ewogICJ0b2tlbiI6ICI0YjJkZmYzYi02MTcwLTQ2NmItYWM0Ni00ZTczZmUzYTJkN2ZfNCIKfQ==",
+   "workTypes": [
+    "Full time"
+   ],
+   "workArrangements": {
+    "data": [
+     {
+      "id": "1",
+      "label": {
+       "text": "On-site"
+      }
+     }
+    ]
+   }
+  }
+ ]
+}

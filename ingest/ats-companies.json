@@ -1,0 +1,26 @@
+{
+  "_comment": "Companies hiring in NZ on public ATS job boards. Each slug was verified to return jobs (2026-10-19). Only NZ / NZ-remote jobs are kept.",
+  "greenhouse": [
+    { "slug": "rocketlab", "name": "Rocket Lab" },
+    { "slug": "pushpay", "name": "Pushpay" },
+    { "slug": "dawnaerospace", "name": "Dawn Aerospace" },
+    { "slug": "stripe", "name": "Stripe" },
+    { "slug": "hellofresh", "name": "HelloFresh" }
+  ],
+  "lever": [
+    { "slug": "foodstuffs", "name": "Foodstuffs" },
+    { "slug": "kpmgnz", "name": "KPMG New Zealand" }
+  ],
+  "smartrecruiters": [
+    { "slug": "airnewzealand", "name": "Air New Zealand" }
+  ],
+  "workable": [],
+  "ashby": [
+    { "slug": "xero", "name": "Xero" },
+    { "slug": "halter", "name": "Halter" },
+    { "slug": "zuru", "name": "ZURU" },
+    { "slug": "lightspeedhq", "name": "Lightspeed" },
+    { "slug": "airwallex", "name": "Airwallex" },
+    { "slug": "supabase", "name": "Supabase" }
+  ]
+}
