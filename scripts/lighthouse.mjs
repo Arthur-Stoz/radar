@@ -26,6 +26,13 @@ for (const p of pages) {
   const last = runs.at(-1);
   const bad = Object.values(last.audits).filter((a) => a.score !== null && a.score < 0.9 && !['informative', 'manual', 'notApplicable'].includes(a.scoreDisplayMode));
   if (bad.length) console.log('   ', bad.slice(0, 8).map((a) => `${a.id}(${Math.round(a.score * 100)})`).join(', '));
+  for (const id of ['color-contrast', 'label-content-name-mismatch', 'heading-order', 'link-name', 'button-name']) {
+    const items = last.audits[id]?.details?.items || [];
+    for (const it of items.slice(0, 3)) {
+      const why = it.node?.explanation ? ` — ${it.node.explanation.split('\n')[0].slice(0, 120)}` : '';
+      console.log(`    ${id}: ${(it.node?.snippet || '').slice(0, 160)}${why}`);
+    }
+  }
 }
 await browser.close();
 console.log(failed ? '\nSome scores are under 90.' : '\nAll scores ≥ 90 on / and /search.');
