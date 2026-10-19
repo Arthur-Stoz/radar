@@ -25,6 +25,8 @@ export interface SearchInput {
   pageSize?: number;
   /** Optional query vector (normalized) for semantic blending. */
   vector?: number[] | null;
+  /** CV match: the CV's mean vector (computed on the device) and the confirmed profile chips. */
+  cv?: { vector: number[]; chips: { kind: string; label: string; terms: string[] }[] } | null;
 }
 
 export interface CardJob {
@@ -55,6 +57,11 @@ export interface CardJob {
   category: string | null;
   expiresAt: string | null;
   score?: number;
+  /** CV match 0–100 and the user's chips found in this job. */
+  match?: number;
+  why?: string[];
+  /** Optional one-line reason from the AI rerank. */
+  reason?: string;
 }
 
 export interface FacetCount {
@@ -294,7 +301,7 @@ const resultCache = new Map<string, SearchResult>();
 
 export function search(input: SearchInput): SearchResult {
   const store0 = getStore();
-  const cacheKey = store0 && !input.vector ? `${store0.version}|${JSON.stringify(input)}` : null;
+  const cacheKey = store0 && !input.vector && !input.cv ? `${store0.version}|${JSON.stringify(input)}` : null;
   if (cacheKey) {
     const hit = resultCache.get(cacheKey);
     if (hit) {
@@ -389,11 +396,11 @@ function searchUncached(input: SearchInput): SearchResult {
   }
 
   // ---- Scoring ----
-  const sort: Sort = input.sort || (units.length || input.vector ? 'best' : 'new');
+  const sort: Sort = input.sort || (units.length || input.vector || input.cv ? 'best' : 'new');
   const now = Date.now() / 1000;
   let maxRel = 0;
   if (rel) for (const j of filtered) maxRel = Math.max(maxRel, rel.get(j.rowid) || 0);
-  const vectors = input.vector ? getVectors(store) : null;
+  const vectors = input.vector || input.cv ? getVectors(store) : null;
 
   // Fast path: no text, newest first — the light index is already sorted by date.
   const fast = !rel && !vectors && sort === 'new';
@@ -419,8 +426,21 @@ function searchUncached(input: SearchInput): SearchResult {
     return { j, score };
   });
 
+  // CV match mode (BUILD.md §6.3) replaces the scores of the text ranking.
+  const matchInfo = new Map<number, { match: number; why: string[] }>();
+  if (input.cv && vectors) {
+    const cvScored = scoreCv(store, filtered, vectors, input.cv, rel, maxRel, now);
+    scored.length = 0;
+    for (const s of cvScored) {
+      scored.push({ j: s.j, score: s.score });
+      if (s.match != null) matchInfo.set(s.j.rowid, { match: s.match, why: s.why });
+    }
+  }
+
   if (fast) {
     // already ordered
+  } else if (input.cv && sort === 'best') {
+    // scoreCv already sorted
   } else if (sort === 'new') scored.sort((a, b) => b.j.postedTs - a.j.postedTs || b.score - a.score);
   else if (sort === 'pay') scored.sort((a, b) => (b.j.hourlyMax ?? -1) - (a.j.hourlyMax ?? -1) || b.score - a.score);
   else scored.sort((a, b) => b.score - a.score || b.j.postedTs - a.j.postedTs);
@@ -438,7 +458,14 @@ function searchUncached(input: SearchInput): SearchResult {
   const total = ordered.length;
   const slice = ordered.slice((page - 1) * pageSize, page * pageSize);
   const results = loadCards(store, slice.map((s) => s.j.rowid));
-  slice.forEach((s, i) => (results[i].score = Math.round(s.score * 1000) / 1000));
+  slice.forEach((s, i) => {
+    results[i].score = Math.round(s.score * 1000) / 1000;
+    const m = matchInfo.get(s.j.rowid);
+    if (m) {
+      results[i].match = m.match;
+      results[i].why = m.why;
+    }
+  });
 
   // ---- Facets (each ignores its own filter) ----
   const facets = computeFacets(candidates, f, sourceNameMap(store));
@@ -648,4 +675,66 @@ export function getVectors(store: Store): Map<number, Int8Array> {
   }
   vecCache = { version: store.version, map };
   return map;
+}
+
+// ---------- CV match ----------
+
+const CHIP_WEIGHT: Record<string, number> = { title: 2, skill: 1, licence: 1, language: 0.5, visa: 0.5 };
+
+/** Blended CV score → calibrated 0–100 "match": ≈90 for the best fits, ≈50 at 0.45, ≈25 for weak ones (tuned on real data). */
+export function matchPercent(score: number): number {
+  return Math.max(1, Math.min(99, Math.round(100 / (1 + Math.exp(-(score - 0.45) * 9)))));
+}
+
+function scoreCv(
+  store: Store,
+  filtered: LightJob[],
+  vectors: Map<number, Int8Array>,
+  cv: NonNullable<SearchInput['cv']>,
+  rel: Map<number, number> | null,
+  maxRel: number,
+  now: number,
+): { j: LightJob; score: number; match?: number; why: string[] }[] {
+  // Stage 1: cosine (+ bm25 when there is a query) over every candidate.
+  const stage1 = filtered.map((j) => {
+    const v = vectors.get(j.rowid);
+    const cos = v ? Math.max(0, cosineQ(cv.vector, v)) : 0;
+    const bm = rel && maxRel > 0 ? (rel.get(j.rowid) || 0) / maxRel : 0;
+    const fresh = Math.exp(-Math.max(0, (now - j.postedTs) / DAY) / 14);
+    return { j, cos, bm, fresh, score: 0.6 * cos + 0.15 * bm + 0.05 * fresh };
+  });
+  stage1.sort((a, b) => b.score - a.score);
+
+  // Stage 2: chip overlap on the best 400, reading their text.
+  const head = stage1.slice(0, 400);
+  const texts = new Map<number, string>();
+  if (head.length && cv.chips.length) {
+    const ids = head.map((h) => h.j.rowid);
+    const rows = store.db
+      .prepare(`SELECT rowid, title, summary, tags, category, substr(description, 1, 2500) AS d FROM jobs WHERE rowid IN (${ids.map(() => '?').join(',')})`)
+      .all(...ids) as { rowid: number; title: string; summary: string; tags: string; category: string | null; d: string }[];
+    for (const r of rows) texts.set(r.rowid, fold(`${r.title} ${r.summary} ${r.category || ''} ${r.tags.replace(/,/g, ' ')} ${r.d}`));
+  }
+  const totalW = cv.chips.reduce((s, c) => s + (CHIP_WEIGHT[c.kind] ?? 1), 0) || 1;
+  const out = head.map((h) => {
+    const text = texts.get(h.j.rowid) || '';
+    const why: string[] = [];
+    let w = 0;
+    for (const c of cv.chips) {
+      const hit =
+        (c.kind === 'visa' && /working holiday/i.test(c.label) && h.j.tg.includes('whv-friendly')) ||
+        (c.kind === 'licence' && /driver/i.test(c.label) && h.j.tg.includes('driver-licence')) ||
+        c.terms.some((t) => t.length > 1 && text.includes(fold(t)));
+      if (hit) {
+        w += CHIP_WEIGHT[c.kind] ?? 1;
+        why.push(c.label);
+      }
+    }
+    // Overlap saturates: matching ~40 % of a long profile is already a strong signal.
+    const overlap = Math.min(1, w / Math.min(totalW, 7));
+    const score = 0.6 * h.cos + 0.25 * overlap + 0.15 * h.bm + 0.05 * h.fresh;
+    return { j: h.j, score, match: matchPercent(score), why: [...new Set(why)].slice(0, 4) };
+  });
+  out.sort((a, b) => b.score - a.score);
+  return [...out, ...stage1.slice(400).map((s) => ({ j: s.j, score: s.score, match: matchPercent(s.score), why: [] as string[] }))];
 }

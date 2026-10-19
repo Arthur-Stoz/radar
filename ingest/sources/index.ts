@@ -5,9 +5,25 @@ import { jobsgovt } from './jobsgovt';
 import { backpackerboard } from './backpackerboard';
 import { picknz } from './picknz';
 import { facebook } from './facebook';
+import { jobsconz } from './jobsconz';
+import { seasonaljobs } from './seasonaljobs';
 import { ashby, greenhouse, lever, smartrecruiters, workable } from './ats';
 
-export const ALL_SOURCES: Source[] = [seek, trademe, jobsgovt, greenhouse, lever, smartrecruiters, workable, ashby, backpackerboard, picknz, facebook];
+export const ALL_SOURCES: Source[] = [
+  seek,
+  trademe,
+  jobsgovt,
+  backpackerboard,
+  picknz,
+  jobsconz,
+  seasonaljobs,
+  greenhouse,
+  lever,
+  smartrecruiters,
+  workable,
+  ashby,
+  facebook,
+];
 
 const list = (v: string | undefined) =>
   (v || '')

@@ -13,14 +13,14 @@ Turn a source off instantly with `DISABLED_SOURCES=id1,id2`; opt a disabled one 
 | `smartrecruiters` | SmartRecruiters | Yes. Public postings API. | Enabled | `api.smartrecruiters.com/v1/companies/{id}/postings?country=nz` + posting detail | NZ jobs only. |
 | `workable` | Workable | Yes. Public widget API. | Enabled (no NZ company found yet) | `apply.workable.com/api/v1/widget/accounts/{slug}?details=true` | Add slugs to `ats-companies.json`. |
 | `ashby` | Ashby | Yes. Public job-board API. | Enabled | `api.ashbyhq.com/posting-api/job-board/{name}?includeCompensation=true` | NZ jobs only. |
-| `backpackerboard` | Backpacker Board | **No (needs permission).** robots.txt allows, but the terms say information "cannot be copied, republished or distributed without written permission". | Disabled (connector built) | Listing pages + JobPosting JSON-LD | Ask Square Kiwi Ltd for written permission, then `ENABLED_SOURCES=backpackerboard`. |
-| `picknz` | PickNZ jobs (jobs.picknz.co.nz) | **No (needs permission).** robots.txt allows, but the terms forbid using/copying/storing content without prior written permission. | Disabled (connector built) | `job-sitemap.xml` + JobPosting JSON-LD | Ask Horticulture NZ, then `ENABLED_SOURCES=picknz`. |
+| `backpackerboard` | Backpacker Board | **Yes — written permission held by the owner (2026-10-19).** The public terms alone require it. | Enabled, but **blocked**: the site answers automated requests with a Cloudflare challenge (HTTP 403). Radar never bypasses bot protection. | Listing pages + JobPosting JSON-LD | Ask Backpacker Board to allow the `RadarNZ/1.0` user agent (or GitHub Actions IPs); the connector then works as is. |
+| `picknz` | PickNZ jobs (jobs.picknz.co.nz) | **Yes — written permission held by the owner (2026-10-19).** The public terms alone require it. | Enabled | `job-sitemap.xml` + JobPosting JSON-LD (new listings only) | Run on 2026-10-19: 99 listings, 97 live. |
 | `facebook` | Facebook groups / Marketplace | No feed exists. | Disabled (empty connector) | — | Meta removed the Groups API (2024) and closed Facebook Jobs; posts sit behind a login. We will not automate a personal account. |
 | — | LinkedIn | Excluded by the owner. | — | — | — |
 | — | Indeed | Excluded (terms forbid collection). | — | — | — |
 | — | Work the Seasons (worktheseasons.co.nz) | n/a | Not built | — | The domain now serves an unrelated casino site; the government seasonal-work board no longer lives there. |
-| — | jobs.co.nz | **No.** Terms: "Scrape the site, or use automated means to collect listings" is prohibited. | Not built | — | — |
-| — | seasonaljobs.co.nz | **No.** Terms reserve all content rights (Create a Moment Ltd). | Not built | — | — |
+| `jobsconz` | jobs.co.nz | **Yes — written permission held by the owner (2026-10-19).** The public terms alone forbid automated collection. | Enabled | `sitemap.xml` (every live job URL) + JobPosting JSON-LD | Run on 2026-10-19: 331 listings, 274 live after dedup. |
+| `seasonaljobs` | SeasonalJobs NZ (seasonaljobs.co.nz) | **Yes — written permission held by the owner (2026-10-19).** The public terms alone reserve all rights. | Enabled | `sitemap.xml` + job detail HTML (no JSON-LD on this site) | Run on 2026-10-19: 174 listings, 173 live. Many ads link out to other boards. |
 | — | Student Job Search (sjs.co.nz) | n/a | Not built | — | Jobs are on student.sjs.co.nz behind a student login. |
 | — | Adzuna, Jooble | Excluded by the brief (accounts needed, duplicates). | — | — | — |
 

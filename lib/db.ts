@@ -46,7 +46,11 @@ export interface Store {
   vocab: VocabEntry[];
   words: Map<string, number>;
   version: number;
+  code: number;
 }
+
+/** Bump when the in-memory index shape changes (dev hot reload keeps the old store on globalThis). */
+const STORE_CODE = 3;
 
 let store: Store | null = null;
 let lastCheck = 0;
@@ -114,6 +118,7 @@ function open(src: string, mtime: number): Store {
     vocab,
     words,
     version: Date.now(),
+    code: STORE_CODE,
   };
 }
 
@@ -128,7 +133,7 @@ export function getStore(): Store | null {
   if (!existsSync(src)) return store;
   try {
     const m = statSync(src).mtimeMs;
-    if (!store || m !== sourceMtime) {
+    if (!store || m !== sourceMtime || store.code !== STORE_CODE) {
       const next = open(src, m);
       const old = store;
       store = next;

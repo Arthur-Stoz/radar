@@ -53,6 +53,14 @@ export function JobPreview({ job, full = false, headingLevel = 2 }: { job: CardJ
         )}
       </header>
 
+      {job.match != null && (
+        <section className="rounded-[16px] p-4" style={{ background: 'var(--accent-soft)' }} aria-label="Why this matches your CV">
+          <p className="m-0 text-[15px] font-semibold">{job.match}% match with your CV</p>
+          {job.why && job.why.length > 0 && <p className="m-0 mt-1 text-[14px]">Matches your: {job.why.join(' · ')}</p>}
+          {job.reason && <p className="m-0 mt-1 text-[14px] text-ink-2">{job.reason}</p>}
+        </section>
+      )}
+
       <ApplyButton job={job} />
 
       <dl className="m-0 grid grid-cols-[88px_1fr] gap-x-4 gap-y-2.5 rounded-[16px] bg-surface p-4 text-[14px]">

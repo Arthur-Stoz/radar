@@ -1,11 +1,10 @@
 // Backpacker Board (backpackerboard.co.nz).
-// DISABLED: robots.txt allows crawling, but the terms say all information "cannot be copied,
-// republished or distributed without written permission from backpackerboard". The connector is
-// complete; enable it with ENABLED_SOURCES=backpackerboard once written permission is obtained.
+// The owner states written permission to collect listings (2026-10-19); the public terms alone
+// require it ("cannot be copied, republished or distributed without written permission").
 
 import { decodeEntities } from '../../lib/text';
 import type { RawJob, Source } from '../types';
-import { fillFromJsonLd } from './detailjsonld';
+import { fillFromDetail } from './detailjsonld';
 
 const BASE = 'https://www.backpackerboard.co.nz/work_jobs/';
 
@@ -29,7 +28,7 @@ export const backpackerboard: Source = {
   id: 'backpackerboard',
   name: 'Backpacker Board',
   homepage: 'https://www.backpackerboard.co.nz',
-  enabled: false,
+  enabled: true,
   kind: 'site',
   hosts: ['www.backpackerboard.co.nz', 'backpackerboard.co.nz'],
   async *fetchListings(ctx) {
@@ -39,10 +38,13 @@ export const backpackerboard: Source = {
       const r = await ctx.http.text(`${BASE}job_listings.php${page > 1 ? `?page=${page}` : ''}`);
       ctx.counters.pages++;
       const p = parseBackpackerList(r.text);
-      if (!p.jobs.length) break;
+      if (!p.jobs.length) {
+        if (page === 1) throw new Error(`backpackerboard: no listings on page 1 (HTTP ${r.status}, ${r.text.length} bytes)`);
+        break;
+      }
       for (const j of p.jobs) all.set(j.sourceId, j);
       last = Math.max(last, p.lastPage);
     }
-    yield* await fillFromJsonLd(ctx, [...all.values()], 'backpackerboard');
+    yield* await fillFromDetail(ctx, [...all.values()], 'backpackerboard');
   },
 };

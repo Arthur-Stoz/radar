@@ -26,6 +26,9 @@ export interface HttpStats {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/** The site answered with a bot-protection challenge. Not retried, never bypassed. */
+export class BlockedError extends Error {}
+
 class HostGate {
   private next = 0;
   private inFlight = 0;
@@ -141,6 +144,11 @@ export class Http {
           continue;
         }
         const text = await res.text();
+        // Bot-protection challenges are never worked around: report them so the site can allow us.
+        if ((res.status === 403 || res.status === 503) && (res.headers.get('cf-mitigated') === 'challenge' || text.includes('_cf_chl_opt'))) {
+          this.stats.errors++;
+          throw new BlockedError(`Blocked by ${u.host} bot protection (Cloudflare challenge). Ask the site to allow the RadarNZ user agent.`);
+        }
         if (paths && res.ok) {
           const etag = res.headers.get('etag') || undefined;
           const lastModified = res.headers.get('last-modified') || undefined;

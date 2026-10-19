@@ -12,6 +12,8 @@ import { LiveLine } from './LiveLine';
 import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { ThemeToggle } from './ThemeToggle';
+import { CvDropZone, OPEN_CV_EVENT, useCv } from './CvButton';
+import { clearCv } from '@/lib/cvClient';
 
 const SEEN_KEY = 'radar-seen';
 const list = (v: string | null) => (v ? v.split(',').filter(Boolean) : []);
@@ -51,7 +53,11 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
   const [selectedId, setSelectedId] = useState<string | null>(initial.results[0]?.id ?? null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [seen, setSeen] = useState<Set<string>>(new Set());
-  const firstKey = useRef(key);
+  const cv = useCv();
+  const cvOn = params.get('cv') === '1' && !!cv.profile;
+  const cvSig = cvOn && cv.profile ? `${cv.profile.chips.map((c) => c.label).join(',')}|${cv.profile.vector.slice(0, 4).join(',')}` : '';
+  const fetchKey = `${key}|${cvSig}`;
+  const firstKey = useRef(`${key}|`);
   const sentinel = useRef<HTMLDivElement>(null);
   const reqId = useRef(0);
 
@@ -60,16 +66,42 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
     return () => clearTimeout(t);
   }, []);
 
-  // Fetch when the URL changes (filters, query, sort).
+  /** Text search (GET /api/search) or CV match (POST /api/match: only the vector and chips, never the CV text). */
+  const query = useCallback(
+    (qs: string, page = 1): Promise<SearchResult> => {
+      const p = new URLSearchParams(qs);
+      if (page > 1) p.set('page', String(page));
+      if (!cvOn || !cv.profile) return fetch(`/api/search?${p}`).then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
+      const list = (k: string) => (p.get(k) || '').split(',').filter(Boolean);
+      const body = {
+        vector: cv.profile.vector,
+        chips: cv.profile.chips,
+        q: p.get('q') || '',
+        loc: list('loc'),
+        type: list('type'),
+        tags: list('tags'),
+        source: list('source'),
+        pay: Number(p.get('pay')) || null,
+        posted: p.get('posted'),
+        sort: p.get('sort') || 'best',
+        page,
+      };
+      return fetch('/api/match', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then((r) =>
+        r.ok ? r.json() : Promise.reject(r.status),
+      );
+    },
+    [cvOn, cv.profile],
+  );
+
+  // Fetch when the URL (filters, query, sort) or the CV changes.
   useEffect(() => {
-    if (key === firstKey.current) return;
-    firstKey.current = key;
+    if (fetchKey === firstKey.current) return;
+    firstKey.current = fetchKey;
     const id = ++reqId.current;
     const slow = setTimeout(() => setLoading(true), 150);
     setError(false);
-    fetch(`/api/search?${key}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((res: SearchResult) => {
+    query(key)
+      .then((res) => {
         if (id !== reqId.current) return;
         setData(res);
         setExtra([]);
@@ -81,7 +113,7 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
         if (id === reqId.current) setLoading(false);
       });
     return () => clearTimeout(slow);
-  }, [key]);
+  }, [fetchKey, key, query]);
 
   const results = useMemo(() => [...data.results, ...extra], [data.results, extra]);
   const hasMore = results.length < data.total;
@@ -90,18 +122,15 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
   const loadMore = useCallback(() => {
     if (loadingMore || !hasMore) return;
     setLoadingMore(true);
-    const p = new URLSearchParams(key);
     const nextPage = Math.floor(results.length / data.pageSize) + 1;
-    p.set('page', String(nextPage));
-    fetch(`/api/search?${p}`)
-      .then((r) => r.json())
+    query(key, nextPage)
       .then((res: SearchResult) => {
         const have = new Set(results.map((r) => r.id));
         setExtra((e) => [...e, ...res.results.filter((r) => !have.has(r.id))]);
       })
       .catch(() => {})
       .finally(() => setLoadingMore(false));
-  }, [loadingMore, hasMore, key, results, data.pageSize]);
+  }, [loadingMore, hasMore, key, results, data.pageSize, query]);
 
   // Infinite scroll with a "Load more" fallback button.
   useEffect(() => {
@@ -216,7 +245,11 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
     update({ q: nq });
   };
 
-  const heading = q ? (
+  const heading = cvOn ? (
+    <>
+      {data.total.toLocaleString('en-NZ')} jobs matched to your CV{q ? <> for “{q}”</> : null}
+    </>
+  ) : q ? (
     <>
       {data.total.toLocaleString('en-NZ')} {data.total === 1 ? 'job' : 'jobs'} for “{q}”
     </>
@@ -261,6 +294,35 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
                 </li>
               ))}
             </ul>
+          )}
+          {cvOn && cv.profile && (
+            <div className="flex flex-wrap items-center gap-2 rounded-[16px] bg-surface px-4 py-3 text-[14px]">
+              <span className="font-medium">Matching your CV</span>
+              <span className="min-w-0 truncate text-muted">{cv.profile.chips.slice(0, 5).map((c) => c.label).join(' · ')}</span>
+              <span className="ml-auto flex gap-1">
+                <button type="button" onClick={() => window.dispatchEvent(new Event(OPEN_CV_EVENT))} className="rounded-full px-3 py-1.5 hover:bg-surface-2">
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearCv();
+                    update({ cv: null });
+                  }}
+                  className="rounded-full px-3 py-1.5 hover:bg-surface-2"
+                >
+                  Clear CV
+                </button>
+              </span>
+            </div>
+          )}
+          {params.get('cv') === '1' && !cv.profile && (
+            <p className="m-0 rounded-[16px] bg-surface px-4 py-3 text-[14px] text-muted">
+              Your CV is not on this device any more, so these are regular results.{' '}
+              <button type="button" onClick={() => window.dispatchEvent(new Event(OPEN_CV_EVENT))} className="text-ink underline underline-offset-2">
+                Match with your CV
+              </button>
+            </p>
           )}
           <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
             <div>
@@ -329,6 +391,7 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
                       selected={isDesktop && j.id === selectedId}
                       seen={seen.has(j.id)}
                       onSelect={() => select(j.id, true)}
+                      matchPill={cvOn ? (j.match ?? null) : null}
                     />
                   ))}
               <div ref={sentinel} />
@@ -350,6 +413,7 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
       </main>
 
       {!isDesktop && sheetOpen && selected && <BottomSheet job={selected} onClose={closeSheet} />}
+      <CvDropZone />
     </>
   );
 }

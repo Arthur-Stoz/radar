@@ -37,7 +37,7 @@ export interface Job {
 }
 
 // Sources that rebuild deferred listings from the previous run need the raw listing.
-const KEEP_RAW = new Set(['backpackerboard', 'picknz']);
+const KEEP_RAW = new Set(['backpackerboard', 'picknz', 'jobsconz', 'seasonaljobs']);
 
 export const jobId = (source: string, sourceId: string) => hash(`${source}:${sourceId}`);
 

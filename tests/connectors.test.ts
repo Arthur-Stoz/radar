@@ -9,6 +9,7 @@ import { govDate, parseGovResults } from '@/ingest/sources/jobsgovt';
 import { parseSeekDetail } from '@/ingest/sources/seek';
 import { tmDate, trademeToRaw } from '@/ingest/sources/trademe';
 import { parseSitemap } from '@/ingest/sources/picknz';
+import { parseSeasonalJob, relativeDate } from '@/ingest/sources/seasonaljobs';
 
 // Saved, trimmed real snapshots: CI never hits live sites (BUILD.md §9.2).
 const fx = (f: string) => readFileSync(join(__dirname, 'fixtures', f), 'utf8');
@@ -95,5 +96,27 @@ describe('ats', () => {
     expect(isNZLocation('Hamilton, Ontario')).toBe(false);
     expect(isNZLocation('Remote - APAC')).toBe(false);
     expect(isNZLocation('Sydney', 'NZ')).toBe(true);
+  });
+});
+
+describe('jobs.co.nz and SeasonalJobs NZ', () => {
+  it('jobs.co.nz JSON-LD', () => {
+    const r = jobPostingToRaw(findJobPostings(fx('jobsconz-job.html'))[0]);
+    expect(r.title).toBe('Customer Advisor');
+    expect(r.company).toBe('Spark New Zealand');
+    expect(r.location).toBe('Christchurch, Canterbury');
+  });
+  it('seasonaljobs detail HTML', () => {
+    const r = parseSeasonalJob(fx('seasonaljobs-job.html'), now)!;
+    expect(r.title).toBe('Housekeepers');
+    expect(r.company).toBe('Tasman Holiday Parks Picton');
+    expect(r.location).toBe('Marlborough');
+    expect(r.workTypes).toEqual(['Temporary']);
+    expect(r.descriptionHtml).toContain('Summer season');
+    expect(r.postedAt).toMatch(/^2026-10-1/);
+  });
+  it('relative dates', () => {
+    expect(relativeDate('3 weeks ago', now)).toBe('2026-09-28T00:00:00.000Z');
+    expect(relativeDate('whenever', now)).toBeNull();
   });
 });

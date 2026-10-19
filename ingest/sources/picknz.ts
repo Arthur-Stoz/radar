@@ -1,10 +1,9 @@
 // PickNZ jobs board (jobs.picknz.co.nz, run by Horticulture NZ).
-// DISABLED: robots.txt allows crawling, but the PickNZ terms forbid using, copying, storing or
-// displaying site content "except with our prior written permission". The connector is complete
-// (sitemap + JobPosting JSON-LD); enable it with ENABLED_SOURCES=picknz once permission is obtained.
+// The owner states written permission to collect listings (2026-10-19); the public terms alone
+// forbid reuse without prior written permission. Method: job-sitemap.xml + JobPosting JSON-LD.
 
 import type { RawJob, Source } from '../types';
-import { fillFromJsonLd } from './detailjsonld';
+import { fillFromDetail } from './detailjsonld';
 
 export function parseSitemap(xml: string): { loc: string; lastmod: string | null }[] {
   const out: { loc: string; lastmod: string | null }[] = [];
@@ -19,7 +18,7 @@ export const picknz: Source = {
   id: 'picknz',
   name: 'PickNZ',
   homepage: 'https://www.picknz.co.nz',
-  enabled: false,
+  enabled: true,
   kind: 'site',
   hosts: ['jobs.picknz.co.nz', 'www.picknz.co.nz'],
   async *fetchListings(ctx) {
@@ -28,7 +27,7 @@ export const picknz: Source = {
     const cutoff = ctx.now.getTime() - 120 * 864e5;
     const urls = parseSitemap(r.text).filter((u) => /\/job\//.test(u.loc) && (!u.lastmod || Date.parse(u.lastmod) > cutoff));
     const list: RawJob[] = urls.map((u) => ({ sourceId: u.loc.replace(/\/$/, '').split('/').pop()!, url: u.loc, title: '' }));
-    const filled = await fillFromJsonLd(ctx, list, 'picknz');
+    const filled = await fillFromDetail(ctx, list, 'picknz');
     for (const j of filled) {
       if (!j.title) continue;
       if (j.expiresAt && Date.parse(j.expiresAt) < ctx.now.getTime()) continue;

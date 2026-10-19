@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useId, useRef, useState } from 'react';
+import { CvButton } from './CvButton';
 import { RadarSweep } from './RadarSweep';
 
 interface Suggestion {
@@ -177,6 +178,7 @@ export function SearchBar({
             </div>
           )}
         </div>
+        <CvButton compact={!hero} getQuery={() => value} />
         {hero ? (
           <button
             type="submit"

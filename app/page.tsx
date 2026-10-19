@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { AutoRefresh } from '@/components/AutoRefresh';
+import { CvDropZone } from '@/components/CvButton';
 import { FreshRail } from '@/components/FreshRail';
 import { LiveLine } from '@/components/LiveLine';
 import { SearchBar } from '@/components/SearchBar';
@@ -116,6 +117,7 @@ export default function Home() {
         )}
       </main>
       <SiteFooter />
+      <CvDropZone />
     </>
   );
 }

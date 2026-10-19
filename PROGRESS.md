@@ -123,3 +123,31 @@ Known issues
 - The app reads `DATA_DIR/radar.db` (copied to `DATA_DIR/serve/` before opening). Downloading from `DATA_URL` comes in phase F, so a fresh
   deploy currently shows "Loading jobs…" until a DB file is present.
 - Seek listings without a fetched detail page show Seek's teaser + bullet points instead of the full description (filled over next runs).
+
+## Phase D — CV match (2026-10-19)
+
+Done
+- Lens button (document + sparkle, "Match with your CV") at the right of every search bar; popover with drop zone
+  ("Drop your CV (PDF, DOCX or TXT)"), "or paste it", and "Read on your device. Never uploaded."; dropping a file anywhere on Home or
+  Search also works (full-page drop overlay).
+- On-device reading: pdf.js (text layer; scanned PDFs → clear message + paste box), mammoth (DOCX), plain text; 5 MB max.
+- Module Web Worker (`public/cv-worker.js`) runs the same MiniLM model in the browser with a progress bar
+  ("Getting the matcher ready… 12 MB / 23 MB · only the first time"), then cached by the browser. **Everything is self-hosted**
+  (`scripts/prepare-assets.mjs` copies transformers.js + ONNX wasm, the model, pdf.js and mammoth into `public/` before dev/build) —
+  no CDN, no third-party request.
+- Rule-based profile (`lib/profile.ts`): job titles (built-in list + real top titles from `/api/vocab`), ~45 skill groups, languages,
+  licences/certificates (driver licence classes, forklift, WTR, first aid, Site Safe, LCQ, barista, food safety…), visa hints.
+  Chips are editable (remove/add) + "Where do you want to work?" region picker.
+- `POST /api/match { vector, chips, q, filters }` — the CV text is never sent. Two-stage scoring: cosine over every candidate, then chip
+  overlap on the best 400: `0.60·cosine + 0.25·chip overlap + 0.15·bm25 (if q) + 0.05·freshness`, calibrated to a 0–100 "92% match" pill,
+  plus "why" chips ("Matches your: Barista · French"). Works alone or combined with a typed query and all filters.
+  Vector + chips live in `sessionStorage` only; "Clear CV" removes them.
+- Optional AI rerank (`lib/rerank.ts`) when `GEMINI_API_KEY` is set: only chips + top-30 titles/summaries are sent to
+  `gemini-3.5-flash-lite` (free tier, checked on ai.google.dev 2026-10-19; override with `GEMINI_MODEL`), 2.5 s timeout, cached by hash,
+  silent fallback to the local ranking on any error.
+- New sources enabled at the owner's request (written permission): PickNZ (97 live), jobs.co.nz (274), SeasonalJobs NZ (173) — real
+  run on 2026-10-19. Backpacker Board is enabled but blocked by its Cloudflare bot challenge (403); Radar reports it on /status and never
+  bypasses it.
+
+Known issues
+- First CV match on a device downloads ~23 MB of model + ~20 MB of runtime (compressed much smaller by the server); later uses are instant.

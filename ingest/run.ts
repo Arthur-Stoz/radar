@@ -208,7 +208,7 @@ async function main() {
     stats.set(r.source.id, st);
     const prevCount = [...prev.jobs.values()].filter((p) => p.source === r.source.id).length;
     // A source that suddenly returns nothing is treated as failed (keeps its previous jobs).
-    if (r.ok && r.raws.length === 0 && prevCount > 20) {
+    if (r.ok && r.raws.length === 0 && (prevCount > 20 || r.source.kind === 'site')) {
       r.ok = false;
       r.message = 'returned 0 listings';
     }
@@ -315,7 +315,8 @@ async function main() {
     const r = results.find((x) => x.source.id === s.id);
     const p = prev.statuses.get(s.id);
     const st = stats.get(s.id);
-    const isActive = sources.includes(s);
+    // With ONLY_SOURCES, sources not run this time keep their previous status.
+    const isActive = sources.includes(s) || (only.length > 0 && activeSources().includes(s));
     const hosts = new Set([...s.hosts, ...(hostsBySource.get(s.id) || [])]);
     if (!r) {
       return {
@@ -441,8 +442,6 @@ function replaceFile(src: string, dest: string) {
 function disabledReason(id: string): string {
   return (
     {
-      backpackerboard: 'Terms require written permission to republish listings.',
-      picknz: 'Terms require written permission to reuse content.',
       facebook: 'No official feed since Meta removed the Groups API.',
     }[id] || 'Disabled'
   );
