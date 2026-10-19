@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#FFFFFF;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+</style>
+</helmet>
+<div style="position:absolute; inset:0; overflow:hidden; background:#FFFFFF; font-family:'Geist',system-ui,sans-serif; color:#0B0B0A">
+  <header style="height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 40px">
+    <a href="#" aria-label="Radar home" style="display:flex; align-items:baseline; gap:3px; padding:4px 2px">
+      <span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+      <span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+    </a>
+    <nav style="display:flex; align-items:center; gap:4px; font-size:14px">
+      <a href="#" style="height:36px; padding:0 14px; border-radius:999px; display:inline-flex; align-items:center" style-hover="background:#F5F5F4">Saved</a>
+      <a href="#" style="height:36px; padding:0 14px; border-radius:999px; display:inline-flex; align-items:center" style-hover="background:#F5F5F4">For employers</a>
+    </nav>
+  </header>
+
+  <sc-if value="{{ isSearch }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Alert modal" style="padding:24px 40px 0">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between">
+        <div>
+          <h1 style="margin:0; font-size:30px; font-weight:650; letter-spacing:-0.035em"><span style="font-family:'Geist Mono',ui-monospace,monospace; font-weight:500">248</span> jobs for “barista auckland”</h1>
+          <p style="margin:8px 0 0; font-size:14px; color:#6B6B6B">Updated 12 min ago</p>
+        </div>
+        <button onClick="{{ open }}" style="height:38px; padding:0 15px 0 13px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; gap:8px; font-size:14px; cursor:pointer" style-hover="background:#F5F5F4"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><polyline points="3.5 6.5 12 13 20.5 6.5"></polyline></svg>Get these jobs by email</button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:24px; margin-top:28px">
+        <div style="aspect-ratio:16/11; border-radius:14px; background:url('assets/photos/ponsonby.jpg') center/cover"></div>
+        <div style="aspect-ratio:16/11; border-radius:14px; background:linear-gradient(160deg,#EAF1FB,#C9DAF2); display:flex; align-items:center; justify-content:center"><img src="assets/icons/coffee.png" alt="" style="width:30%"></div>
+        <div style="aspect-ratio:16/11; border-radius:14px; background:linear-gradient(160deg,#FCEEDC,#F1D5B1); display:flex; align-items:center; justify-content:center"><img src="assets/icons/coffee.png" alt="" style="width:30%; transform:rotate(6deg)"></div>
+      </div>
+    </div>
+
+    <div onClick="{{ close }}" style="position:absolute; inset:0; z-index:10; background:rgba(11,11,10,.34); opacity:{{ dimOp }}; pointer-events:{{ dimPe }}; transition:opacity .3s ease"></div>
+    <div role="dialog" aria-modal="true" aria-label="Get these jobs by email" style="position:absolute; left:50%; top:50%; z-index:11; width:480px; margin-left:-240px; transform:translateY(-50%) scale({{ modalScale }}); opacity:{{ dimOp }}; pointer-events:{{ dimPe }}; transition:opacity .25s ease, transform .3s cubic-bezier(.2,.8,.2,1); background:#FFFFFF; border-radius:20px; padding:28px; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.18)">
+      <button onClick="{{ close }}" aria-label="Close" style="position:absolute; top:16px; right:16px; width:36px; height:36px; border-radius:999px; border:0; background:#F5F5F4; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.6" strokeLinecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg></button>
+      <sc-if value="{{ isForm }}" hint-placeholder-val="{{ true }}">
+        <form onSubmit="{{ submit }}">
+          <h2 style="margin:0; font-size:24px; font-weight:650; letter-spacing:-0.03em">Get these jobs by email</h2>
+          <p style="margin:6px 0 0; font-size:14.5px; color:#6B6B6B">New jobs for this search, straight to your inbox.</p>
+          <div style="margin-top:22px; font-size:13px; font-weight:500">Your search</div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="3"><span style="height:30px; padding:0 12px; border-radius:999px; background:#F5F5F4; display:inline-flex; align-items:center; font-size:13.5px">{{ c }}</span></sc-for>
+          </div>
+          <label style="display:block; margin-top:22px; font-size:13px; font-weight:500" for="al-email">Email</label>
+          <input id="al-email" type="email" required="{{ true }}" value="{{ email }}" onChange="{{ onEmail }}" placeholder="you@example.com" autoComplete="email" style="width:100%; margin-top:8px; height:50px; padding:0 16px; border-radius:12px; border:1px solid #E8E8E6; font-size:16px; outline:none" style-focus="border-color:#00C97A; box-shadow:0 0 0 4px rgba(0,201,122,.16)">
+          <div style="margin-top:22px; font-size:13px; font-weight:500">How often</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px">
+            <sc-for list="{{ freq }}" as="o" hint-placeholder-count="2">
+              <button type="button" onClick="{{ o.pick }}" aria-pressed="{{ o.on }}" style="height:64px; padding:0 14px; border-radius:12px; border:0; background:#FFFFFF; box-shadow:{{ o.ring }}; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:2px; text-align:left; cursor:pointer"><span style="font-size:15px; font-weight:600">{{ o.label }}</span><span style="font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; color:#6B6B6B">{{ o.time }}</span></button>
+            </sc-for>
+          </div>
+          <p style="margin:18px 0 0; font-size:12.5px; line-height:1.5; color:#6B6B6B">We only use your email for this alert. No account, no marketing. Every email has a link to pause or delete it.</p>
+          <button type="submit" style="width:100%; margin-top:18px; height:52px; border-radius:999px; border:0; background:#0B0B0A; color:#FFFFFF; font-size:16px; font-weight:550; cursor:pointer" style-hover="background:#2A2A29">Create alert</button>
+        </form>
+      </sc-if>
+      <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; align-items:center; text-align:center; padding:20px 8px 4px">
+          <span style="width:56px; height:56px; border-radius:50%; background:rgba(0,201,122,.14); display:flex; align-items:center; justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00573A" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><polyline points="3.5 6.5 12 13 20.5 6.5"></polyline></svg></span>
+          <h2 style="margin:20px 0 0; font-size:24px; font-weight:650; letter-spacing:-0.03em">Check your inbox to confirm.</h2>
+          <p style="margin:8px 0 0; font-size:15px; line-height:1.5; color:#6B6B6B; text-wrap:balance">We sent a link to <span style="color:#0B0B0A; font-weight:500">{{ emailShown }}</span>. Your first email arrives {{ firstSend }} after you confirm.</p>
+          <button onClick="{{ close }}" style="margin-top:24px; height:46px; padding:0 24px; border-radius:999px; border:0; background:#F5F5F4; font-size:15px; font-weight:500; cursor:pointer" style-hover="background:#ECECEA">Done</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isManage }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Manage alerts" style="max-width:880px; margin:0 auto; padding:40px 40px 80px">
+      <h1 style="margin:0; font-size:48px; font-weight:650; letter-spacing:-0.045em; line-height:1">Manage your alerts</h1>
+      <p style="margin:12px 0 0; font-size:15.5px; color:#6B6B6B">For <span style="color:#0B0B0A; font-weight:500">mia.keller@example.com</span> · reached from your alert email, no password needed</p>
+      <div style="margin-top:36px; display:flex; flex-direction:column; gap:12px">
+        <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="2">
+          <div style="border-radius:16px; background:#F5F5F4; padding:20px 20px 20px 24px; opacity:{{ a.op }}">
+            <div style="display:flex; align-items:center; gap:16px">
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px">
+                <div style="display:flex; align-items:center; gap:10px"><span style="font-size:18px; font-weight:600; letter-spacing:-0.02em">“{{ a.q }}”</span><span style="height:22px; padding:0 8px; border-radius:999px; font-size:11.5px; font-weight:600; display:inline-flex; align-items:center; background:{{ a.stBg }}; color:{{ a.stFg }}">{{ a.status }}</span></div>
+                <div style="display:flex; flex-wrap:wrap; gap:6px"><sc-for list="{{ a.chips }}" as="c" hint-placeholder-count="2"><span style="height:26px; padding:0 10px; border-radius:999px; background:#FFFFFF; display:inline-flex; align-items:center; font-size:12.5px">{{ c }}</span></sc-for></div>
+                <span style="font-size:13px; color:#6B6B6B">{{ a.meta }}</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px; padding:3px; border-radius:999px; background:#FFFFFF">
+                <sc-for list="{{ a.freq }}" as="o" hint-placeholder-count="2"><button onClick="{{ o.pick }}" style="height:34px; padding:0 14px; border-radius:999px; border:0; background:{{ o.bg }}; color:{{ o.fg }}; font-size:13px; font-weight:500; white-space:nowrap; cursor:pointer">{{ o.label }}</button></sc-for>
+              </div>
+              <button onClick="{{ a.pause }}" style="height:38px; padding:0 14px; border-radius:999px; border:1px solid #E3E3E1; background:#FFFFFF; font-size:13.5px; font-weight:500; cursor:pointer">{{ a.pauseLabel }}</button>
+              <button onClick="{{ a.edit }}" style="height:38px; padding:0 14px; border-radius:999px; border:1px solid #E3E3E1; background:#FFFFFF; font-size:13.5px; font-weight:500; cursor:pointer">Edit</button>
+              <button onClick="{{ a.remove }}" aria-label="Delete alert" style="width:38px; height:38px; border-radius:999px; border:1px solid #E3E3E1; background:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"></path></svg></button>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ noAlerts }}" hint-placeholder-val="{{ false }}"><div style="padding:40px 0; font-size:15px; color:#6B6B6B">{{ noAlertsText }}</div></sc-if>
+      </div>
+      <div style="margin-top:56px; padding-top:28px; border-top:1px solid #E8E8E6; display:flex; align-items:center; justify-content:space-between; gap:24px">
+        <div>
+          <div style="font-size:16px; font-weight:600">Delete all my data</div>
+          <p style="margin:4px 0 0; font-size:14px; color:#6B6B6B">Removes your email and every alert from Radar, now. This can’t be undone.</p>
+        </div>
+        <button onClick="{{ wipe }}" style="flex:none; height:44px; padding:0 20px; border-radius:999px; border:1px solid #0B0B0A; background:#FFFFFF; font-size:14.5px; font-weight:550; cursor:pointer" style-hover="background:#0B0B0A; color:#FFFFFF">{{ wipeLabel }}</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;view&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;modal&quot;,&quot;success&quot;,&quot;manage&quot;],&quot;default&quot;:&quot;modal&quot;,&quot;tsType&quot;:&quot;'modal'|'success'|'manage'&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = {
+    open: (this.props.view || 'modal') !== 'closed',
+    done: this.props.view === 'success', email: this.props.view === 'success' ? 'mia.keller@example.com' : '', freq: 'daily',
+    alerts: [
+      { id: 1, q: 'barista auckland', chips: ['Pay: $27+/h', 'Part-time'], freq: 'daily', paused: false, meta: 'Created 2 Oct · 14 jobs sent this week' },
+      { id: 2, q: 'live-in south island', chips: ['Accommodation', 'WHV friendly'], freq: 'weekly', paused: true, meta: 'Created 18 Sep · paused since 9 Oct' }
+    ],
+    confirmWipe: false, wiped: false
+  };
+  updA(id, patch) { this.setState(s => ({ alerts: s.alerts.map(a => a.id === id ? { ...a, ...patch } : a) })); }
+  renderVals() {
+    const s = this.state, view = this.props.view || 'modal';
+    const F = [['daily', 'Daily', '7:00 am'], ['weekly', 'Weekly', 'Mondays 7:00 am']];
+    return {
+      isSearch: view !== 'manage', isManage: view === 'manage',
+      isForm: !s.done, isDone: s.done,
+      dimOp: s.open ? 1 : 0, dimPe: s.open ? 'auto' : 'none', modalScale: s.open ? 1 : 0.97,
+      open: () => this.setState({ open: true, done: false }),
+      close: () => this.setState({ open: false }),
+      chips: ['barista', 'Auckland', 'Pay: $27+/h'],
+      email: s.email, onEmail: e => this.setState({ email: e.target.value }),
+      emailShown: s.email || 'your inbox',
+      freq: F.map(([k, label, time]) => ({ label, time: k === 'daily' ? 'Every day at ' + time : time, on: s.freq === k, ring: s.freq === k ? 'inset 0 0 0 2px #0B0B0A' : 'inset 0 0 0 1px #E8E8E6', pick: () => this.setState({ freq: k }) })),
+      firstSend: s.freq === 'daily' ? 'tomorrow at 7:00 am' : 'next Monday at 7:00 am',
+      submit: e => { e.preventDefault(); this.setState({ done: true }); },
+      alerts: s.alerts.map(a => ({
+        ...a, op: a.paused ? 0.7 : 1,
+        status: a.paused ? 'Paused' : 'Active', stBg: a.paused ? '#FFFFFF' : 'rgba(0,201,122,.16)', stFg: a.paused ? '#6B6B6B' : '#00573A',
+        pauseLabel: a.paused ? 'Resume' : 'Pause',
+        pause: () => this.updA(a.id, { paused: !a.paused }),
+        edit: () => {},
+        remove: () => this.setState(st => ({ alerts: st.alerts.filter(x => x.id !== a.id) })),
+        freq: [['daily', 'Daily 7am'], ['weekly', 'Mon 7am']].map(([k, label]) => ({ label, bg: a.freq === k ? '#0B0B0A' : 'transparent', fg: a.freq === k ? '#FFFFFF' : '#6B6B6B', pick: () => this.updA(a.id, { freq: k }) }))
+      })),
+      noAlerts: s.alerts.length === 0,
+      noAlertsText: s.wiped ? 'Done. Your email and alerts are gone from Radar.' : 'No alerts left. Create one from any search.',
+      wipeLabel: s.confirmWipe ? 'Tap again to delete' : 'Delete all my data',
+      wipe: () => s.confirmWipe ? this.setState({ alerts: [], wiped: true, confirmWipe: false }) : this.setState({ confirmWipe: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

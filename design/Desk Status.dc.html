@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#FFFFFF;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+</style>
+</helmet>
+<div data-screen-label="Status" style="min-height:900px; background:#FFFFFF; font-family:'Geist',system-ui,sans-serif; color:#0B0B0A">
+  <header style="height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 40px">
+    <a href="#" aria-label="Radar home" style="display:flex; align-items:baseline; gap:3px; padding:4px 2px">
+      <span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+      <span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+    </a>
+    <a href="#" style="height:36px; padding:0 14px; border-radius:999px; display:inline-flex; align-items:center; font-size:14px" style-hover="background:#F5F5F4">Find a job</a>
+  </header>
+
+  <div style="max-width:1040px; margin:0 auto; padding:56px 40px 96px">
+    <h1 style="margin:0; font-size:48px; font-weight:650; letter-spacing:-0.045em; line-height:1">Status</h1>
+    <p style="margin:12px 0 0; font-size:16px; color:#6B6B6B">4 of 5 sources normal · checked every 15 minutes · times in NZDT</p>
+
+    <div style="margin-top:40px; display:grid; grid-template-columns:minmax(0,1.3fr) 150px 120px minmax(0,1.6fr); gap:24px; padding:0 4px 12px; border-bottom:1px solid #E8E8E6; font-size:12.5px; color:#6B6B6B">
+      <span>Source</span><span>Last sync</span><span style="text-align:right">Active jobs</span><span>Last 7 days</span>
+    </div>
+    <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+      <div style="display:grid; grid-template-columns:minmax(0,1.3fr) 150px 120px minmax(0,1.6fr); gap:24px; align-items:center; padding:22px 4px; border-bottom:1px solid #E8E8E6">
+        <div style="display:flex; align-items:center; gap:12px; min-width:0">
+          <span style="flex:none; width:10px; height:10px; border-radius:50%; background:{{ r.dot }}; box-shadow:{{ r.ring }}"></span>
+          <img src="{{ r.favicon }}" alt="" style="width:18px; height:18px; border-radius:5px">
+          <div style="min-width:0; display:flex; flex-direction:column; gap:2px">
+            <span style="font-size:16px; font-weight:600; letter-spacing:-0.015em">{{ r.name }}</span>
+            <span style="font-size:13px; color:{{ r.stateC }}">{{ r.state }}</span>
+          </div>
+        </div>
+        <span style="font-family:'Geist Mono',ui-monospace,monospace; font-size:14px">{{ r.sync }}</span>
+        <span style="font-family:'Geist Mono',ui-monospace,monospace; font-size:14px; text-align:right">{{ r.jobs }}</span>
+        <div style="display:flex; align-items:flex-end; gap:6px; height:36px" aria-label="{{ r.aria }}">
+          <sc-for list="{{ r.days }}" as="d" hint-placeholder-count="7">
+            <div title="{{ d.title }}" style="flex:1; display:flex; flex-direction:column; align-items:stretch; gap:5px">
+              <div style="height:24px; border-radius:5px; background:{{ d.bg }}"></div>
+              <span style="font-family:'Geist Mono',ui-monospace,monospace; font-size:10.5px; color:#9A9A98; text-align:center">{{ d.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+
+    <div style="display:flex; align-items:center; gap:20px; margin-top:20px; font-size:13px; color:#6B6B6B">
+      <span style="display:flex; align-items:center; gap:7px"><span style="width:12px; height:12px; border-radius:3px; background:#00C97A"></span>Normal</span>
+      <span style="display:flex; align-items:center; gap:7px"><span style="width:12px; height:12px; border-radius:3px; background:#9FE5C7"></span>Slow</span>
+      <span style="display:flex; align-items:center; gap:7px"><span style="width:12px; height:12px; border-radius:3px; background:#0B0B0A"></span>Down</span>
+    </div>
+    <p style="margin:40px 0 0; font-size:14px; line-height:1.6; color:#6B6B6B; max-width:640px">When a source is slow or down, Radar keeps showing jobs from the others and marks results as partial. Jobs already found stay up until they close.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  static SRC = [
+    ['Seek', 'seek.co.nz', 'ok', '9:45 am', '6,214', 'nnnnnnn'],
+    ['Trade Me', 'trademe.co.nz', 'ok', '9:45 am', '3,108', 'nnnnnnn'],
+    ['Backpacker Board', 'backpackerboard.co.nz', 'slow', '8:30 am', '1,846', 'nnnndns'],
+    ['PickNZ', 'picknz.co.nz', 'ok', '9:30 am', '742', 'nnnnnnn'],
+    ['Facebook groups', 'facebook.com', 'ok', '9:15 am', '570', 'nnsnnnn']
+  ];
+  static DAYS = ['Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu'];
+  renderVals() {
+    const C = { n: '#00C97A', s: '#9FE5C7', d: '#0B0B0A' };
+    const W = { n: 'Normal', s: 'Slow', d: 'Down' };
+    return {
+      rows: Component.SRC.map(([name, dom, st, sync, jobs, days]) => ({
+        name, sync: 'Today ' + sync, jobs,
+        favicon: 'https://www.google.com/s2/favicons?domain=' + dom + '&sz=64',
+        dot: st === 'ok' ? '#00C97A' : '#FFFFFF', ring: st === 'ok' ? '0 0 0 4px rgba(0,201,122,.16)' : 'inset 0 0 0 2.5px #0B0B0A',
+        state: st === 'ok' ? 'Normal' : 'Slow — last sync over an hour ago', stateC: st === 'ok' ? '#6B6B6B' : '#0B0B0A',
+        aria: 'Last 7 days: ' + days.split('').map(c => W[c]).join(', '),
+        days: days.split('').map((c, i) => ({ bg: C[c], label: Component.DAYS[i][0], title: Component.DAYS[i] + ': ' + W[c] }))
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

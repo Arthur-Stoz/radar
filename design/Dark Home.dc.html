@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#0B0B0A;color:#F5F5F4;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#F5F5F4;text-decoration:none}
+a:hover{color:#F5F5F4}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+@keyframes rdSpin{to{transform:rotate(360deg)}}
+@keyframes rdPulse{0%{box-shadow:0 0 0 0 rgba(0,201,122,.55)}70%{box-shadow:0 0 0 7px rgba(0,201,122,0)}100%{box-shadow:0 0 0 0 rgba(0,201,122,0)}}
+</style>
+</helmet>
+<div data-screen-label="Home dark" style="min-height:900px; background:#0B0B0A; color:#F5F5F4; font-family:'Geist',system-ui,sans-serif">
+  <header style="position:relative; z-index:3; height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 40px">
+    <div style="display:flex; align-items:baseline; gap:3px"><span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span><span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span></div>
+    <span style="font-size:13px; color:#A1A1A0">Free · No account</span>
+  </header>
+  <section style="position:relative; z-index:0; isolation:isolate; display:flex; flex-direction:column; align-items:center; text-align:center; padding:96px 40px 112px">
+    <h1 style="margin:0; font-size:84px; font-weight:650; letter-spacing:-0.047em; line-height:1.02">
+      <span style="display:block">Every <span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#3A2E22,#2A2118); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(-7deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 1px rgba(255,255,255,.06)"><img src="assets/icons/coffee.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> job in</span>
+      <span style="display:block"><span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#25331C,#1A2614); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(6deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 1px rgba(255,255,255,.06)"><img src="assets/icons/kiwi.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> New Zealand.</span>
+      <span style="display:block"><span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#1C2737,#141C28); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(-4deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 1px rgba(255,255,255,.06)"><img src="assets/icons/mountain.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> One search.</span>
+    </h1>
+    <p style="margin:26px 0 0; max-width:560px; font-size:19px; line-height:1.45; color:#A1A1A0; text-wrap:balance">Seek, Trade Me, Backpacker Board, PickNZ and Facebook groups, all in one place.</p>
+    <div style="position:relative; width:720px; margin-top:44px">
+      {{ radar }}
+      <form onSubmit="{{ noop }}" role="search" style="position:relative; display:flex; align-items:center; gap:6px; height:64px; padding:0 7px 0 24px; background:#161615; border:1px solid {{ bd }}; border-radius:999px; box-shadow:{{ sh }}; transition:border-color .2s ease, box-shadow .3s ease">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5F5F4" strokeWidth="2.2" strokeLinecap="round" style="flex:none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+        <input onFocus="{{ onFocus }}" onBlur="{{ onBlur }}" placeholder="barista in Auckland" aria-label="Search every job in New Zealand" style="flex:1; min-width:0; height:100%; border:0; outline:none; background:transparent; padding:0 12px; font-size:19px; letter-spacing:-0.01em; color:#F5F5F4">
+        <button type="submit" style="flex:none; height:50px; padding:0 26px; border-radius:999px; border:0; background:#F5F5F4; color:#0B0B0A; font-size:16px; font-weight:550; cursor:pointer" style-hover="background:#FFFFFF">Search</button>
+      </form>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:22px; max-width:720px">
+      <sc-for list="{{ pills }}" as="p" hint-placeholder-count="6"><button style="height:36px; padding:0 15px; border-radius:999px; border:0; background:#161615; box-shadow:inset 0 0 0 1px #2A2A29; font-size:14px; color:#E8E8E6; cursor:pointer" style-hover="background:#1F1F1E">{{ p }}</button></sc-for>
+    </div>
+    <div style="display:flex; align-items:center; gap:9px; margin-top:30px; font-size:13px; color:#A1A1A0">{{ pulseDot }}<span><span style="font-family:'Geist Mono',ui-monospace,monospace; color:#F5F5F4">12,480</span> jobs · updated today at <span style="font-family:'Geist Mono',ui-monospace,monospace; color:#F5F5F4">7:00</span></span></div>
+  </section>
+  <section style="padding:0 80px 112px">
+    <h2 style="margin:0; font-size:30px; font-weight:650; letter-spacing:-0.035em">Fresh today</h2>
+    <p style="margin:6px 0 18px; font-size:15px; color:#A1A1A0">Posted since 7:00 this morning</p>
+    <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:20px">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="4">
+        <a href="#" style="display:flex; flex-direction:column; gap:12px">
+          <div style="position:relative; aspect-ratio:16/11; border-radius:14px; overflow:hidden; background:{{ c.grad }}; display:flex; align-items:center; justify-content:center">
+            <sc-if value="{{ c.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ c.photo }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover"></sc-if>
+            <sc-if value="{{ c.noPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ c.icon }}" alt="" style="width:34%; transform:rotate({{ c.rot }}deg); filter:drop-shadow(0 14px 16px rgba(0,0,0,.4))"></sc-if>
+            <div style="position:absolute; inset:0; border-radius:14px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)"></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:5px; padding:0 2px">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px"><span style="font-size:16px; font-weight:600; letter-spacing:-0.015em">{{ c.title }}</span><span style="flex:none; font-family:'Geist Mono',ui-monospace,monospace; font-size:13.5px; font-weight:500">{{ c.pay }}</span></div>
+            <span style="font-size:14px; color:#A1A1A0">{{ c.where }}</span>
+            <div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:5px"><sc-for list="{{ c.badges }}" as="b" hint-placeholder-count="2"><span style="height:23px; padding:0 9px; border-radius:999px; display:inline-flex; align-items:center; font-size:12px; font-weight:{{ b.fw }}; background:{{ b.bg }}; color:{{ b.fg }}; box-shadow:{{ b.bd }}">{{ b.label }}</span></sc-for></div>
+            <span style="margin-top:4px; font-size:12.5px; color:#A1A1A0">on {{ c.source }} · {{ c.ago }}</span>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;focus&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { focused: this.props.focus ?? true };
+  static CARDS = [
+    ['Kiwifruit picker', '$27/h', 'Ōtawa Orchards · Te Puke', 'PickNZ', '1h ago', 'tepuke', null, 110, ['New', 'No experience']],
+    ['Barista', '$27–29/h', 'Kōwhai Café · Ponsonby, Auckland', 'Backpacker Board', '2h ago', 'ponsonby', null, 40, ['New', 'Meals', 'Tips']],
+    ['Kitchen hand – lodge', '$25–30/h', 'Fiordland Sound Lodge · Milford Sound', 'Backpacker Board', '3h ago', 'milford', null, 160, ['New', 'Accommodation', 'Meals']],
+    ['Dishwasher', '$25/h', 'Lucky Duck Ramen · Te Aro, Wellington', 'Facebook', '3h ago', null, 'coffee', 25, ['New', 'Meals']]
+  ];
+  badge(l) {
+    if (l === 'New') return { label: l, bg: '#00C97A', fg: '#00261A', fw: 600, bd: 'none' };
+    return { label: l, bg: '#161615', fg: '#E8E8E6', fw: 500, bd: 'inset 0 0 0 1px #2A2A29' };
+  }
+  radar(size, on) {
+    const h = React.createElement;
+    const rings = [0.16, 0.32, 0.48, 0.64, 0.8, 0.96].map((r, i) => h('div', { key: i, style: { position: 'absolute', left: '50%', top: '50%', width: size * r, height: size * r, marginLeft: -size * r / 2, marginTop: -size * r / 2, borderRadius: '50%', border: '1px solid rgba(245,245,244,0.08)' } }));
+    const sweep = h('div', { key: 's', style: { position: 'absolute', inset: 0, borderRadius: '50%', background: 'conic-gradient(from 0deg, rgba(0,201,122,0) 0deg, rgba(0,201,122,0) 280deg, rgba(0,201,122,0.16) 352deg, rgba(0,201,122,0.42) 359.4deg, rgba(0,201,122,0) 360deg)', animation: 'rdSpin 7s linear infinite' } });
+    const mask = 'radial-gradient(closest-side, #000 32%, transparent 100%)';
+    return h('div', { 'aria-hidden': true, style: { position: 'absolute', left: '50%', top: '50%', width: size, height: size, transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: -1, opacity: on ? 1 : 0, transition: 'opacity .9s ease', WebkitMaskImage: mask, maskImage: mask } }, rings, sweep);
+  }
+  grad(hue) { return `radial-gradient(90% 80% at 15% 8%, oklch(0.34 0.04 ${hue}) 0%, transparent 70%), radial-gradient(80% 90% at 95% 100%, oklch(0.3 0.06 ${(hue + 45) % 360}) 0%, transparent 72%), oklch(0.24 0.03 ${(hue + 20) % 360})`; }
+  renderVals() {
+    const on = this.state.focused, h = React.createElement;
+    return {
+      noop: e => e.preventDefault(),
+      onFocus: () => this.setState({ focused: true }), onBlur: () => this.setState({ focused: false }),
+      bd: on ? '#00C97A' : '#2A2A29', sh: on ? '0 0 0 4px rgba(0,201,122,.22)' : 'none',
+      radar: this.radar(1040, on),
+      pulseDot: h('span', { style: { width: 8, height: 8, borderRadius: '50%', background: '#00C97A', display: 'inline-block', flex: 'none', animation: 'rdPulse 2.2s ease-out infinite' } }),
+      pills: ['Live-in', 'Hospitality', 'Fruit picking', 'No experience', 'Starts this week', '$30+/h'],
+      cards: Component.CARDS.map(([title, pay, where, source, ago, photo, icon, hue, b], i) => ({
+        title, pay, where, source, ago, grad: this.grad(hue), rot: [-6, 5, -3, 7][i],
+        hasPhoto: !!photo, noPhoto: !photo, photo: photo ? 'assets/photos/' + photo + '.jpg' : '', icon: 'assets/icons/' + (icon || 'coffee') + '.png',
+        badges: b.map(l => this.badge(l))
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

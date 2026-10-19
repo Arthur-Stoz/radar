@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#FFFFFF;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+</style>
+</helmet>
+<div data-screen-label="Saved desktop" style="min-height:900px; background:#FFFFFF; font-family:'Geist',system-ui,sans-serif; color:#0B0B0A">
+  <header style="height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 40px">
+    <a href="#" aria-label="Radar home" style="display:flex; align-items:baseline; gap:3px; padding:4px 2px">
+      <span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+      <span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+    </a>
+    <nav style="display:flex; align-items:center; gap:4px; font-size:14px">
+      <a href="#" style="height:36px; padding:0 14px; border-radius:999px; display:inline-flex; align-items:center; background:#F5F5F4; font-weight:500">Saved</a>
+      <a href="#" style="height:36px; padding:0 14px; border-radius:999px; display:inline-flex; align-items:center" style-hover="background:#F5F5F4">For employers</a>
+    </nav>
+  </header>
+
+  <div style="padding:40px 40px 96px">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px">
+      <div>
+        <h1 style="margin:0; font-size:48px; font-weight:650; letter-spacing:-0.045em; line-height:1">Saved</h1>
+        <p style="margin:10px 0 0; font-size:15px; color:#6B6B6B"><span style="font-family:'Geist Mono',ui-monospace,monospace; color:#0B0B0A">{{ total }}</span> jobs · kept in this browser, no account needed</p>
+      </div>
+      <div style="display:flex; gap:8px">
+        <button onClick="{{ exportCsv }}" style="height:40px; padding:0 16px 0 14px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:500; cursor:pointer" style-hover="background:#F5F5F4"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Export CSV</button>
+        <button onClick="{{ email }}" style="height:40px; padding:0 16px 0 14px; border-radius:999px; border:0; background:#0B0B0A; color:#FFFFFF; display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:550; cursor:pointer" style-hover="background:#2A2A29"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><polyline points="3.5 6.5 12 13 20.5 6.5"></polyline></svg>Email me my saved jobs</button>
+      </div>
+    </div>
+
+    <div role="tablist" aria-label="Filter saved jobs" style="display:flex; gap:4px; margin-top:32px; border-bottom:1px solid #E8E8E6">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+        <button role="tab" aria-selected="{{ t.on }}" onClick="{{ t.pick }}" style="position:relative; height:44px; padding:0 14px; border:0; background:transparent; display:inline-flex; align-items:center; gap:7px; font-size:15px; font-weight:{{ t.fw }}; color:{{ t.fg }}; cursor:pointer; box-shadow:{{ t.line }}">{{ t.label }}<span style="font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; color:#6B6B6B">{{ t.n }}</span></button>
+      </sc-for>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:36px 24px; margin-top:28px">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="4">
+        <div style="position:relative; opacity:{{ c.op }}">
+          <a href="#" style="display:flex; flex-direction:column; gap:12px">
+            <div style="position:relative; aspect-ratio:16/11; border-radius:14px; overflow:hidden; background:{{ c.grad }}; display:flex; align-items:center; justify-content:center; filter:{{ c.filter }}">
+              <sc-if value="{{ c.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ c.photo }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover"></sc-if>
+              <sc-if value="{{ c.noPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ c.icon }}" alt="" style="width:34%; transform:rotate({{ c.rot }}deg); filter:drop-shadow(0 14px 16px rgba(0,0,0,.12))"></sc-if>
+              <div style="position:absolute; inset:0; border-radius:14px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)"></div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px; padding:0 2px">
+              <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px"><span style="font-size:16px; font-weight:600; letter-spacing:-0.015em; line-height:1.3">{{ c.title }}</span><span style="flex:none; font-family:'Geist Mono',ui-monospace,monospace; font-size:13.5px; font-weight:500">{{ c.pay }}</span></div>
+              <span style="font-size:14px; color:#6B6B6B">{{ c.where }}</span>
+              <div style="display:flex; align-items:center; gap:8px; margin-top:6px">
+                <sc-if value="{{ c.applied }}" hint-placeholder-val="{{ false }}"><span style="height:24px; padding:0 9px 0 7px; border-radius:999px; background:rgba(0,201,122,.14); color:#00573A; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00573A" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="5 12.5 10 17.5 19 7"></polyline></svg>Applied {{ c.appliedOn }}</span></sc-if>
+                <sc-if value="{{ c.closed }}" hint-placeholder-val="{{ false }}"><span style="height:24px; padding:0 9px; border-radius:999px; background:#FFFFFF; box-shadow:inset 0 0 0 1px #D6D6D4; color:#3D3D3C; font-size:12px; font-weight:500; display:inline-flex; align-items:center">Closed</span></sc-if>
+                <span style="font-size:12.5px; color:#6B6B6B">{{ c.meta }}</span>
+              </div>
+            </div>
+          </a>
+          <button onClick="{{ c.remove }}" aria-label="Remove from saved" style="position:absolute; top:12px; right:12px; width:36px; height:36px; border-radius:999px; border:0; background:rgba(255,255,255,.94); display:flex; align-items:center; justify-content:center; cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="#0B0B0A" stroke="#0B0B0A" strokeWidth="2.1" strokeLinejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"></path></svg></button>
+          <sc-if value="{{ c.canMark }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ c.mark }}" style="margin-top:10px; height:32px; padding:0 12px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; font-size:13px; font-weight:500; cursor:pointer" style-hover="background:#F5F5F4">Mark as applied</button>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:96px 0; text-align:center; font-size:16px; color:#6B6B6B">{{ emptyText }}</div>
+    </sc-if>
+  </div>
+
+  <div role="status" style="position:fixed; left:50%; bottom:32px; transform:translateX(-50%) translateY({{ toastY }}); opacity:{{ toastOp }}; transition:opacity .25s ease, transform .3s ease; height:44px; padding:0 18px; border-radius:999px; background:#0B0B0A; color:#FFFFFF; display:flex; align-items:center; font-size:14.5px; font-weight:500; pointer-events:none">{{ toast }}</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;tab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;all&quot;,&quot;applied&quot;,&quot;closed&quot;],&quot;default&quot;:&quot;all&quot;,&quot;tsType&quot;:&quot;'all'|'applied'|'closed'&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = { tab: this.props.tab || 'all', removed: {}, applied: { ritual: '12 Oct' }, toast: '', toastOn: false };
+  static JOBS = [
+    ['kowhai', 'Barista', 'Kōwhai Café · Ponsonby', '$27–29/h', 'Backpacker Board', 'ponsonby', 40, false],
+    ['ritual', 'Head barista', 'Ritual Espresso Bar · Britomart', '$30–34/h', 'Seek', null, 220, false],
+    ['matiatia', 'Barista & café all-rounder', 'Matiatia Wharf Café · Waiheke', '$27–30/h', 'Trade Me', 'waiheke', 100, false],
+    ['tepuke', 'Kiwifruit picker', 'Ōtawa Orchards · Te Puke', '$27/h', 'PickNZ', 'tepuke', 110, false],
+    ['stewart', 'Lodge host', 'Rakiura Retreat · Stewart Island', '$27–30/h', 'Facebook', 'stewart', 20, false],
+    ['waiheke', 'Chef de partie', 'Oneroa Bay Estate · Waiheke', '$30–35/h', 'Seek', null, 100, true],
+    ['franz', 'Glacier guide assistant', 'Southern Ice Guides · Franz Josef', '$28–31/h', 'Trade Me', 'franz', 200, false],
+    ['fox', 'Reception + housekeeping', 'Glacier Gateway Motel · Fox Glacier', '$27/h', 'Trade Me', null, 210, true]
+  ];
+  static ICON = { kowhai: 'coffee', ritual: 'coffee', matiatia: 'coffee', tepuke: 'kiwi', stewart: 'mountain', waiheke: 'coffee', franz: 'van', fox: 'bed' };
+  grad(h) { return `radial-gradient(90% 80% at 15% 8%, oklch(0.95 0.045 ${h}) 0%, transparent 70%), radial-gradient(80% 90% at 95% 100%, oklch(0.87 0.085 ${(h + 45) % 360}) 0%, transparent 72%), oklch(0.925 0.045 ${(h + 20) % 360})`; }
+  toast(t) { clearTimeout(this.tt); this.setState({ toast: t, toastOn: true }); this.tt = setTimeout(() => this.setState({ toastOn: false }), 1800); }
+  componentWillUnmount() { clearTimeout(this.tt); }
+  renderVals() {
+    const s = this.state;
+    const all = Component.JOBS.filter(j => !s.removed[j[0]]);
+    const isApplied = j => !j[7] && !!s.applied[j[0]];
+    const counts = { all: all.length, applied: all.filter(isApplied).length, closed: all.filter(j => j[7]).length };
+    const list = all.filter(j => s.tab === 'all' || (s.tab === 'applied' ? isApplied(j) : j[7]));
+    return {
+      total: all.length,
+      tabs: [['all', 'All'], ['applied', 'Applied'], ['closed', 'Closed']].map(([k, label]) => ({
+        label, n: counts[k], on: s.tab === k, fw: s.tab === k ? 600 : 500, fg: s.tab === k ? '#0B0B0A' : '#6B6B6B',
+        line: s.tab === k ? 'inset 0 -2px 0 #0B0B0A' : 'none', pick: () => this.setState({ tab: k })
+      })),
+      cards: list.map(([id, title, where, pay, source, photo, hue, closed], i) => ({
+        title, where, pay, closed, applied: !closed && !!s.applied[id], appliedOn: s.applied[id] || '',
+        canMark: !closed && !s.applied[id],
+        meta: closed ? 'No longer listed' : 'on ' + source,
+        op: closed ? 0.55 : 1, filter: closed ? 'grayscale(1)' : 'none',
+        grad: this.grad(hue), rot: [-6, 5, -3, 7][i % 4], icon: 'assets/icons/' + Component.ICON[id] + '.png',
+        hasPhoto: !!photo, noPhoto: !photo, photo: photo ? 'assets/photos/' + photo + '.jpg' : '',
+        remove: () => { this.setState(st => ({ removed: { ...st.removed, [id]: 1 } })); this.toast('Removed from saved'); },
+        mark: () => { this.setState(st => ({ applied: { ...st.applied, [id]: '17 Oct' } })); this.toast('Marked as applied'); }
+      })),
+      empty: list.length === 0,
+      emptyText: s.tab === 'applied' ? 'Nothing marked as applied yet.' : s.tab === 'closed' ? 'None of your saved jobs have closed.' : 'No saved jobs yet. Tap the bookmark on any job to keep it here.',
+      exportCsv: () => this.toast('CSV exported'),
+      email: () => this.toast('Saved jobs sent to your inbox'),
+      toast: s.toast, toastOp: s.toastOn ? 1 : 0, toastY: s.toastOn ? '0' : '10px'
+    };
+  }
+}
+</script>
+</body>
+</html>

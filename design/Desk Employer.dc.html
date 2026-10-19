@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#FFFFFF;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+</style>
+</helmet>
+<div data-screen-label="Employer page" style="min-height:900px; background:#FFFFFF; font-family:'Geist',system-ui,sans-serif; color:#0B0B0A">
+  <header style="height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 40px">
+    <a href="#" aria-label="Radar home" style="display:flex; align-items:baseline; gap:3px; padding:4px 2px">
+      <span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+      <span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+    </a>
+    <nav style="display:flex; align-items:center; gap:4px; font-size:14px">
+      <a href="#" style="height:36px; padding:0 14px; border-radius:999px; display:inline-flex; align-items:center" style-hover="background:#F5F5F4">Saved</a>
+      <a href="#" style="height:36px; padding:0 14px; border-radius:999px; display:inline-flex; align-items:center" style-hover="background:#F5F5F4">For employers</a>
+    </nav>
+  </header>
+
+  <div style="max-width:1120px; margin:0 auto; padding:12px 40px 96px">
+    <nav aria-label="Breadcrumb" style="display:flex; align-items:center; gap:8px; font-size:14px; color:#6B6B6B">
+      <a href="#" style="color:#6B6B6B" style-hover="color:#0B0B0A">Jobs</a><span>›</span>
+      <a href="#" style="color:#6B6B6B" style-hover="color:#0B0B0A">Auckland</a><span>›</span>
+      <span style="color:#0B0B0A">Kōwhai Café</span>
+    </nav>
+
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:32px; margin-top:40px">
+      <div style="display:flex; align-items:center; gap:24px">
+        <div style="width:96px; height:96px; border-radius:24px; background:linear-gradient(160deg,#FCEEDC,#F1D5B1); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.04); display:flex; align-items:center; justify-content:center; transform:rotate(-4deg)"><img src="assets/icons/coffee.png" alt="" style="width:74%"></div>
+        <div>
+          <h1 style="margin:0; font-size:56px; font-weight:650; letter-spacing:-0.045em; line-height:1">Kōwhai Café</h1>
+          <p style="margin:12px 0 0; font-size:17px; color:#6B6B6B"><span style="font-family:'Geist Mono',ui-monospace,monospace; color:#0B0B0A">4</span> open jobs · Auckland</p>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; font-size:13.5px; color:#6B6B6B">
+        <span>Ponsonby Road, Ponsonby, Auckland</span>
+        <span>Hiring on Radar since March 2025</span>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:48px; padding-bottom:14px; border-bottom:1px solid #E8E8E6">
+      <h2 style="margin:0; font-size:20px; font-weight:600; letter-spacing:-0.025em">Open jobs</h2>
+      <span style="font-size:13.5px; color:#6B6B6B">Newest first</span>
+    </div>
+
+    <div style="display:flex; flex-direction:column">
+      <sc-for list="{{ jobs }}" as="j" hint-placeholder-count="4">
+        <div style="position:relative; border-bottom:1px solid #E8E8E6">
+          <a href="#" style="display:grid; grid-template-columns:96px minmax(0,1.6fr) minmax(0,1.4fr) 140px 170px 44px; align-items:center; gap:24px; padding:18px 8px; border-radius:12px" style-hover="background:#FAFAF9">
+            <div style="position:relative; width:96px; height:72px; border-radius:10px; overflow:hidden; background:{{ j.grad }}; display:flex; align-items:center; justify-content:center">
+              <sc-if value="{{ j.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ j.photo }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover"></sc-if>
+              <sc-if value="{{ j.noPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ j.icon }}" alt="" style="width:48%; transform:rotate({{ j.rot }}deg)"></sc-if>
+              <div style="position:absolute; inset:0; border-radius:10px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)"></div>
+            </div>
+            <div style="min-width:0; display:flex; flex-direction:column; gap:4px">
+              <span style="font-size:17px; font-weight:600; letter-spacing:-0.015em">{{ j.title }}</span>
+              <span style="font-size:14px; color:#6B6B6B">{{ j.type }} · Ponsonby, Auckland</span>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:5px">
+              <sc-for list="{{ j.badges }}" as="b" hint-placeholder-count="2">
+                <span style="height:24px; padding:0 9px; border-radius:999px; display:inline-flex; align-items:center; font-size:12px; font-weight:{{ b.fw }}; background:{{ b.bg }}; color:{{ b.fg }}; box-shadow:{{ b.bd }}">{{ b.label }}</span>
+              </sc-for>
+            </div>
+            <span style="font-family:{{ j.payFam }}; font-size:15px; font-weight:500; letter-spacing:-0.02em; color:{{ j.payC }}; text-align:right">{{ j.pay }}</span>
+            <span style="display:flex; align-items:center; gap:7px; font-size:13px; color:#6B6B6B"><img src="{{ j.favicon }}" alt="" style="width:14px; height:14px; border-radius:4px; filter:grayscale(1); opacity:.75">{{ j.source }} · {{ j.ago }}</span>
+            <span></span>
+          </a>
+          <button onClick="{{ j.save }}" aria-label="{{ j.saveAria }}" aria-pressed="{{ j.saved }}" style="position:absolute; right:8px; top:50%; margin-top:-20px; width:40px; height:40px; border-radius:999px; border:0; background:#F5F5F4; display:flex; align-items:center; justify-content:center; cursor:pointer" style-hover="background:#ECECEA"><svg width="16" height="16" viewBox="0 0 24 24" fill="{{ j.bmFill }}" stroke="#0B0B0A" strokeWidth="2.1" strokeLinejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"></path></svg></button>
+        </div>
+      </sc-for>
+    </div>
+
+    <p style="margin:28px 0 0; font-size:13.5px; color:#6B6B6B">Jobs from Kōwhai Café found on Backpacker Board, Seek and Facebook groups. Is this your business? <a href="#" style="color:#0B0B0A; font-weight:500; border-bottom:1px solid #D6D6D4">Post a job — free</a></p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { saved: { barista: true } };
+  static SRC = { 'Seek': 'seek.co.nz', 'Backpacker Board': 'backpackerboard.co.nz', 'Facebook': 'facebook.com' };
+  static JOBS = [
+    ['barista', 'Barista', 'Part-time', '$27–29/h', 'Backpacker Board', '2h ago', 'ponsonby', 40, ['New', 'Meals', 'Tips', 'WHV friendly']],
+    ['kitchen', 'Kitchen hand', 'Casual', '$25–26/h', 'Facebook', '1d ago', null, 70, ['Meals', 'No experience']],
+    ['foh', 'Front of house – weekends', 'Part-time', '$26/h + tips', 'Seek', '3d ago', null, 20, ['Tips', 'WHV friendly']],
+    ['roaster', 'Roastery assistant', 'Full-time', 'Pay not listed', 'Seek', '6d ago', null, 120, ['Closing soon']]
+  ];
+  badge(l) {
+    if (l === 'New') return { label: l, bg: '#00C97A', fg: '#00261A', fw: 600, bd: 'none' };
+    if (l === 'Closing soon') return { label: l, bg: '#FFFFFF', fg: '#0B0B0A', fw: 500, bd: 'inset 0 0 0 1px #D6D6D4' };
+    return { label: l, bg: '#F5F5F4', fg: '#3D3D3C', fw: 500, bd: 'none' };
+  }
+  grad(h) { return `radial-gradient(90% 80% at 15% 8%, oklch(0.95 0.045 ${h}) 0%, transparent 70%), oklch(0.925 0.045 ${(h + 20) % 360})`; }
+  renderVals() {
+    return {
+      jobs: Component.JOBS.map(([id, title, type, pay, source, ago, photo, hue, b], i) => {
+        const saved = !!this.state.saved[id];
+        return {
+          title, type, pay, source, ago, grad: this.grad(hue), rot: [-6, 5, -3, 7][i],
+          hasPhoto: !!photo, noPhoto: !photo, photo: photo ? 'assets/photos/' + photo + '.jpg' : '', icon: 'assets/icons/coffee.png',
+          payFam: pay === 'Pay not listed' ? "'Geist',system-ui,sans-serif" : "'Geist Mono',ui-monospace,monospace",
+          payC: pay === 'Pay not listed' ? '#6B6B6B' : '#0B0B0A',
+          badges: b.map(l => this.badge(l)),
+          favicon: 'https://www.google.com/s2/favicons?domain=' + Component.SRC[source] + '&sz=64',
+          saved, bmFill: saved ? '#0B0B0A' : 'none', saveAria: saved ? 'Remove from saved' : 'Save job',
+          save: () => this.setState(s => ({ saved: { ...s.saved, [id]: !s.saved[id] } }))
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

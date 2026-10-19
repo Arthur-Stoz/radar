@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#FFFFFF;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+</style>
+</helmet>
+<div data-screen-label="Job page" style="position:absolute; inset:0; overflow:hidden; background:#FFFFFF; font-family:'Geist',system-ui,sans-serif; color:#0B0B0A">
+  <div style="position:absolute; inset:0; overflow-y:auto; padding-bottom:96px">
+    <header style="height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 40px">
+      <a href="#" aria-label="Radar home" style="display:flex; align-items:baseline; gap:3px; padding:4px 2px">
+        <span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+        <span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+      </a>
+      <nav style="display:flex; align-items:center; gap:4px; font-size:14px">
+        <a href="#" style="height:36px; padding:0 14px; border-radius:999px; display:inline-flex; align-items:center" style-hover="background:#F5F5F4">Saved</a>
+        <a href="#" style="height:36px; padding:0 14px; border-radius:999px; display:inline-flex; align-items:center" style-hover="background:#F5F5F4">For employers</a>
+      </nav>
+    </header>
+
+    <div style="max-width:1120px; margin:0 auto; padding:12px 40px 0">
+      <nav aria-label="Breadcrumb" style="display:flex; align-items:center; gap:8px; font-size:14px; color:#6B6B6B">
+        <a href="#" style="color:#6B6B6B" style-hover="color:#0B0B0A">Jobs</a><span>›</span>
+        <a href="#" style="color:#6B6B6B" style-hover="color:#0B0B0A">Auckland</a><span>›</span>
+        <span style="color:#0B0B0A">Barista</span>
+      </nav>
+
+      <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}">
+        <div role="status" style="margin-top:20px; display:flex; align-items:center; gap:14px; min-height:56px; padding:0 8px 0 18px; border-radius:12px; background:#F5F5F4">
+          <span style="width:10px; height:10px; border-radius:50%; background:#0B0B0A; flex:none"></span>
+          <div style="flex:1; display:flex; flex-direction:column; gap:2px">
+            <span style="font-size:15px; font-weight:600">This job has closed.</span>
+            <span style="font-size:13.5px; color:#6B6B6B">It was taken down on Backpacker Board on 14 Oct. Here are similar jobs still open.</span>
+          </div>
+          <a href="#similar" onClick="{{ toSimilar }}" style="height:38px; padding:0 16px; border-radius:999px; background:#FFFFFF; display:inline-flex; align-items:center; font-size:14px; font-weight:500">See similar jobs</a>
+        </div>
+      </sc-if>
+
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:56px; margin-top:24px; align-items:start">
+        <article style="min-width:0">
+          <div style="position:relative; aspect-ratio:16/9; border-radius:16px; overflow:hidden; background:#F5F5F4">
+            <img src="assets/photos/ponsonby.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:{{ imgFilter }}">
+            <div style="position:absolute; inset:0; border-radius:16px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)"></div>
+          </div>
+          <h1 style="margin:28px 0 0; font-size:48px; font-weight:650; letter-spacing:-0.04em; line-height:1.05">Barista</h1>
+          <p style="margin:10px 0 0; font-size:17px; color:#6B6B6B"><a href="#" style="color:#0B0B0A; font-weight:500; text-decoration:underline; text-decoration-color:#D6D6D4; text-underline-offset:4px" style-hover="text-decoration-color:#0B0B0A">Kōwhai Café</a> · Ponsonby, Auckland</p>
+          <div style="display:flex; align-items:baseline; gap:8px; margin-top:20px">
+            <span style="font-family:'Geist Mono',ui-monospace,monospace; font-size:28px; font-weight:500; letter-spacing:-0.035em">$27–29</span>
+            <span style="font-family:'Geist Mono',ui-monospace,monospace; font-size:15px; color:#6B6B6B">/hour</span>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:14px">
+            <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="height:26px; padding:0 10px; border-radius:999px; background:#00C97A; color:#00261A; font-size:12.5px; font-weight:600; display:inline-flex; align-items:center">New</span></sc-if>
+            <span style="height:26px; padding:0 10px; border-radius:999px; background:#F5F5F4; color:#3D3D3C; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">Meals</span>
+            <span style="height:26px; padding:0 10px; border-radius:999px; background:#F5F5F4; color:#3D3D3C; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">Tips</span>
+            <span style="height:26px; padding:0 10px; border-radius:999px; background:#F5F5F4; color:#3D3D3C; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">WHV friendly</span>
+          </div>
+
+          <h2 style="margin:40px 0 14px; font-size:20px; font-weight:600; letter-spacing:-0.025em">Key facts</h2>
+          <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px 32px">
+            <sc-for list="{{ facts }}" as="f" hint-placeholder-count="5">
+              <div style="display:flex; align-items:center; gap:12px; font-size:16px"><span style="flex:none; width:6px; height:6px; border-radius:50%; background:#0B0B0A"></span>{{ f }}</div>
+            </sc-for>
+          </div>
+
+          <h2 style="margin:40px 0 0; font-size:20px; font-weight:600; letter-spacing:-0.025em">Description</h2>
+          <p style="margin:12px 0 0; font-size:16.5px; line-height:1.6; color:#2B2B2A; max-width:640px; text-wrap:pretty">Kōwhai Café is a neighbourhood café on Ponsonby Road, open seven days from 6:30am. We roast in small batches and pour around 600 coffees on a Saturday.</p>
+          <div style="margin-top:18px; font-size:16.5px; font-weight:600">What you’ll do</div>
+          <ul style="margin:8px 0 0; padding-left:20px; font-size:16.5px; line-height:1.7; color:#2B2B2A">
+            <li>Pull consistent espresso on a two-group machine</li>
+            <li>Dial in the grinders each morning with the head barista</li>
+            <li>Keep the bar clean and help close on weekdays</li>
+          </ul>
+          <div style="margin-top:18px; font-size:16.5px; font-weight:600">What we offer</div>
+          <ul style="margin:8px 0 0; padding-left:20px; font-size:16.5px; line-height:1.7; color:#2B2B2A">
+            <li>$27–29 an hour depending on experience, plus a share of tips</li>
+            <li>Free coffee on shift and a staff meal after five hours</li>
+            <li>Rosters out two weeks ahead</li>
+          </ul>
+          <p style="margin:18px 0 0; font-size:16.5px; line-height:1.6; color:#2B2B2A">Open to working holiday visa holders with at least three months left on their visa.</p>
+          <div style="margin-top:32px; padding-top:20px; border-top:1px solid #E8E8E6; display:flex; flex-wrap:wrap; align-items:center; gap:8px 20px; font-size:14px; color:#6B6B6B">
+            <span>{{ postedLine }}</span>
+            <span style="display:flex; align-items:center; gap:7px">via <img src="https://www.google.com/s2/favicons?domain=backpackerboard.co.nz&amp;sz=64" alt="" style="width:14px; height:14px; border-radius:4px"><span style="color:#0B0B0A; font-weight:500">Backpacker Board</span></span>
+            <span style="display:flex; align-items:center; gap:7px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" strokeWidth="2" strokeLinejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"></path></svg>Never pay to get a job.</span>
+          </div>
+        </article>
+
+        <aside style="position:sticky; top:24px; display:flex; flex-direction:column; gap:14px">
+          <div style="display:flex; gap:6px">
+            <button onClick="{{ toggleSave }}" aria-pressed="{{ saved }}" style="flex:1; height:42px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; gap:7px; font-size:14px; font-weight:500; cursor:pointer" style-hover="background:#F5F5F4"><svg width="15" height="15" viewBox="0 0 24 24" fill="{{ bmFill }}" stroke="#0B0B0A" strokeWidth="2.1" strokeLinejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"></path></svg>{{ saveLabel }}</button>
+            <button style="flex:1; height:42px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; gap:7px; font-size:14px; font-weight:500; cursor:pointer" style-hover="background:#F5F5F4"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12M7.5 7.5L12 3l4.5 4.5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"></path></svg>Share</button>
+            <button aria-label="Report" title="Report" style="flex:none; width:42px; height:42px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; cursor:pointer" style-hover="background:#F5F5F4"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M5 21V4M5 4h12l-2.5 4.5L17 13H5"></path></svg></button>
+          </div>
+          <div style="position:relative; height:220px; border-radius:16px; overflow:hidden; background:#F2F2F0">
+            <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="0"><img src="{{ t.src }}" alt="" style="position:absolute; left:{{ t.left }}; top:{{ t.top }}; width:256px; height:256px; max-width:none"></sc-for>
+            <span style="position:absolute; left:50%; top:50%; width:16px; height:16px; margin:-8px 0 0 -8px; border-radius:50%; background:#0B0B0A; box-shadow:0 0 0 3px #FFFFFF, 0 0 0 12px rgba(0,201,122,.22)"></span>
+            <span style="position:absolute; left:12px; bottom:12px; height:28px; padding:0 11px; border-radius:999px; background:#FFFFFF; font-size:13px; font-weight:500; display:inline-flex; align-items:center">Ponsonby Rd, Auckland</span>
+            <div style="position:absolute; inset:0; border-radius:16px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.07)"></div>
+          </div>
+          <a href="#" style="display:flex; align-items:center; gap:12px; padding:14px; border-radius:16px; background:#F5F5F4" style-hover="background:#EFEFED">
+            <span style="width:44px; height:44px; border-radius:12px; background:linear-gradient(160deg,#FCEEDC,#F1D5B1); display:flex; align-items:center; justify-content:center"><img src="assets/icons/coffee.png" alt="" style="width:68%"></span>
+            <span style="flex:1; display:flex; flex-direction:column; gap:2px"><span style="font-size:15px; font-weight:600">Kōwhai Café</span><span style="font-size:13px; color:#6B6B6B"><span style="font-family:'Geist Mono',ui-monospace,monospace">4</span> open jobs · Auckland</span></span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </a>
+        </aside>
+      </div>
+
+      <section id="similar" ref="{{ simRef }}" style="margin-top:72px">
+        <h2 style="margin:0 0 18px; font-size:26px; font-weight:650; letter-spacing:-0.035em">Similar jobs</h2>
+        <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:20px">
+          <sc-for list="{{ similar }}" as="m" hint-placeholder-count="4">
+            <a href="#" style="display:flex; flex-direction:column; gap:10px" style-hover="transform:translateY(-2px)">
+              <div style="position:relative; aspect-ratio:4/3; border-radius:14px; overflow:hidden; background:{{ m.grad }}; display:flex; align-items:center; justify-content:center">
+                <sc-if value="{{ m.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ m.photo }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover"></sc-if>
+                <sc-if value="{{ m.noPhoto }}" hint-placeholder-val="{{ true }}"><img src="assets/icons/coffee.png" alt="" style="width:36%; transform:rotate({{ m.rot }}deg); filter:drop-shadow(0 12px 14px rgba(0,0,0,.12))"></sc-if>
+                <div style="position:absolute; inset:0; border-radius:14px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)"></div>
+              </div>
+              <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px"><span style="font-size:15px; font-weight:600; letter-spacing:-0.015em">{{ m.title }}</span><span style="flex:none; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500">{{ m.pay }}</span></div>
+              <span style="margin-top:-4px; font-size:13.5px; color:#6B6B6B">{{ m.where }}</span>
+            </a>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div style="position:absolute; left:0; right:0; bottom:0; z-index:5; height:84px; padding:0 40px; background:rgba(255,255,255,.96); backdrop-filter:blur(12px); border-top:1px solid #E8E8E6; display:flex; align-items:center; justify-content:center">
+    <div style="width:100%; max-width:1040px; display:flex; align-items:center; gap:24px">
+      <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+        <span style="font-size:15px; font-weight:600">Barista · Kōwhai Café</span>
+        <span style="font-size:13px; color:#6B6B6B">{{ barNote }}</span>
+      </div>
+      <span style="font-family:'Geist Mono',ui-monospace,monospace; font-size:15px; font-weight:500">$27–29/h</span>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+        <a href="https://www.backpackerboard.co.nz/" target="_blank" rel="noopener" style="height:52px; padding:0 28px; border-radius:999px; background:#0B0B0A; color:#FFFFFF; display:inline-flex; align-items:center; font-size:16px; font-weight:550" style-hover="color:#FFFFFF; background:#2A2A29"><span>Apply on Backpacker Board ↗</span></a>
+      </sc-if>
+      <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}">
+        <button disabled="{{ true }}" aria-disabled="true" style="height:52px; padding:0 28px; border-radius:999px; border:0; background:#ECECEA; color:#9A9A98; font-size:16px; font-weight:550; cursor:not-allowed">Apply on Backpacker Board ↗</button>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;closed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = { saved: false };
+  simRef = React.createRef();
+  static SIM = [
+    ['Barista', '$26–29/h', 'Small Hours Coffee · Kingsland', 70],
+    ['Head barista', '$30–34/h', 'Ritual Espresso Bar · Britomart', 220],
+    ['Weekend barista', '$25–28/h', 'Fig & Fern · Grey Lynn', 30],
+    ['Barista & café all-rounder', '$27–30/h', 'Matiatia Wharf Café · Waiheke', 100, 'waiheke']
+  ];
+  tiles(lat, lng, W, H, z) {
+    const n = 256 * Math.pow(2, z), s = Math.sin(lat * Math.PI / 180);
+    const x = (lng + 180) / 360 * n, y = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n;
+    const x0 = x - W / 2, y0 = y - H / 2, out = [];
+    for (let tx = Math.floor(x0 / 256); tx <= Math.floor((x0 + W) / 256); tx++)
+      for (let ty = Math.floor(y0 / 256); ty <= Math.floor((y0 + H) / 256); ty++)
+        out.push({ src: `https://a.basemaps.cartocdn.com/light_all/${z}/${tx}/${ty}@2x.png`, left: (tx * 256 - x0).toFixed(1) + 'px', top: (ty * 256 - y0).toFixed(1) + 'px' });
+    return out;
+  }
+  grad(h) { return `radial-gradient(90% 80% at 15% 8%, oklch(0.95 0.045 ${h}) 0%, transparent 70%), radial-gradient(80% 90% at 95% 100%, oklch(0.87 0.085 ${(h + 45) % 360}) 0%, transparent 72%), oklch(0.925 0.045 ${(h + 20) % 360})`; }
+  renderVals() {
+    const closed = !!this.props.closed, saved = this.state.saved;
+    return {
+      closed, open: !closed, imgFilter: closed ? 'grayscale(1)' : 'none',
+      postedLine: closed ? 'Posted 9 days ago · Closed 14 Oct' : 'Posted 2 hours ago · Closes 30 Oct',
+      barNote: closed ? 'This listing is no longer open.' : 'You’ll apply on the original listing.',
+      facts: ['Part-time', '25–30 h a week', 'Starts this week', 'Free coffee and staff meal', '1 year of café experience'],
+      tiles: this.tiles(-36.8571, 174.7460, 340, 220, 15),
+      saved, bmFill: saved ? '#0B0B0A' : 'none', saveLabel: saved ? 'Saved' : 'Save',
+      toggleSave: () => this.setState({ saved: !saved }),
+      simRef: this.simRef,
+      toSimilar: e => { e.preventDefault(); const el = this.simRef.current; if (el && el.parentElement) { const sc = el.closest('[style*="overflow-y"]'); if (sc) sc.scrollTo({ top: el.offsetTop - 24, behavior: 'smooth' }); } },
+      similar: Component.SIM.map(([title, pay, where, hue, photo], i) => ({ title, pay, where, grad: this.grad(hue), rot: [-6, 5, -3, 7][i], hasPhoto: !!photo, noPhoto: !photo, photo: photo ? 'assets/photos/' + photo + '.jpg' : '' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

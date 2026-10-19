@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#E9E9E7;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+@keyframes rdSpin{to{transform:rotate(360deg)}}
+@keyframes rdPulse{0%{box-shadow:0 0 0 0 rgba(0,201,122,.55)}70%{box-shadow:0 0 0 7px rgba(0,201,122,0)}100%{box-shadow:0 0 0 0 rgba(0,201,122,0)}}
+</style>
+</helmet>
+
+<section data-screen-label="Turn 4 · Public pages desktop" style="padding:72px 80px 120px; display:flex; flex-direction:column; gap:36px">
+  <div style="display:flex; flex-direction:column; gap:6px">
+    <div style="font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; color:#6B6B6B">Turn 4</div>
+    <div style="font-size:28px; font-weight:650; letter-spacing:-0.035em">Public pages · desktop 1440</div>
+    <div style="font-size:15px; color:#3D3D3C">Scroll inside any board. Live: Clear recent, Save, Saved tabs, alert modal, alert management, the Post a job form.</div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(3, 1440px); gap:72px 56px; align-items:start">
+
+    <div id="4a" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4a</span>Home, returning visitor. Recently viewed and new since last visit.</div>
+      <div data-screen-label="4a Home returning" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:auto; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Home Returning" hint-size="1440px,900px" style="display:block"></dc-import>
+      </div>
+    </div>
+
+    <div id="4b" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4b</span>Job page, opened from a shared link. Sticky apply bar.</div>
+      <div data-screen-label="4b Job page" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Job Page" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="4c" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4c</span>Job page, closed. Apply disabled, similar jobs offered.</div>
+      <div data-screen-label="4c Job page closed" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Job Page" closed="{{ true }}" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="4d" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4d</span>Employer page.</div>
+      <div data-screen-label="4d Employer" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:auto; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Employer" hint-size="1440px,900px" style="display:block"></dc-import>
+      </div>
+    </div>
+
+    <div id="4e" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4e</span>Saved. Tabs All · Applied · Closed.</div>
+      <div data-screen-label="4e Saved" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:auto; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Saved" hint-size="1440px,900px" style="display:block"></dc-import>
+      </div>
+    </div>
+
+    <div id="4f" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4f</span>Get these jobs by email. Submit it, close it, reopen it.</div>
+      <div data-screen-label="4f Alert modal" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Alerts" view="modal" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="4g" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4g</span>Alert created.</div>
+      <div data-screen-label="4g Alert success" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Alerts" view="success" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="4h" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4h</span>Manage your alerts, reached from the email.</div>
+      <div data-screen-label="4h Manage alerts" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Alerts" view="manage" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="4i" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4i</span>/employers.</div>
+      <div data-screen-label="4i Employers" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Employers" view="landing" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="4j" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4j</span>Post a job. Publish to see the success state.</div>
+      <div data-screen-label="4j Post a job" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Employers" view="form" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="4k" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4k</span>Job sent, waiting for email confirmation.</div>
+      <div data-screen-label="4k Post success" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Employers" view="success" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="4l" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4l</span>Status, one row per source.</div>
+      <div data-screen-label="4l Status" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:auto; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk Status" hint-size="1440px,900px" style="display:block"></dc-import>
+      </div>
+    </div>
+
+    <div id="4m" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">4m</span>404.</div>
+      <div data-screen-label="4m 404" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <dc-import name="Desk 404" hint-size="1440px,900px" style="display:block"></dc-import>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+</body>
+</html>

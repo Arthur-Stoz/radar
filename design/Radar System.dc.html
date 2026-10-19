@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#E9E9E7;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+@keyframes rdSpin{to{transform:rotate(360deg)}}
+@keyframes rdPing{0%{transform:scale(.12);opacity:0}12%{opacity:1}100%{transform:scale(1);opacity:0}}
+@keyframes rdPulse{0%{box-shadow:0 0 0 0 rgba(0,201,122,.55)}70%{box-shadow:0 0 0 7px rgba(0,201,122,0)}100%{box-shadow:0 0 0 0 rgba(0,201,122,0)}}
+</style>
+</helmet>
+
+<section data-screen-label="Turn 5 · Admin, shortcuts, dark, system" style="padding:72px 80px 120px; display:flex; flex-direction:column; gap:36px">
+  <div style="display:flex; flex-direction:column; gap:6px">
+    <div style="font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; color:#6B6B6B">Turn 5</div>
+    <div style="font-size:28px; font-weight:650; letter-spacing:-0.035em">Admin, shortcuts, dark mode, design system</div>
+    <div style="font-size:15px; color:#3D3D3C">Admin boards are live: switch sections, Run now, moderate, read a link. Press ? on 5f after clicking it.</div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(3, 1440px); gap:72px 56px; align-items:start">
+    <div id="5a" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">5a</span>Admin · Sign in</div>
+      <div data-screen-label="5a Admin login" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)"><dc-import name="Admin" view="login" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import></div>
+    </div>
+    <div id="5b" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">5b</span>Admin · Overview</div>
+      <div data-screen-label="5b Admin overview" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)"><dc-import name="Admin" view="overview" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import></div>
+    </div>
+    <div id="5c" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">5c</span>Admin · Sources</div>
+      <div data-screen-label="5c Admin sources" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)"><dc-import name="Admin" view="sources" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import></div>
+    </div>
+    <div id="5d" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">5d</span>Admin · Moderation queue</div>
+      <div data-screen-label="5d Admin moderation" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)"><dc-import name="Admin" view="moderation" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import></div>
+    </div>
+    <div id="5e" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">5e</span>Admin · Add a job from a link</div>
+      <div data-screen-label="5e Admin add" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)"><dc-import name="Admin" view="add" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import></div>
+    </div>
+    <div id="5f" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">5f</span>Keyboard shortcuts, opened with ?</div>
+      <div data-screen-label="5f Shortcuts" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)"><dc-import name="Shortcuts" frame="{{ true }}" hint-size="1440px,900px" style="position:absolute; inset:0"></dc-import></div>
+    </div>
+    <div id="5g" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">5g</span>Home · dark, search focused</div>
+      <div data-screen-label="5g Home dark" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:auto; background:#0B0B0A; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)"><dc-import name="Dark Home" hint-size="1440px,900px" style="display:block"></dc-import></div>
+    </div>
+    <div id="5h" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">5h</span>Results · dark</div>
+      <div data-screen-label="5h Results dark" style="position:relative; width:1440px; height:900px; border-radius:20px; overflow:auto; background:#0B0B0A; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)"><dc-import name="Dark Results" hint-size="1440px,900px" style="display:block"></dc-import></div>
+    </div>
+    <div id="5i" style="grid-row:span 3; display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C"><span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">5i</span>Design system</div>
+      <div data-screen-label="5i Design system" style="position:relative; width:1440px; border-radius:20px; overflow:hidden; background:#FFFFFF; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)"><dc-import name="Design System" hint-size="1440px,2400px" style="display:block"></dc-import></div>
+    </div>
+  </div>
+</section>
+</x-dc>
+</body>
+</html>

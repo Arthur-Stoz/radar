@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#E9E9E7;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+@keyframes rdSpin{to{transform:rotate(360deg)}}
+@keyframes rdPing{0%{transform:scale(.12);opacity:0}12%{opacity:1}100%{transform:scale(1);opacity:0}}
+@keyframes rdBlip{0%{opacity:0;transform:scale(.3)}4%{opacity:1;transform:scale(1)}45%{opacity:0;transform:scale(.9)}100%{opacity:0}}
+@keyframes rdPulse{0%{box-shadow:0 0 0 0 rgba(0,201,122,.55)}70%{box-shadow:0 0 0 7px rgba(0,201,122,0)}100%{box-shadow:0 0 0 0 rgba(0,201,122,0)}}
+@keyframes rdPh{from{opacity:0;transform:translateY(55%)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<section data-screen-label="Turn 3 · Mobile" style="padding:72px 80px 120px; display:flex; flex-direction:column; gap:36px">
+  <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; max-width:2174px">
+    <div style="display:flex; flex-direction:column; gap:6px">
+      <div style="font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; color:#6B6B6B">Turn 3</div>
+      <div style="font-size:28px; font-weight:650; letter-spacing:-0.035em">Mobile · 390 × 844</div>
+      <div style="font-size:15px; color:#3D3D3C">Every board is live: search, open a card, drag the sheet, filter, save.</div>
+    </div>
+    <div style="flex:none; display:flex; gap:8px; white-space:nowrap">
+      <a href="MobileApp.dc.html" style="height:40px; padding:0 18px; border-radius:999px; background:#0B0B0A; color:#FFFFFF; display:inline-flex; align-items:center; font-size:14px; font-weight:550" style-hover="color:#FFFFFF; background:#2A2A29">Open the prototype ↗</a>
+      <a href="Radar.dc.html" style="height:40px; padding:0 18px; border-radius:999px; background:#FFFFFF; display:inline-flex; align-items:center; font-size:14px; font-weight:500">Desktop Home</a>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(5, 390px); gap:72px 56px; align-items:start">
+
+    <div id="3a" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:flex-start; gap:10px; min-height:44px; font-size:14.5px; line-height:1.45; color:#3D3D3C"><span style="flex:none; height:24px; padding:0 9px; border-radius:7px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">3a</span>Home. Type and hit Search, or tap a pill or a card.</div>
+      <div data-screen-label="3a Mobile Home" style="position:relative; width:390px; height:844px; border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.10)">
+        <dc-import name="MobileApp" frame="{{ true }}" hint-size="390px,844px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="3b" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:flex-start; gap:10px; min-height:44px; font-size:14.5px; line-height:1.45; color:#3D3D3C"><span style="flex:none; height:24px; padding:0 9px; border-radius:7px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">3b</span>Home, search focused. The radar sweep comes on.</div>
+      <div data-screen-label="3b Mobile Home focused" style="position:relative; width:390px; height:844px; border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.10)">
+        <dc-import name="MobileApp" frame="{{ true }}" focus="{{ true }}" hint-size="390px,844px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="3c" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:flex-start; gap:10px; min-height:44px; font-size:14.5px; line-height:1.45; color:#3D3D3C"><span style="flex:none; height:24px; padding:0 9px; border-radius:7px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">3c</span>Home, scrolled. Fresh today swipes sideways; Browse by type in two columns.</div>
+      <div data-screen-label="3c Mobile Home lower" style="position:relative; width:390px; height:844px; border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.10)">
+        <dc-import name="MobileApp" frame="{{ true }}" scroll="fresh" hint-size="390px,844px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="3d" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:flex-start; gap:10px; min-height:44px; font-size:14.5px; line-height:1.45; color:#3D3D3C"><span style="flex:none; height:24px; padding:0 9px; border-radius:7px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">3d</span>Home footer with the cropped wordmark.</div>
+      <div data-screen-label="3d Mobile Home footer" style="position:relative; width:390px; height:844px; border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.10)">
+        <dc-import name="MobileApp" frame="{{ true }}" scroll="end" hint-size="390px,844px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="3e" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:flex-start; gap:10px; min-height:44px; font-size:14.5px; line-height:1.45; color:#3D3D3C"><span style="flex:none; height:24px; padding:0 9px; border-radius:7px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">3e</span>Results. Sticky search, sideways filter pills, Sort and View.</div>
+      <div data-screen-label="3e Mobile Results" style="position:relative; width:390px; height:844px; border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.10)">
+        <dc-import name="MobileApp" frame="{{ true }}" screen="results" hint-size="390px,844px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="3f" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:flex-start; gap:10px; min-height:44px; font-size:14.5px; line-height:1.45; color:#3D3D3C"><span style="flex:none; height:24px; padding:0 9px; border-radius:7px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">3f</span>Filters, full screen. The count updates live.</div>
+      <div data-screen-label="3f Mobile Filters" style="position:relative; width:390px; height:844px; border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.10)">
+        <dc-import name="MobileApp" frame="{{ true }}" screen="results" sheet="filters" hint-size="390px,844px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="3g" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:flex-start; gap:10px; min-height:44px; font-size:14.5px; line-height:1.45; color:#3D3D3C"><span style="flex:none; height:24px; padding:0 9px; border-radius:7px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">3g</span>Job preview, half height. Drag the handle up, or swipe down to close.</div>
+      <div data-screen-label="3g Mobile Job half" style="position:relative; width:390px; height:844px; border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.10)">
+        <dc-import name="MobileApp" frame="{{ true }}" screen="results" sheet="job" job="ponsonby-barista" hint-size="390px,844px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="3h" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:flex-start; gap:10px; min-height:44px; font-size:14.5px; line-height:1.45; color:#3D3D3C"><span style="flex:none; height:24px; padding:0 9px; border-radius:7px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">3h</span>Job preview, full height. Sticky apply bar.</div>
+      <div data-screen-label="3h Mobile Job full" style="position:relative; width:390px; height:844px; border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.10)">
+        <dc-import name="MobileApp" frame="{{ true }}" screen="results" sheet="job" sheet-h="full" job="ponsonby-barista" hint-size="390px,844px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="3i" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:flex-start; gap:10px; min-height:44px; font-size:14.5px; line-height:1.45; color:#3D3D3C"><span style="flex:none; height:24px; padding:0 9px; border-radius:7px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">3i</span>Saved. Applied, closed, export and email.</div>
+      <div data-screen-label="3i Mobile Saved" style="position:relative; width:390px; height:844px; border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.10)">
+        <dc-import name="MobileApp" frame="{{ true }}" screen="saved" hint-size="390px,844px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+    <div id="3j" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:flex-start; gap:10px; min-height:44px; font-size:14.5px; line-height:1.45; color:#3D3D3C"><span style="flex:none; height:24px; padding:0 9px; border-radius:7px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">3j</span>Get these jobs by email, as a bottom sheet.</div>
+      <div data-screen-label="3j Mobile Email alert" style="position:relative; width:390px; height:844px; border-radius:36px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.10)">
+        <dc-import name="MobileApp" frame="{{ true }}" screen="results" sheet="alert" hint-size="390px,844px" style="position:absolute; inset:0"></dc-import>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+</body>
+</html>

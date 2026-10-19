@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#FFFFFF;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+@keyframes rdSpin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div data-screen-label="404" style="position:relative; min-height:900px; overflow:hidden; background:#FFFFFF; font-family:'Geist',system-ui,sans-serif; color:#0B0B0A">
+  <header style="position:relative; z-index:2; height:72px; display:flex; align-items:center; padding:0 40px">
+    <a href="#" aria-label="Radar home" style="display:flex; align-items:baseline; gap:3px; padding:4px 2px">
+      <span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+      <span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+    </a>
+  </header>
+  <section style="position:relative; z-index:0; isolation:isolate; display:flex; flex-direction:column; align-items:center; text-align:center; padding:150px 40px 0">
+    {{ radar }}
+    <div style="font-family:'Geist Mono',ui-monospace,monospace; font-size:14px; color:#6B6B6B">404</div>
+    <h1 style="margin:14px 0 0; font-size:72px; font-weight:650; letter-spacing:-0.047em; line-height:1.02; max-width:900px; text-wrap:balance">This page went off the radar.</h1>
+    <p style="margin:18px 0 0; font-size:18px; color:#6B6B6B">The link may be old, or the job was taken down. Try a search instead.</p>
+    <form onSubmit="{{ noop }}" role="search" style="width:640px; margin-top:40px; display:flex; align-items:center; gap:6px; height:60px; padding:0 6px 0 22px; background:#FFFFFF; border:1px solid #E8E8E6; border-radius:999px; box-shadow:0 1px 2px rgba(0,0,0,.04), 0 8px 28px rgba(0,0,0,.05)">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.2" strokeLinecap="round" style="flex:none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+      <input placeholder="Search a job, a town or a perk" aria-label="Search jobs" style="flex:1; min-width:0; height:100%; border:0; outline:none; background:transparent; padding:0 12px; font-size:18px">
+      <button type="submit" style="flex:none; height:48px; padding:0 24px; border-radius:999px; border:0; background:#0B0B0A; color:#FFFFFF; font-size:15.5px; font-weight:550; cursor:pointer" style-hover="background:#2A2A29">Search</button>
+    </form>
+    <a href="#" style="margin-top:22px; font-size:14.5px; font-weight:500; border-bottom:1px solid #D6D6D4" style-hover="border-color:#0B0B0A">Back to the home page</a>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  renderVals() {
+    const h = React.createElement, size = 980;
+    const rings = [0.2, 0.4, 0.6, 0.8, 1].map((r, i) => h('div', { key: i, style: { position: 'absolute', left: '50%', top: '50%', width: size * r, height: size * r, marginLeft: -size * r / 2, marginTop: -size * r / 2, borderRadius: '50%', border: '1px solid rgba(11,11,10,0.075)' } }));
+    const sweep = h('div', { key: 's', style: { position: 'absolute', inset: 0, borderRadius: '50%', background: 'conic-gradient(from 0deg, rgba(0,201,122,0) 0deg, rgba(0,201,122,0) 290deg, rgba(0,201,122,0.1) 352deg, rgba(0,201,122,0.24) 359.4deg, rgba(0,201,122,0) 360deg)', animation: 'rdSpin 9s linear infinite' } });
+    const mask = 'radial-gradient(closest-side, #000 30%, transparent 100%)';
+    return {
+      noop: e => e.preventDefault(),
+      radar: h('div', { 'aria-hidden': true, style: { position: 'absolute', left: '50%', top: 300, width: size, height: size, transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: -1, WebkitMaskImage: mask, maskImage: mask } }, rings, sweep)
+    };
+  }
+}
+</script>
+</body>
+</html>

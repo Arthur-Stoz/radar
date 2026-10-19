@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#FFFFFF;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+</style>
+</helmet>
+<div style="position:absolute; inset:0; overflow:hidden; background:#FFFFFF; font-family:'Geist',system-ui,sans-serif; color:#0B0B0A">
+<div ref="{{ scroller }}" style="position:absolute; inset:0; overflow-y:auto">
+  <header style="height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 40px">
+    <a href="#" aria-label="Radar home" style="display:flex; align-items:baseline; gap:3px; padding:4px 2px">
+      <span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+      <span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+      <span style="margin-left:8px; font-size:14px; font-weight:500; color:#6B6B6B; letter-spacing:-0.01em">for employers</span>
+    </a>
+    <a href="#" style="height:36px; padding:0 14px; border-radius:999px; display:inline-flex; align-items:center; font-size:14px" style-hover="background:#F5F5F4">Find a job</a>
+  </header>
+
+  <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+    <section data-screen-label="Employers landing" style="max-width:1000px; margin:0 auto; padding:96px 40px 120px">
+      <h1 style="margin:0; font-size:72px; font-weight:650; letter-spacing:-0.047em; line-height:1.02; text-wrap:balance">Hiring in New Zealand? Post it here, free.</h1>
+      <div style="margin-top:48px; display:flex; flex-direction:column; border-top:1px solid #E8E8E6">
+        <sc-for list="{{ lines }}" as="l" hint-placeholder-count="5">
+          <div style="display:flex; align-items:baseline; gap:24px; padding:20px 0; border-bottom:1px solid #E8E8E6">
+            <span style="flex:none; width:32px; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; color:#6B6B6B">{{ l.n }}</span>
+            <span style="font-size:22px; font-weight:500; letter-spacing:-0.02em; line-height:1.35">{{ l.text }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <button onClick="{{ toForm }}" style="margin-top:44px; height:60px; padding:0 30px; border-radius:999px; border:0; background:#0B0B0A; color:#FFFFFF; font-size:18px; font-weight:550; letter-spacing:-0.01em; cursor:pointer" style-hover="background:#2A2A29">Post a job — free</button>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isForm }}" hint-placeholder-val="{{ false }}">
+    <form data-screen-label="Post a job" onSubmit="{{ submit }}" style="max-width:720px; margin:0 auto; padding:40px 40px 120px">
+      <button type="button" onClick="{{ toLanding }}" style="height:32px; padding:0; border:0; background:transparent; font-size:14px; color:#6B6B6B; cursor:pointer">‹ Back</button>
+      <h1 style="margin:12px 0 0; font-size:44px; font-weight:650; letter-spacing:-0.045em; line-height:1.05">Post a job</h1>
+      <p style="margin:10px 0 0; font-size:15.5px; color:#6B6B6B">Free, no account. It goes live once you confirm your email.</p>
+
+      <div style="margin-top:36px; display:grid; grid-template-columns:1fr 1fr; gap:20px 16px">
+        <label style="grid-column:span 2; display:flex; flex-direction:column; gap:8px; font-size:13.5px; font-weight:500">Job title<input required="{{ true }}" defaultValue="Barista" style="height:48px; padding:0 14px; border-radius:12px; border:1px solid #E8E8E6; font-size:16px; font-weight:400; outline:none" style-focus="border-color:#00C97A; box-shadow:0 0 0 4px rgba(0,201,122,.16)"></label>
+        <label style="display:flex; flex-direction:column; gap:8px; font-size:13.5px; font-weight:500">Business name<input required="{{ true }}" defaultValue="Kōwhai Café" style="height:48px; padding:0 14px; border-radius:12px; border:1px solid #E8E8E6; font-size:16px; font-weight:400; outline:none" style-focus="border-color:#00C97A; box-shadow:0 0 0 4px rgba(0,201,122,.16)"></label>
+        <label style="display:flex; flex-direction:column; gap:8px; font-size:13.5px; font-weight:500">Town<input required="{{ true }}" defaultValue="Ponsonby, Auckland" style="height:48px; padding:0 14px; border-radius:12px; border:1px solid #E8E8E6; font-size:16px; font-weight:400; outline:none" style-focus="border-color:#00C97A; box-shadow:0 0 0 4px rgba(0,201,122,.16)"></label>
+      </div>
+
+      <div style="margin-top:28px; font-size:13.5px; font-weight:500">Pay</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-top:8px; opacity:{{ payOp }}">
+        <input aria-label="Minimum pay" disabled="{{ payNL }}" defaultValue="27" style="width:120px; height:48px; padding:0 14px; border-radius:12px; border:1px solid #E8E8E6; font-family:'Geist Mono',ui-monospace,monospace; font-size:15px; outline:none">
+        <span style="color:#6B6B6B">to</span>
+        <input aria-label="Maximum pay" disabled="{{ payNL }}" defaultValue="29" style="width:120px; height:48px; padding:0 14px; border-radius:12px; border:1px solid #E8E8E6; font-family:'Geist Mono',ui-monospace,monospace; font-size:15px; outline:none">
+        <div style="display:flex; padding:3px; gap:2px; border-radius:999px; background:#F5F5F4">
+          <sc-for list="{{ units }}" as="u" hint-placeholder-count="3"><button type="button" onClick="{{ u.pick }}" style="height:40px; padding:0 14px; border-radius:999px; border:0; background:{{ u.bg }}; box-shadow:{{ u.ring }}; font-size:14px; font-weight:500; cursor:pointer">{{ u.label }}</button></sc-for>
+        </div>
+      </div>
+      <label style="display:inline-flex; align-items:center; gap:10px; margin-top:12px; font-size:14px; cursor:pointer"><input type="checkbox" checked="{{ payNL }}" onChange="{{ togglePayNL }}" style="width:18px; height:18px; accent-color:#0B0B0A">Not listed</label>
+      <p style="margin:6px 0 0; font-size:12.5px; color:#6B6B6B">Jobs with pay listed get more clicks. Minimum wage is $23.95/h.</p>
+
+      <div style="margin-top:28px; display:grid; grid-template-columns:1fr 1fr; gap:16px">
+        <div>
+          <div style="font-size:13.5px; font-weight:500">Job type</div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px">
+            <sc-for list="{{ types }}" as="t" hint-placeholder-count="4"><button type="button" onClick="{{ t.pick }}" style="height:38px; padding:0 14px; border-radius:999px; border:0; background:{{ t.bg }}; color:{{ t.fg }}; font-size:14px; cursor:pointer">{{ t.label }}</button></sc-for>
+          </div>
+        </div>
+        <label style="display:flex; flex-direction:column; gap:8px; font-size:13.5px; font-weight:500">Start date<input type="date" defaultValue="2026-10-20" style="height:48px; padding:0 14px; border-radius:12px; border:1px solid #E8E8E6; font-family:'Geist Mono',ui-monospace,monospace; font-size:15px; font-weight:400; outline:none"></label>
+      </div>
+
+      <div style="margin-top:28px; font-size:13.5px; font-weight:500">Perks</div>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px">
+        <sc-for list="{{ perks }}" as="p" hint-placeholder-count="5"><button type="button" onClick="{{ p.pick }}" aria-pressed="{{ p.on }}" style="height:38px; padding:0 14px; border-radius:999px; border:0; background:{{ p.bg }}; color:{{ p.fg }}; font-size:14px; cursor:pointer">{{ p.label }}</button></sc-for>
+      </div>
+
+      <label style="margin-top:28px; display:flex; flex-direction:column; gap:8px; font-size:13.5px; font-weight:500">Description<textarea rows="6" required="{{ true }}" defaultValue="Neighbourhood café on Ponsonby Road, open seven days from 6:30am. We’re after a barista who can hold a Saturday queue. Free coffee on shift and a staff meal after five hours." style="padding:12px 14px; border-radius:12px; border:1px solid #E8E8E6; font-size:15.5px; font-weight:400; line-height:1.55; resize:vertical; outline:none" style-focus="border-color:#00C97A; box-shadow:0 0 0 4px rgba(0,201,122,.16)"></textarea></label>
+
+      <div style="margin-top:28px; font-size:13.5px; font-weight:500">How to apply</div>
+      <div style="display:flex; gap:10px; margin-top:8px">
+        <div style="display:flex; padding:3px; gap:2px; border-radius:999px; background:#F5F5F4; flex:none">
+          <sc-for list="{{ applyModes }}" as="m" hint-placeholder-count="2"><button type="button" onClick="{{ m.pick }}" style="height:42px; padding:0 16px; border-radius:999px; border:0; background:{{ m.bg }}; box-shadow:{{ m.ring }}; font-size:14px; font-weight:500; cursor:pointer">{{ m.label }}</button></sc-for>
+        </div>
+        <input required="{{ true }}" aria-label="{{ applyLabel }}" placeholder="{{ applyPh }}" style="flex:1; min-width:0; height:48px; padding:0 14px; border-radius:12px; border:1px solid #E8E8E6; font-size:15.5px; outline:none" style-focus="border-color:#00C97A; box-shadow:0 0 0 4px rgba(0,201,122,.16)">
+      </div>
+
+      <label style="margin-top:28px; display:flex; flex-direction:column; gap:8px; font-size:13.5px; font-weight:500">Contact email<input type="email" required="{{ true }}" value="{{ email }}" onChange="{{ onEmail }}" placeholder="you@yourbusiness.co.nz" style="height:48px; padding:0 14px; border-radius:12px; border:1px solid #E8E8E6; font-size:16px; font-weight:400; outline:none" style-focus="border-color:#00C97A; box-shadow:0 0 0 4px rgba(0,201,122,.16)"><span style="font-size:12.5px; font-weight:400; color:#6B6B6B">Not shown on the listing. We send the publish link here.</span></label>
+
+      <label style="margin-top:28px; display:flex; align-items:flex-start; gap:12px; font-size:14px; line-height:1.5; cursor:pointer"><input type="checkbox" required="{{ true }}" style="width:18px; height:18px; margin-top:2px; accent-color:#0B0B0A">I agree to the posting rules: real job, real pay, legal to work in NZ, and no fee charged to applicants.</label>
+
+      <button type="submit" style="margin-top:32px; width:100%; height:56px; border-radius:999px; border:0; background:#0B0B0A; color:#FFFFFF; font-size:17px; font-weight:550; cursor:pointer" style-hover="background:#2A2A29">Publish</button>
+    </form>
+  </sc-if>
+
+  <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+    <section data-screen-label="Post a job sent" style="max-width:640px; margin:0 auto; padding:140px 40px; display:flex; flex-direction:column; align-items:center; text-align:center">
+      <span style="width:64px; height:64px; border-radius:50%; background:rgba(0,201,122,.14); display:flex; align-items:center; justify-content:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00573A" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><polyline points="3.5 6.5 12 13 20.5 6.5"></polyline></svg></span>
+      <h1 style="margin:24px 0 0; font-size:44px; font-weight:650; letter-spacing:-0.045em; line-height:1.05; text-wrap:balance">Check your email to publish your job.</h1>
+      <p style="margin:14px 0 0; font-size:16.5px; line-height:1.5; color:#6B6B6B; text-wrap:balance">We sent a link to <span style="color:#0B0B0A; font-weight:500">{{ emailShown }}</span>. Your job goes live on Radar as soon as you click it. The link works for 24 hours.</p>
+      <button onClick="{{ toForm }}" style="margin-top:32px; height:46px; padding:0 22px; border-radius:999px; border:0; background:#F5F5F4; font-size:15px; font-weight:500; cursor:pointer" style-hover="background:#ECECEA">Post another job</button>
+    </section>
+  </sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;view&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;landing&quot;,&quot;form&quot;,&quot;success&quot;],&quot;default&quot;:&quot;landing&quot;,&quot;tsType&quot;:&quot;'landing'|'form'|'success'&quot;,&quot;section&quot;:&quot;State&quot;}}">
+class Component extends DCLogic {
+  state = { view: this.props.view || 'landing', unit: 'hour', payNL: false, type: 'Part-time', perks: { Meals: 1, Tips: 1 }, mode: 'link', email: this.props.view === 'success' ? 'hello@kowhaicafe.co.nz' : '' };
+  scroller = React.createRef();
+  componentDidUpdate(pp) { if (pp.view !== this.props.view && this.props.view) this.setState({ view: this.props.view }); }
+  go(view) { this.setState({ view }); const el = this.scroller.current; if (el) el.scrollTop = 0; }
+  renderVals() {
+    const s = this.state;
+    const pill = on => on ? { bg: '#0B0B0A', fg: '#FFFFFF' } : { bg: '#F5F5F4', fg: '#1F1F1E' };
+    const seg = on => on ? { bg: '#FFFFFF', ring: '0 0 0 1px #E8E8E6' } : { bg: 'transparent', ring: 'none' };
+    return {
+      scroller: this.scroller,
+      isLanding: s.view === 'landing', isForm: s.view === 'form', isDone: s.view === 'success',
+      toForm: () => this.go('form'), toLanding: () => this.go('landing'),
+      lines: [
+        'Free to post. No account, no card.',
+        'Live within minutes, next to jobs from Seek and Trade Me.',
+        'Seen by backpackers, students and locals across New Zealand.',
+        'Applicants come straight to you, by link or email.',
+        'Fill it, then close it with one click from your email.'
+      ].map((text, i) => ({ text, n: '0' + (i + 1) })),
+      units: [['hour', '/hour'], ['day', '/day'], ['year', '/year']].map(([k, label]) => ({ label, ...seg(s.unit === k), pick: () => this.setState({ unit: k }) })),
+      payNL: s.payNL, payOp: s.payNL ? 0.4 : 1, togglePayNL: () => this.setState({ payNL: !s.payNL }),
+      types: ['Full-time', 'Part-time', 'Casual', 'Seasonal'].map(t => ({ label: t, ...pill(s.type === t), pick: () => this.setState({ type: t }) })),
+      perks: ['Accommodation', 'Meals', 'Tips', 'Transport', 'Open to working holiday visa'].map(p => ({ label: p, on: !!s.perks[p], ...pill(!!s.perks[p]), pick: () => this.setState(st => ({ perks: { ...st.perks, [p]: !st.perks[p] } })) })),
+      applyModes: [['link', 'Link'], ['email', 'Email']].map(([k, label]) => ({ label, ...seg(s.mode === k), pick: () => this.setState({ mode: k }) })),
+      applyLabel: s.mode === 'link' ? 'Application link' : 'Application email',
+      applyPh: s.mode === 'link' ? 'https://kowhaicafe.co.nz/jobs' : 'jobs@kowhaicafe.co.nz',
+      email: s.email, onEmail: e => this.setState({ email: e.target.value }), emailShown: s.email || 'your email',
+      submit: e => { e.preventDefault(); this.go('success'); }
+    };
+  }
+}
+</script>
+</body>
+</html>

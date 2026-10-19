@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#E9E9E7;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+::selection{background:rgba(0,201,122,.22)}
+@keyframes rdSpin{to{transform:rotate(360deg)}}
+@keyframes rdPing{0%{transform:scale(.12);opacity:0}12%{opacity:1}100%{transform:scale(1);opacity:0}}
+@keyframes rdBlip{0%{opacity:0;transform:scale(.3)}4%{opacity:1;transform:scale(1)}45%{opacity:0;transform:scale(.9)}100%{opacity:0}}
+@keyframes rdPulse{0%{box-shadow:0 0 0 0 rgba(0,201,122,.55)}70%{box-shadow:0 0 0 7px rgba(0,201,122,0)}100%{box-shadow:0 0 0 0 rgba(0,201,122,0)}}
+@keyframes rdPh{from{opacity:0;transform:translateY(55%)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" onPointerDownCapture="{{ activate }}" style="position:absolute; inset:0; display:flex; overflow:auto; background:#E9E9E7; font-family:'Geist',system-ui,sans-serif; color:#0B0B0A">
+<div ref="{{ devRef }}" style="position:relative; flex:none; margin:auto; width:390px; height:844px; overflow:hidden; border-radius:36px; background:#FFFFFF; isolation:isolate; box-shadow:0 0 0 1px rgba(0,0,0,.06)">
+
+  <div aria-hidden="true" style="position:absolute; z-index:60; top:0; left:0; right:0; height:47px; display:flex; align-items:center; justify-content:space-between; padding:4px 28px 0 38px; background:#FFFFFF; font-size:16px; font-weight:600; letter-spacing:-0.01em; pointer-events:none">
+    <span>9:41</span>
+    <span style="display:flex; align-items:center; gap:6px">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="#0B0B0A"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="#0B0B0A"><path d="M8 11.6l2.3-2.7a3.1 3.1 0 0 0-4.6 0zM3.1 6.3a7 7 0 0 1 9.8 0l-1.5 1.7a4.8 4.8 0 0 0-6.8 0zM.3 3.4a11 11 0 0 1 15.4 0L14.2 5a8.8 8.8 0 0 0-12.4 0z"></path></svg>
+      <span style="width:25px; height:12px; border-radius:3.5px; box-shadow:inset 0 0 0 1px rgba(11,11,10,.4); padding:2px; display:flex"><span style="flex:1; border-radius:1.5px; background:#0B0B0A"></span></span>
+    </span>
+  </div>
+
+  <sc-if value="{{ is.home }}" hint-placeholder-val="{{ true }}">
+  <div ref="{{ homeScroll }}" data-screen-label="Mobile Home" style="position:absolute; top:47px; left:0; right:0; bottom:0; overflow-y:auto; overflow-x:hidden; scrollbar-width:none">
+    <header style="position:relative; z-index:3; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 10px 0 20px">
+      <a href="#" onClick="{{ goHome }}" aria-label="Radar home" style="display:flex; align-items:baseline; gap:3px; padding:4px 2px">
+        <span style="font-size:21px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+        <span style="width:6px; height:6px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+      </a>
+      <div style="display:flex; align-items:center; gap:4px">
+        <span style="font-size:12.5px; color:#6B6B6B">Free · No account</span>
+        <button onClick="{{ goSaved }}" aria-label="{{ savedAria }}" style="position:relative; width:44px; height:44px; border:0; border-radius:999px; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2" strokeLinejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"></path></svg>
+          <sc-if value="{{ savedHas }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; top:6px; right:4px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:10.5px; font-weight:600; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2px #FFFFFF">{{ savedN }}</span></sc-if>
+        </button>
+      </div>
+    </header>
+
+    <section style="position:relative; z-index:0; isolation:isolate; display:flex; flex-direction:column; align-items:center; text-align:center; padding:36px 20px 56px">
+      <h1 style="margin:0; font-size:40px; font-weight:650; letter-spacing:-0.045em; line-height:1.06">
+        <span style="display:block">Every <span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#FCEEDC,#F1D5B1); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(-7deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.04)"><img src="assets/icons/coffee.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> job in</span>
+        <span style="display:block"><span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#ECF7DE,#CFE8B2); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(6deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.04)"><img src="assets/icons/kiwi.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> New Zealand.</span>
+        <span style="display:block"><span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#E8F1FC,#C8DCF4); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(-4deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.04)"><img src="assets/icons/mountain.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> One search.</span>
+      </h1>
+      <p style="margin:18px 0 0; max-width:320px; font-size:16px; line-height:1.45; color:#6B6B6B; text-wrap:balance">Seek, Trade Me, Backpacker Board, PickNZ and Facebook groups, all in one place.</p>
+
+      <div style="position:relative; width:100%; margin-top:30px">
+        {{ radarHome }}
+        <form onSubmit="{{ submitHome }}" role="search" style="position:relative; display:flex; align-items:center; gap:4px; height:56px; padding:0 6px 0 18px; background:#FFFFFF; border:1px solid {{ bar.bd }}; border-radius:999px; box-shadow:{{ bar.sh }}; transition:border-color .2s ease, box-shadow .3s ease">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.2" strokeLinecap="round" style="flex:none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+          <div style="position:relative; flex:1; min-width:0; height:100%">
+            <input ref="{{ homeInput }}" value="{{ draft }}" onChange="{{ onDraft }}" onFocus="{{ onFocus }}" onBlur="{{ onBlur }}" enterKeyHint="search" aria-label="Search every job in New Zealand" autoComplete="off" style="position:absolute; inset:0; width:100%; height:100%; border:0; outline:none; background:transparent; padding:0 10px; font-size:16px; letter-spacing:-0.01em; color:#0B0B0A">
+            <sc-if value="{{ showPh }}" hint-placeholder-val="{{ true }}">
+              <div aria-hidden="true" style="position:absolute; left:10px; right:6px; top:0; bottom:0; display:flex; align-items:center; overflow:hidden; pointer-events:none; font-size:16px; letter-spacing:-0.01em; color:#6B6B6B; text-align:left">{{ phEl }}</div>
+            </sc-if>
+          </div>
+          <button type="submit" style="flex:none; height:44px; padding:0 18px; border-radius:999px; border:0; background:#0B0B0A; color:#FFFFFF; font-size:15px; font-weight:550; cursor:pointer" style-active="transform:scale(.97)">Search</button>
+        </form>
+      </div>
+
+      <div style="align-self:stretch; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; margin:18px -20px 0; padding:0 20px">
+        <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="5">
+          <button onClick="{{ s.pick }}" style="flex:none; height:36px; padding:0 15px; border-radius:999px; border:0; background:#F5F5F4; font-size:14px; color:#1F1F1E; white-space:nowrap; cursor:pointer" style-active="transform:scale(.97)">{{ s.label }}</button>
+        </sc-for>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:9px; margin-top:24px; font-size:12.5px; color:#6B6B6B; white-space:nowrap">
+        {{ pulseDot }}
+        <span><span style="font-family:'Geist Mono',ui-monospace,monospace; color:#3D3D3C">12,480</span> jobs · updated today at <span style="font-family:'Geist Mono',ui-monospace,monospace; color:#3D3D3C">7:00</span></span>
+      </div>
+    </section>
+
+    <section ref="{{ freshRef }}" style="position:relative; z-index:1; padding-bottom:56px">
+      <div style="padding:0 20px; margin-bottom:14px">
+        <h2 style="margin:0; font-size:24px; font-weight:650; letter-spacing:-0.035em">Fresh today</h2>
+        <p style="margin:4px 0 0; font-size:14px; color:#6B6B6B">Posted since 7:00 this morning</p>
+      </div>
+      <div style="display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:4px 20px 8px; scroll-padding-inline:20px">
+        <sc-for list="{{ fresh }}" as="job" hint-placeholder-count="2">
+          <a href="#" onClick="{{ job.open }}" aria-label="{{ job.aria }}" style="flex:0 0 264px; scroll-snap-align:start; display:flex; flex-direction:column; gap:10px; border-radius:16px">
+            <div style="position:relative; width:100%; aspect-ratio:16/11; border-radius:14px; overflow:hidden; background:#F5F5F4">
+              <sc-if value="{{ job.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ job.photo }}" alt="" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block"></sc-if>
+              <sc-if value="{{ job.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; background:{{ job.grad }}; display:flex; align-items:center; justify-content:center"><img src="{{ job.icon }}" alt="" style="width:36%; height:auto; transform:rotate({{ job.rot }}deg); filter:drop-shadow(0 14px 16px rgba(0,0,0,.12))"></div></sc-if>
+              <div style="position:absolute; inset:0; border-radius:14px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05); pointer-events:none"></div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px; padding:0 2px">
+              <div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px">
+                <span style="min-width:0; font-size:15.5px; font-weight:600; letter-spacing:-0.015em; line-height:1.3">{{ job.title }}</span>
+                <span style="flex:none; font-family:{{ job.payFam }}; font-size:13px; font-weight:500; letter-spacing:-0.02em; color:{{ job.payC }}">{{ job.pay }}</span>
+              </div>
+              <span style="font-size:13.5px; line-height:1.35; color:#6B6B6B">{{ job.where }}</span>
+              <div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:4px">
+                <sc-for list="{{ job.badges }}" as="b" hint-placeholder-count="2">
+                  <span style="height:23px; padding:0 9px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:{{ b.fw }}; background:{{ b.bg }}; color:{{ b.fg }}; box-shadow:{{ b.bd }}"><sc-if value="{{ b.dot }}" hint-placeholder-val="{{ false }}"><span style="width:6px; height:6px; border-radius:50%; background:#00C97A"></span></sc-if>{{ b.label }}</span>
+                </sc-for>
+              </div>
+              <div style="display:flex; align-items:center; gap:7px; margin-top:3px; font-size:12.5px; color:#6B6B6B">
+                <img src="{{ job.favicon }}" alt="" style="width:14px; height:14px; border-radius:4px; filter:grayscale(1); opacity:.75">
+                <span>on {{ job.source }} · {{ job.ago }}</span>
+              </div>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="position:relative; z-index:1; padding:0 20px 64px">
+      <h2 style="margin:0 0 14px; font-size:24px; font-weight:650; letter-spacing:-0.035em">Browse by type</h2>
+      <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); grid-auto-rows:150px; gap:10px">
+        <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+          <a href="#" onClick="{{ c.go }}" aria-label="{{ c.aria }}" style="grid-column:span {{ c.span }}; position:relative; overflow:hidden; border-radius:16px; background:#F5F5F4; padding:16px; display:flex; flex-direction:column; justify-content:space-between" style-active="transform:scale(.98)">
+            <div style="position:relative; z-index:1">
+              <div style="font-size:17px; font-weight:600; letter-spacing:-0.025em">{{ c.label }}</div>
+              <div style="margin-top:3px; font-family:'Geist Mono',ui-monospace,monospace; font-size:12px; color:#6B6B6B">{{ c.count }} jobs</div>
+            </div>
+            <sc-if value="{{ c.wide }}" hint-placeholder-val="{{ false }}"><div style="position:relative; z-index:1; max-width:52%; font-size:13px; line-height:1.4; color:#6B6B6B; text-wrap:pretty">{{ c.eg }}</div></sc-if>
+            <img src="{{ c.icon }}" alt="" style="position:absolute; right:{{ c.right }}; bottom:{{ c.bottom }}; width:{{ c.size }}; height:auto; transform:rotate({{ c.rot }}deg); filter:drop-shadow(0 12px 14px rgba(0,0,0,.10)); pointer-events:none">
+          </a>
+        </sc-for>
+      </div>
+    </section>
+
+    <footer style="position:relative; z-index:1; background:#0B0B0A; color:#FFFFFF; overflow:hidden">
+      <div style="padding:44px 20px 0; display:flex; flex-direction:column; gap:14px">
+        <div style="display:flex; align-items:baseline; gap:3px">
+          <span style="font-size:21px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+          <span style="width:6px; height:6px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+        </div>
+        <p style="margin:0; font-size:13.5px; line-height:1.6; color:#A3A3A1; text-wrap:pretty">Radar links to jobs posted on other websites. Always apply on the original listing. Never pay to get a job.</p>
+        <span style="font-size:12.5px; color:#A3A3A1">© 2026 Radar</span>
+      </div>
+      <div aria-hidden="true" style="margin-top:36px; height:132px; overflow:hidden; display:flex; justify-content:center">
+        <span style="font-size:200px; font-weight:700; letter-spacing:-0.075em; line-height:0.8; color:#1D1D1C; white-space:nowrap; user-select:none">Radar</span>
+      </div>
+    </footer>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ is.results }}" hint-placeholder-val="{{ false }}">
+  <div ref="{{ resScroll }}" onScroll="{{ onResScroll }}" data-screen-label="Mobile Results" style="position:absolute; top:47px; left:0; right:0; bottom:0; overflow-y:auto; overflow-x:hidden; scrollbar-width:none">
+    <div style="position:sticky; top:0; z-index:10; background:#FFFFFF; padding:6px 0 12px; box-shadow:{{ ui.line }}; transition:box-shadow .2s ease">
+      <div style="display:flex; align-items:center; gap:4px; padding:0 6px 0 4px">
+        <button onClick="{{ goHome }}" aria-label="Back to Home" style="flex:none; width:44px; height:44px; border:0; border-radius:999px; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+        <form onSubmit="{{ submitRes }}" role="search" style="flex:1; min-width:0; display:flex; align-items:center; height:44px; padding:0 4px 0 14px; border-radius:999px; background:#F5F5F4; box-shadow:{{ ui.ring }}; transition:box-shadow .2s ease">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" strokeWidth="2.2" strokeLinecap="round" style="flex:none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+          <input value="{{ draft }}" onChange="{{ onDraft }}" onFocus="{{ onResFocus }}" onBlur="{{ onResBlur }}" enterKeyHint="search" aria-label="Search jobs" autoComplete="off" style="flex:1; min-width:0; height:100%; border:0; outline:none; background:transparent; padding:0 8px; font-size:16px; letter-spacing:-0.01em">
+          <sc-if value="{{ hasDraft }}" hint-placeholder-val="{{ true }}">
+            <button type="button" onClick="{{ clearDraft }}" aria-label="Clear search" style="flex:none; width:36px; height:36px; border:0; border-radius:999px; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer"><span style="width:18px; height:18px; border-radius:50%; background:#C9C9C7; display:flex; align-items:center; justify-content:center"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round"><line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line></svg></span></button>
+          </sc-if>
+        </form>
+        <button onClick="{{ goSaved }}" aria-label="{{ savedAria }}" style="position:relative; flex:none; width:44px; height:44px; border:0; border-radius:999px; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2" strokeLinejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"></path></svg>
+          <sc-if value="{{ savedHas }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; top:6px; right:4px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:10.5px; font-weight:600; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2px #FFFFFF">{{ savedN }}</span></sc-if>
+        </button>
+      </div>
+      <div style="display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding:10px 16px 0">
+        <button onClick="{{ openFiltersAll }}" style="flex:none; height:36px; padding:0 13px 0 12px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; gap:7px; font-size:14px; font-weight:500; white-space:nowrap; cursor:pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.1" strokeLinecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="17" x2="20" y2="17"></line><circle cx="9" cy="7" r="2.6" fill="#FFFFFF"></circle><circle cx="15" cy="17" r="2.6" fill="#FFFFFF"></circle></svg>
+          Filters
+          <sc-if value="{{ fCount.has }}" hint-placeholder-val="{{ false }}"><span style="min-width:19px; height:19px; padding:0 5px; border-radius:999px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:11px; font-weight:600; display:inline-flex; align-items:center; justify-content:center">{{ fCount.n }}</span></sc-if>
+        </button>
+        <sc-for list="{{ pills }}" as="p" hint-placeholder-count="5">
+          <button onClick="{{ p.click }}" aria-pressed="{{ p.on }}" style="flex:none; height:36px; padding:0 14px; border-radius:999px; border:0; background:{{ p.bg }}; color:{{ p.fg }}; display:inline-flex; align-items:center; gap:5px; font-size:14px; white-space:nowrap; cursor:pointer; transition:background .15s ease">{{ p.label }}<sc-if value="{{ p.chev }}" hint-placeholder-val="{{ true }}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style="opacity:.6"><polyline points="6 9 12 15 18 9"></polyline></svg></sc-if></button>
+        </sc-for>
+      </div>
+    </div>
+
+    <sc-if value="{{ hdr.show }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:14px 16px 0">
+      <sc-if value="{{ hdr.ready }}" hint-placeholder-val="{{ true }}">
+        <h1 style="margin:0; font-size:22px; font-weight:650; letter-spacing:-0.03em; line-height:1.2; text-wrap:balance"><span style="font-family:'Geist Mono',ui-monospace,monospace; font-weight:500; letter-spacing:-0.05em">{{ hdr.count }}</span> {{ hdr.word }} for “{{ hdr.q }}”</h1>
+      </sc-if>
+      <sc-if value="{{ hdr.loading }}" hint-placeholder-val="{{ false }}">
+        <h1 style="margin:0; font-size:22px; font-weight:650; letter-spacing:-0.03em; line-height:1.2; display:flex; align-items:center; gap:10px">{{ miniRadar }}<span>Searching for “{{ hdr.q }}”</span></h1>
+      </sc-if>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:10px">
+        <span style="display:flex; align-items:center; gap:7px; min-width:0; font-size:13px; color:#6B6B6B; white-space:nowrap">{{ pulseDot }}{{ hdr.meta }}</span>
+        <div style="flex:none; display:flex; gap:6px">
+          <button onClick="{{ openSort }}" aria-label="{{ sortAria }}" style="height:34px; padding:0 12px 0 10px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; gap:6px; font-size:13.5px; cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"></path></svg>Sort</button>
+          <button onClick="{{ toggleView }}" aria-label="{{ viewAria }}" style="height:34px; padding:0 12px 0 10px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; gap:6px; font-size:13.5px; cursor:pointer">
+            <sc-if value="{{ viewIsCards }}" hint-placeholder-val="{{ true }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.1" strokeLinejoin="round"><rect x="4" y="3.5" width="16" height="7.5" rx="2"></rect><rect x="4" y="13" width="16" height="7.5" rx="2"></rect></svg></sc-if>
+            <sc-if value="{{ viewIsList }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.1" strokeLinecap="round"><line x1="9" y1="6" x2="21" y2="6"></line><line x1="9" y1="12" x2="21" y2="12"></line><line x1="9" y1="18" x2="21" y2="18"></line><line x1="3.5" y1="6" x2="4.5" y2="6"></line><line x1="3.5" y1="12" x2="4.5" y2="12"></line><line x1="3.5" y1="18" x2="4.5" y2="18"></line></svg></sc-if>
+            {{ viewLabel }}
+          </button>
+        </div>
+      </div>
+      <button onClick="{{ openAlert }}" style="margin-top:10px; height:32px; padding:0; border:0; background:transparent; display:inline-flex; align-items:center; gap:7px; font-size:13.5px; font-weight:500; color:#0B0B0A; cursor:pointer">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><polyline points="3.5 6.5 12 13 20.5 6.5"></polyline></svg>
+        <span style="border-bottom:1px solid #D6D6D4">Get these jobs by email</span>
+      </button>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ show.cards }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; flex-direction:column; gap:28px; padding:16px 16px 0">
+        <sc-for list="{{ cards }}" as="job" hint-placeholder-count="2">
+          <div style="position:relative">
+            <a href="#" onClick="{{ job.open }}" aria-label="{{ job.aria }}" style="display:flex; flex-direction:column; gap:12px; border-radius:16px">
+              <div style="position:relative; width:100%; aspect-ratio:16/10; border-radius:14px; overflow:hidden; background:#F5F5F4">
+                <sc-if value="{{ job.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ job.photo }}" alt="" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block"></sc-if>
+                <sc-if value="{{ job.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; background:{{ job.grad }}; display:flex; align-items:center; justify-content:center"><img src="{{ job.icon }}" alt="" style="width:32%; height:auto; transform:rotate({{ job.rot }}deg); filter:drop-shadow(0 16px 18px rgba(0,0,0,.12))"></div></sc-if>
+                <div style="position:absolute; inset:0; border-radius:14px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05); pointer-events:none"></div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px; padding:0 2px">
+                <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px">
+                  <span style="min-width:0; font-size:16.5px; font-weight:600; letter-spacing:-0.015em; line-height:1.3">{{ job.title }}</span>
+                  <span style="flex:none; font-family:{{ job.payFam }}; font-size:14px; font-weight:500; letter-spacing:-0.02em; color:{{ job.payC }}">{{ job.pay }}</span>
+                </div>
+                <span style="font-size:14px; line-height:1.35; color:#6B6B6B">{{ job.where }}</span>
+                <div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:5px">
+                  <sc-for list="{{ job.badges }}" as="b" hint-placeholder-count="2">
+                    <span style="height:24px; padding:0 9px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:{{ b.fw }}; background:{{ b.bg }}; color:{{ b.fg }}; box-shadow:{{ b.bd }}"><sc-if value="{{ b.dot }}" hint-placeholder-val="{{ false }}"><span style="width:6px; height:6px; border-radius:50%; background:#00C97A"></span></sc-if>{{ b.label }}</span>
+                  </sc-for>
+                </div>
+                <div style="display:flex; align-items:center; gap:7px; margin-top:4px; font-size:12.5px; color:#6B6B6B">
+                  <img src="{{ job.favicon }}" alt="" style="width:14px; height:14px; border-radius:4px; filter:grayscale(1); opacity:.75">
+                  <span>on {{ job.source }} · {{ job.ago }}</span>
+                </div>
+              </div>
+            </a>
+            <button onClick="{{ job.save }}" aria-label="{{ job.saveAria }}" aria-pressed="{{ job.saved }}" style="position:absolute; top:10px; right:10px; width:40px; height:40px; border-radius:999px; border:0; background:rgba(255,255,255,.94); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .15s ease" style-active="transform:scale(.9)"><svg width="16" height="16" viewBox="0 0 24 24" fill="{{ job.bmFill }}" stroke="#0B0B0A" strokeWidth="2.1" strokeLinejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"></path></svg></button>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ show.list }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; padding:8px 16px 0">
+        <sc-for list="{{ cards }}" as="job" hint-placeholder-count="4">
+          <div style="position:relative; border-bottom:1px solid #E8E8E6">
+            <a href="#" onClick="{{ job.open }}" aria-label="{{ job.aria }}" style="display:flex; gap:14px; padding:14px 44px 14px 0">
+              <div style="position:relative; flex:none; width:76px; height:76px; border-radius:12px; overflow:hidden; background:#F5F5F4">
+                <sc-if value="{{ job.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ job.photo }}" alt="" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover"></sc-if>
+                <sc-if value="{{ job.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; background:{{ job.grad }}; display:flex; align-items:center; justify-content:center"><img src="{{ job.icon }}" alt="" style="width:58%; height:auto; transform:rotate({{ job.rot }}deg)"></div></sc-if>
+                <div style="position:absolute; inset:0; border-radius:12px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)"></div>
+              </div>
+              <div style="min-width:0; flex:1; display:flex; flex-direction:column; gap:3px">
+                <span style="font-size:15px; font-weight:600; letter-spacing:-0.015em; line-height:1.3">{{ job.title }}</span>
+                <span style="font-size:13.5px; color:#6B6B6B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ job.where }}</span>
+                <div style="display:flex; align-items:center; gap:8px; margin-top:2px">
+                  <span style="font-family:{{ job.payFam }}; font-size:13px; font-weight:500; letter-spacing:-0.02em; color:{{ job.payC }}">{{ job.pay }}</span>
+                  <span style="font-size:12px; color:#6B6B6B">· {{ job.source }} · {{ job.ago }}</span>
+                </div>
+                <div style="display:flex; gap:5px; margin-top:4px; overflow:hidden">
+                  <sc-for list="{{ job.badges2 }}" as="b" hint-placeholder-count="1">
+                    <span style="flex:none; height:22px; padding:0 8px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:{{ b.fw }}; background:{{ b.bg }}; color:{{ b.fg }}; box-shadow:{{ b.bd }}"><sc-if value="{{ b.dot }}" hint-placeholder-val="{{ false }}"><span style="width:5px; height:5px; border-radius:50%; background:#00C97A"></span></sc-if>{{ b.label }}</span>
+                  </sc-for>
+                </div>
+              </div>
+            </a>
+            <button onClick="{{ job.save }}" aria-label="{{ job.saveAria }}" aria-pressed="{{ job.saved }}" style="position:absolute; top:12px; right:-4px; width:40px; height:40px; border-radius:999px; border:0; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="{{ job.bmFill }}" stroke="#0B0B0A" strokeWidth="2.1" strokeLinejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"></path></svg></button>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ show.skel }}" hint-placeholder-val="{{ false }}">
+      <div aria-hidden="true" style="display:flex; flex-direction:column; gap:28px; padding:16px 16px 0">
+        <sc-for list="{{ skel }}" as="k" hint-placeholder-count="3">
+          <div style="display:flex; flex-direction:column; gap:12px">
+            <div style="aspect-ratio:16/10; border-radius:14px; background:#F5F5F4"></div>
+            <div style="display:flex; justify-content:space-between; gap:12px"><div style="height:14px; width:{{ k.w1 }}; border-radius:6px; background:#EFEFED"></div><div style="height:14px; width:62px; border-radius:6px; background:#EFEFED"></div></div>
+            <div style="height:12px; width:{{ k.w2 }}; border-radius:6px; background:#F5F5F4"></div>
+            <div style="display:flex; gap:6px"><div style="height:24px; width:52px; border-radius:999px; background:#F5F5F4"></div><div style="height:24px; width:96px; border-radius:999px; background:#F5F5F4"></div></div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ show.empty }}" hint-placeholder-val="{{ false }}">
+      <div style="position:relative; isolation:isolate; overflow:hidden; display:flex; flex-direction:column; align-items:center; text-align:center; padding:64px 24px 24px">
+        {{ emptyRadar }}
+        <h2 style="margin:0; font-size:24px; font-weight:650; letter-spacing:-0.03em; line-height:1.2; text-wrap:balance">No jobs for “{{ empty.q }}” yet.</h2>
+        <p style="margin:8px 0 0; font-size:15.5px; color:#6B6B6B">{{ empty.tip }}</p>
+        <sc-if value="{{ empty.hasDym }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:24px 0 0; font-size:15.5px">Did you mean <button onClick="{{ empty.dym }}" style="border:0; background:transparent; padding:0; font-size:15.5px; font-weight:600; border-bottom:1.5px solid #00C97A; cursor:pointer">{{ empty.dymQ }}</button>?</p>
+        </sc-if>
+        <sc-if value="{{ empty.hasFilters }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:24px; display:flex; flex-direction:column; align-items:center; gap:10px">
+            <span style="font-size:13px; color:#6B6B6B">Remove a filter</span>
+            <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px">
+              <sc-for list="{{ empty.filters }}" as="x" hint-placeholder-count="2">
+                <button onClick="{{ x.remove }}" style="height:36px; padding:0 10px 0 14px; border-radius:999px; border:0; background:#F5F5F4; display:inline-flex; align-items:center; gap:6px; font-size:14px; cursor:pointer">{{ x.label }}<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" strokeWidth="2.6" strokeLinecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg></button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <button onClick="{{ openAlert }}" style="margin-top:28px; height:46px; padding:0 20px 0 16px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; gap:8px; font-size:15px; font-weight:500; cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20.5a2.2 2.2 0 0 0 4 0"></path></svg>Get an alert for this search</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ show.foot }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; flex-direction:column; align-items:center; gap:24px; padding:40px 16px 0">
+        <sc-if value="{{ more.has }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ more.load }}" style="width:100%; height:48px; border-radius:999px; border:0; background:#F5F5F4; font-size:15px; font-weight:500; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer"><sc-if value="{{ more.busy }}" hint-placeholder-val="{{ false }}">{{ miniRadarSm }}</sc-if>{{ more.label }}</button>
+        </sc-if>
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; font-size:14px; color:#6B6B6B">
+          <span>Also search on:</span>
+          <a href="{{ also.seek }}" target="_blank" rel="noopener" style="color:#0B0B0A; font-weight:500; border-bottom:1px solid #D6D6D4">Seek ↗</a>
+          <span>·</span>
+          <a href="{{ also.tm }}" target="_blank" rel="noopener" style="color:#0B0B0A; font-weight:500; border-bottom:1px solid #D6D6D4">Trade Me ↗</a>
+        </div>
+      </div>
+    </sc-if>
+    <div style="margin-top:40px; padding:20px 16px 44px; border-top:1px solid #E8E8E6; font-size:12.5px; line-height:1.5; color:#6B6B6B; text-wrap:pretty">Radar links to jobs posted on other websites. Always apply on the original listing.</div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ is.saved }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Mobile Saved" style="position:absolute; top:47px; left:0; right:0; bottom:0; overflow-y:auto; overflow-x:hidden; scrollbar-width:none">
+    <header style="position:sticky; top:0; z-index:5; height:52px; display:flex; align-items:center; padding:0 4px; background:#FFFFFF">
+      <button onClick="{{ goBack }}" aria-label="Back" style="width:44px; height:44px; border:0; border-radius:999px; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+    </header>
+    <div style="padding:2px 20px 0">
+      <h1 style="margin:0; font-size:32px; font-weight:650; letter-spacing:-0.04em">Saved</h1>
+      <p style="margin:6px 0 0; font-size:14px; color:#6B6B6B"><span style="font-family:'Geist Mono',ui-monospace,monospace; color:#3D3D3C">{{ savedN }}</span> {{ savedWord }} · kept on this phone</p>
+      <div style="display:flex; gap:8px; margin-top:18px">
+        <button onClick="{{ exportCsv }}" style="flex:none; height:40px; padding:0 14px 0 12px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; gap:7px; font-size:14px; font-weight:500; cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>Export CSV</button>
+        <button onClick="{{ openEmailSaved }}" style="flex:1; min-width:0; height:40px; padding:0 14px 0 12px; border-radius:999px; border:1px solid #E8E8E6; background:#FFFFFF; display:inline-flex; align-items:center; justify-content:center; gap:7px; font-size:14px; font-weight:500; white-space:nowrap; cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><polyline points="3.5 6.5 12 13 20.5 6.5"></polyline></svg>Email me my saved jobs</button>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; padding:20px 20px 48px">
+      <sc-for list="{{ savedList }}" as="s" hint-placeholder-count="4">
+        <div style="position:relative; border-top:1px solid #E8E8E6">
+          <a href="#" onClick="{{ s.open }}" aria-label="{{ s.aria }}" style="display:flex; gap:14px; padding:16px 44px 16px 0; opacity:{{ s.op }}">
+            <div style="position:relative; flex:none; width:72px; height:72px; border-radius:12px; overflow:hidden; background:#F5F5F4; filter:{{ s.filter }}">
+              <sc-if value="{{ s.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ s.photo }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover"></sc-if>
+              <sc-if value="{{ s.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; background:{{ s.grad }}; display:flex; align-items:center; justify-content:center"><img src="{{ s.icon }}" alt="" style="width:58%; height:auto; transform:rotate({{ s.rot }}deg)"></div></sc-if>
+              <div style="position:absolute; inset:0; border-radius:12px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)"></div>
+            </div>
+            <div style="min-width:0; flex:1; display:flex; flex-direction:column; gap:3px">
+              <span style="font-size:15.5px; font-weight:600; letter-spacing:-0.015em; line-height:1.3">{{ s.title }}</span>
+              <span style="font-size:13.5px; color:#6B6B6B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ s.where }}</span>
+              <span style="font-family:{{ s.payFam }}; font-size:13px; font-weight:500; letter-spacing:-0.02em; color:{{ s.payC }}">{{ s.pay }}</span>
+              <div style="display:flex; align-items:center; gap:7px; margin-top:4px">
+                <sc-if value="{{ s.applied }}" hint-placeholder-val="{{ false }}"><span style="height:24px; padding:0 9px 0 7px; border-radius:999px; background:rgba(0,201,122,.14); color:#00573A; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00573A" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="5 12.5 10 17.5 19 7"></polyline></svg>Applied</span></sc-if>
+                <sc-if value="{{ s.closed }}" hint-placeholder-val="{{ false }}"><span style="height:24px; padding:0 9px; border-radius:999px; background:#FFFFFF; box-shadow:inset 0 0 0 1px #D6D6D4; color:#3D3D3C; font-size:12px; font-weight:500; display:inline-flex; align-items:center">Closed</span></sc-if>
+                <span style="font-size:12px; color:#6B6B6B">{{ s.meta }}</span>
+              </div>
+            </div>
+          </a>
+          <button onClick="{{ s.remove }}" aria-label="Remove from saved" style="position:absolute; right:-6px; top:14px; width:40px; height:40px; border-radius:999px; border:0; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="#0B0B0A" stroke="#0B0B0A" strokeWidth="2.1" strokeLinejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"></path></svg></button>
+        </div>
+      </sc-for>
+      <sc-if value="{{ savedEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:56px 12px; text-align:center; font-size:15px; line-height:1.5; color:#6B6B6B; text-wrap:balance">No saved jobs yet. Tap the bookmark on any job to keep it here.</div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <div onClick="{{ closeSheet }}" style="position:absolute; inset:0; z-index:20; background:rgba(11,11,10,.34); opacity:{{ dim.op }}; pointer-events:{{ dim.pe }}; transition:opacity .35s ease"></div>
+
+  <div role="dialog" aria-label="Job details" aria-hidden="{{ js.hidden }}" style="position:absolute; left:0; right:0; bottom:0; z-index:21; height:{{ js.h }}; transform:{{ js.tf }}; transition:{{ js.tr }}; background:#FFFFFF; border-radius:20px 20px 0 0; box-shadow:0 -10px 40px rgba(0,0,0,.14); display:flex; flex-direction:column; overflow:hidden">
+    <div onPointerDown="{{ dragDown }}" style="flex:none; touch-action:none; cursor:grab; padding:8px 10px 6px 8px">
+      <div style="width:38px; height:5px; border-radius:999px; background:#D6D6D4; margin:0 auto 6px"></div>
+      <div style="display:flex; align-items:center; gap:0">
+        <button onClick="{{ jv.save }}" aria-pressed="{{ jv.saved }}" style="height:40px; padding:0 11px; border:0; border-radius:999px; background:transparent; display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:500; cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="{{ jv.bmFill }}" stroke="#0B0B0A" strokeWidth="2.1" strokeLinejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"></path></svg>{{ jv.saveLabel }}</button>
+        <button onClick="{{ jv.share }}" style="height:40px; padding:0 11px; border:0; border-radius:999px; background:transparent; display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:500; cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12M7.5 7.5L12 3l4.5 4.5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"></path></svg>Share</button>
+        <button onClick="{{ jv.report }}" style="height:40px; padding:0 11px; border:0; border-radius:999px; background:transparent; display:inline-flex; align-items:center; gap:6px; font-size:14px; font-weight:500; cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M5 21V4M5 4h12l-2.5 4.5L17 13H5"></path></svg>Report</button>
+        <span style="flex:1"></span>
+        <button onClick="{{ closeSheet }}" aria-label="Close" style="width:36px; height:36px; border:0; border-radius:999px; background:#F5F5F4; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.6" strokeLinecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg></button>
+      </div>
+    </div>
+    <div ref="{{ sheetScroll }}" onScroll="{{ onSheetScroll }}" style="flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; padding:4px 20px 28px">
+      <div style="position:relative; width:100%; aspect-ratio:16/10; border-radius:14px; overflow:hidden; background:#F5F5F4">
+        <sc-if value="{{ jv.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ jv.photo }}" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover"></sc-if>
+        <sc-if value="{{ jv.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; background:{{ jv.grad }}; display:flex; align-items:center; justify-content:center"><img src="{{ jv.icon }}" alt="" style="width:34%; height:auto; transform:rotate({{ jv.rot }}deg); filter:drop-shadow(0 16px 18px rgba(0,0,0,.12))"></div></sc-if>
+        <div style="position:absolute; inset:0; border-radius:14px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)"></div>
+      </div>
+      <h2 style="margin:18px 0 0; font-size:28px; font-weight:650; letter-spacing:-0.035em; line-height:1.1">{{ jv.title }}</h2>
+      <p style="margin:8px 0 0; font-size:15px; line-height:1.4; color:#6B6B6B"><button onClick="{{ jv.employerGo }}" style="border:0; background:transparent; padding:0; font-size:15px; font-weight:500; color:#0B0B0A; text-decoration:underline; text-decoration-color:#D6D6D4; text-underline-offset:3px; cursor:pointer">{{ jv.employer }}</button> · {{ jv.place }}</p>
+      <div style="display:flex; align-items:baseline; gap:6px; margin-top:16px">
+        <span style="font-family:{{ jv.payFam }}; font-size:22px; font-weight:500; letter-spacing:-0.03em; color:{{ jv.payC }}">{{ jv.payMain }}</span>
+        <span style="font-family:'Geist Mono',ui-monospace,monospace; font-size:14px; color:#6B6B6B">{{ jv.payUnit }}</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:12px">
+        <sc-for list="{{ jv.badges }}" as="b" hint-placeholder-count="3">
+          <span style="height:26px; padding:0 10px; border-radius:999px; display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:{{ b.fw }}; background:{{ b.bg }}; color:{{ b.fg }}; box-shadow:{{ b.bd }}"><sc-if value="{{ b.dot }}" hint-placeholder-val="{{ false }}"><span style="width:6px; height:6px; border-radius:50%; background:#00C97A"></span></sc-if>{{ b.label }}</span>
+        </sc-for>
+      </div>
+      <div style="position:relative; height:128px; margin-top:20px; border-radius:12px; overflow:hidden; background:#F2F2F0">
+        <sc-for list="{{ jv.tiles }}" as="t" hint-placeholder-count="0">
+          <img src="{{ t.src }}" alt="" style="position:absolute; left:{{ t.left }}; top:{{ t.top }}; width:256px; height:256px; max-width:none">
+        </sc-for>
+        <span style="position:absolute; left:50%; top:50%; width:16px; height:16px; margin:-8px 0 0 -8px; border-radius:50%; background:#0B0B0A; box-shadow:0 0 0 3px #FFFFFF, 0 0 0 11px rgba(0,201,122,.22)"></span>
+        <span style="position:absolute; left:10px; bottom:10px; height:26px; padding:0 10px; border-radius:999px; background:#FFFFFF; font-size:12.5px; font-weight:500; display:inline-flex; align-items:center">{{ jv.place }}</span>
+        <div style="position:absolute; inset:0; border-radius:12px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.07); pointer-events:none"></div>
+      </div>
+      <h3 style="margin:28px 0 10px; font-size:17px; font-weight:600; letter-spacing:-0.02em">Key facts</h3>
+      <div style="display:flex; flex-direction:column; gap:9px">
+        <sc-for list="{{ jv.facts }}" as="f" hint-placeholder-count="5">
+          <div style="display:flex; align-items:center; gap:12px; font-size:15px; line-height:1.4"><span style="flex:none; width:6px; height:6px; border-radius:50%; background:#0B0B0A"></span><span>{{ f.text }}</span></div>
+        </sc-for>
+      </div>
+      <h3 style="margin:28px 0 0; font-size:17px; font-weight:600; letter-spacing:-0.02em">Description</h3>
+      <div style="position:relative">
+        <sc-for list="{{ jv.desc }}" as="d" hint-placeholder-count="3">
+          <sc-if value="{{ d.isH }}" hint-placeholder-val="{{ false }}"><div style="margin-top:16px; font-size:15px; font-weight:600">{{ d.text }}</div></sc-if>
+          <sc-if value="{{ d.isP }}" hint-placeholder-val="{{ true }}"><p style="margin:10px 0 0; font-size:15px; line-height:1.55; color:#2B2B2A; text-wrap:pretty">{{ d.text }}</p></sc-if>
+          <sc-if value="{{ d.isLi }}" hint-placeholder-val="{{ false }}"><div style="display:flex; gap:10px; margin-top:6px; font-size:15px; line-height:1.5; color:#2B2B2A"><span style="flex:none; width:4px; height:4px; border-radius:50%; background:#6B6B6B; margin-top:10px"></span><span>{{ d.text }}</span></div></sc-if>
+        </sc-for>
+        <sc-if value="{{ jv.collapsed }}" hint-placeholder-val="{{ true }}"><div style="position:absolute; left:0; right:0; bottom:0; height:56px; background:linear-gradient(rgba(255,255,255,0), #FFFFFF); pointer-events:none"></div></sc-if>
+      </div>
+      <button onClick="{{ jv.toggleDesc }}" style="margin-top:10px; height:36px; padding:0 14px; border-radius:999px; border:0; background:#F5F5F4; font-size:14px; font-weight:500; cursor:pointer">{{ jv.descLabel }}</button>
+      <div style="margin-top:24px; padding-top:18px; border-top:1px solid #E8E8E6; display:flex; flex-direction:column; gap:8px; font-size:13.5px; color:#6B6B6B">
+        <span>{{ jv.posted }}</span>
+        <span style="display:flex; align-items:center; gap:7px">via <img src="{{ jv.favicon }}" alt="" style="width:14px; height:14px; border-radius:4px"><span style="color:#0B0B0A; font-weight:500">{{ jv.source }}</span></span>
+      </div>
+      <h3 style="margin:28px 0 12px; font-size:17px; font-weight:600; letter-spacing:-0.02em">Similar jobs</h3>
+      <div style="display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; margin:0 -20px; padding:0 20px 4px">
+        <sc-for list="{{ jv.similar }}" as="m" hint-placeholder-count="3">
+          <a href="#" onClick="{{ m.open }}" aria-label="{{ m.aria }}" style="flex:0 0 148px; display:flex; flex-direction:column; gap:8px">
+            <div style="position:relative; width:100%; aspect-ratio:4/3; border-radius:12px; overflow:hidden; background:#F5F5F4">
+              <sc-if value="{{ m.hasPhoto }}" hint-placeholder-val="{{ false }}"><img src="{{ m.photo }}" alt="" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover"></sc-if>
+              <sc-if value="{{ m.noPhoto }}" hint-placeholder-val="{{ false }}"><div style="position:absolute; inset:0; background:{{ m.grad }}; display:flex; align-items:center; justify-content:center"><img src="{{ m.icon }}" alt="" style="width:42%; height:auto; transform:rotate({{ m.rot }}deg)"></div></sc-if>
+              <div style="position:absolute; inset:0; border-radius:12px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)"></div>
+            </div>
+            <span style="font-size:13.5px; font-weight:600; letter-spacing:-0.01em; line-height:1.3">{{ m.title }}</span>
+            <span style="margin-top:-4px; font-family:{{ m.payFam }}; font-size:12.5px; color:{{ m.payC }}">{{ m.pay }}</span>
+          </a>
+        </sc-for>
+      </div>
+      <div style="margin-top:28px; display:flex; align-items:center; gap:8px; font-size:13px; color:#6B6B6B"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" strokeWidth="2" strokeLinejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"></path></svg>Never pay to get a job.</div>
+    </div>
+    <div style="flex:none; padding:10px 16px 26px; border-top:1px solid #E8E8E6; background:#FFFFFF; display:flex; flex-direction:column; gap:9px">
+      <span style="font-size:12.5px; color:#6B6B6B; text-align:center">You'll apply on the original listing.</span>
+      <a href="{{ jv.url }}" target="_blank" rel="noopener" style="height:52px; border-radius:999px; background:#0B0B0A; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:550; letter-spacing:-0.01em" style-hover="color:#FFFFFF; background:#2A2A29"><span>Apply on {{ jv.source }} ↗</span></a>
+    </div>
+  </div>
+
+  <div role="dialog" aria-label="Sort" aria-hidden="{{ ss.hidden }}" style="position:absolute; left:8px; right:8px; bottom:10px; z-index:22; border-radius:24px; background:#FFFFFF; padding:8px 8px 10px; transform:{{ ss.tf }}; transition:transform .38s cubic-bezier(.2,.8,.2,1); box-shadow:0 18px 48px rgba(0,0,0,.18)">
+    <div onPointerDown="{{ dragSmall }}" style="touch-action:none; padding:0 0 4px">
+      <div style="width:38px; height:5px; border-radius:999px; background:#D6D6D4; margin:0 auto 10px"></div>
+      <div style="padding:2px 12px 6px; font-size:13px; color:#6B6B6B">Sort by</div>
+    </div>
+    <sc-for list="{{ sorts }}" as="o" hint-placeholder-count="5">
+      <button onClick="{{ o.pick }}" style="width:100%; height:52px; padding:0 14px; border:0; border-radius:14px; background:transparent; display:flex; align-items:center; justify-content:space-between; font-size:16px; font-weight:{{ o.fw }}; cursor:pointer" style-active="background:#F5F5F4">{{ o.label }}<sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="5 12.5 10 17.5 19 7"></polyline></svg></sc-if></button>
+    </sc-for>
+  </div>
+
+  <div role="dialog" aria-label="{{ as.title }}" aria-hidden="{{ as.hidden }}" style="position:absolute; left:0; right:0; bottom:0; z-index:22; border-radius:20px 20px 0 0; background:#FFFFFF; padding:8px 20px 30px; transform:{{ as.tf }}; transition:transform .4s cubic-bezier(.2,.8,.2,1); box-shadow:0 -10px 40px rgba(0,0,0,.14)">
+    <div onPointerDown="{{ dragSmall }}" style="touch-action:none; padding-bottom:4px"><div style="width:38px; height:5px; border-radius:999px; background:#D6D6D4; margin:0 auto"></div></div>
+    <h2 style="margin:16px 0 0; font-size:22px; font-weight:650; letter-spacing:-0.03em">{{ as.title }}</h2>
+    <p style="margin:6px 0 0; font-size:14.5px; line-height:1.45; color:#6B6B6B; text-wrap:pretty">{{ as.sub }}</p>
+    <sc-if value="{{ as.isAlert }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:14px">
+        <sc-for list="{{ as.chips }}" as="c" hint-placeholder-count="2">
+          <span style="height:28px; padding:0 11px; border-radius:999px; background:#F5F5F4; display:inline-flex; align-items:center; font-size:13px">{{ c.label }}</span>
+        </sc-for>
+      </div>
+      <div style="margin-top:18px; font-size:13px; color:#6B6B6B">How often</div>
+      <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:3px; margin-top:8px; padding:3px; border-radius:999px; background:#F5F5F4">
+        <sc-for list="{{ as.freq }}" as="o" hint-placeholder-count="2">
+          <button onClick="{{ o.pick }}" style="height:38px; border:0; border-radius:999px; background:{{ o.bg }}; box-shadow:{{ o.ring }}; color:{{ o.fg }}; font-size:14px; font-weight:{{ o.fw }}; cursor:pointer">{{ o.label }}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+    <form onSubmit="{{ as.submit }}" style="margin-top:18px; display:flex; flex-direction:column; gap:10px">
+      <input type="email" required="{{ true }}" value="{{ email }}" onChange="{{ onEmail }}" placeholder="you@example.com" aria-label="Email address" autoComplete="email" style="height:52px; padding:0 16px; border-radius:14px; border:1px solid #E8E8E6; background:#FFFFFF; font-size:16px; outline:none; transition:border-color .2s ease, box-shadow .2s ease" style-focus="border-color:#00C97A; box-shadow:0 0 0 4px rgba(0,201,122,.16)">
+      <button type="submit" style="height:52px; border-radius:999px; border:0; background:#0B0B0A; color:#FFFFFF; font-size:16px; font-weight:550; cursor:pointer">{{ as.cta }}</button>
+    </form>
+    <p style="margin:12px 0 0; font-size:12.5px; color:#6B6B6B; text-align:center">No account needed. Unsubscribe from any email.</p>
+  </div>
+
+  <div role="dialog" aria-label="Filters" aria-hidden="{{ fs.hidden }}" style="position:absolute; left:0; right:0; top:47px; bottom:0; z-index:30; background:#FFFFFF; display:flex; flex-direction:column; transform:{{ fs.tf }}; transition:transform .42s cubic-bezier(.2,.8,.2,1)">
+    <div style="flex:none; height:54px; display:grid; grid-template-columns:96px minmax(0,1fr) 96px; align-items:center; padding:0 6px; border-bottom:1px solid #E8E8E6">
+      <button onClick="{{ closeSheet }}" aria-label="Close filters" style="justify-self:start; width:44px; height:44px; border:0; border-radius:999px; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.4" strokeLinecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg></button>
+      <span style="justify-self:center; font-size:16px; font-weight:600; letter-spacing:-0.01em">Filters</span>
+      <button onClick="{{ fs.clear }}" style="justify-self:end; height:44px; padding:0 12px; border:0; background:transparent; font-size:14.5px; font-weight:500; color:{{ fs.clearC }}; cursor:pointer">Clear all</button>
+    </div>
+    <div ref="{{ fsBody }}" style="position:relative; flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none">
+      <section data-sec="region" style="padding:22px 20px; border-bottom:1px solid #E8E8E6">
+        <h3 style="margin:0; font-size:17px; font-weight:600; letter-spacing:-0.02em">Region</h3>
+        <div style="margin-top:14px; font-size:12.5px; color:#6B6B6B">North Island</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px">
+          <sc-for list="{{ fs.north }}" as="o" hint-placeholder-count="6"><button onClick="{{ o.toggle }}" aria-pressed="{{ o.on }}" style="height:38px; padding:0 14px; border-radius:999px; border:0; background:{{ o.bg }}; color:{{ o.fg }}; font-size:14px; cursor:pointer">{{ o.label }}</button></sc-for>
+        </div>
+        <div style="margin-top:16px; font-size:12.5px; color:#6B6B6B">South Island</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px">
+          <sc-for list="{{ fs.south }}" as="o" hint-placeholder-count="6"><button onClick="{{ o.toggle }}" aria-pressed="{{ o.on }}" style="height:38px; padding:0 14px; border-radius:999px; border:0; background:{{ o.bg }}; color:{{ o.fg }}; font-size:14px; cursor:pointer">{{ o.label }}</button></sc-for>
+        </div>
+      </section>
+      <section data-sec="near" style="padding:22px 20px; border-bottom:1px solid #E8E8E6">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:16px">
+          <div>
+            <h3 style="margin:0; font-size:17px; font-weight:600; letter-spacing:-0.02em">Near me</h3>
+            <p style="margin:4px 0 0; font-size:13px; color:#6B6B6B">Uses your location once. Not stored.</p>
+          </div>
+          <button role="switch" aria-checked="{{ fs.near.on }}" aria-label="Near me" onClick="{{ fs.near.toggle }}" style="flex:none; width:50px; height:30px; border-radius:999px; border:0; padding:3px; background:{{ fs.near.bg }}; transition:background .2s ease; cursor:pointer"><span style="display:block; width:24px; height:24px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 3px rgba(0,0,0,.2); transform:{{ fs.near.tf }}; transition:transform .2s ease"></span></button>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:3px; margin-top:14px; padding:3px; border-radius:999px; background:#F5F5F4; opacity:{{ fs.radiusOp }}; transition:opacity .2s ease">
+          <sc-for list="{{ fs.radius }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="height:36px; border:0; border-radius:999px; background:{{ o.bg }}; box-shadow:{{ o.ring }}; color:{{ o.fg }}; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:{{ o.fw }}; cursor:pointer">{{ o.label }}</button></sc-for>
+        </div>
+      </section>
+      <section data-sec="pay" style="padding:22px 20px; border-bottom:1px solid #E8E8E6">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px">
+          <h3 style="margin:0; font-size:17px; font-weight:600; letter-spacing:-0.02em">Pay per hour</h3>
+          <span style="font-family:'Geist Mono',ui-monospace,monospace; font-size:14px; font-weight:500; letter-spacing:-0.02em">{{ fs.payLabel }}</span>
+        </div>
+        <div ref="{{ payTrack }}" onPointerDown="{{ payDown }}" style="position:relative; height:44px; margin:10px 4px 0; touch-action:none; cursor:pointer">
+          <div style="position:absolute; left:0; right:0; top:50%; height:4px; margin-top:-2px; border-radius:999px; background:#E8E8E6"></div>
+          <div style="position:absolute; left:{{ fs.loP }}; right:{{ fs.hiR }}; top:50%; height:4px; margin-top:-2px; border-radius:999px; background:#0B0B0A"></div>
+          <div style="position:absolute; left:{{ fs.loP }}; top:50%; width:28px; height:28px; margin:-14px 0 0 -14px; border-radius:50%; background:#FFFFFF; box-shadow:0 0 0 1px #D6D6D4, 0 2px 6px rgba(0,0,0,.12)"></div>
+          <div style="position:absolute; left:{{ fs.hiP }}; top:50%; width:28px; height:28px; margin:-14px 0 0 -14px; border-radius:50%; background:#FFFFFF; box-shadow:0 0 0 1px #D6D6D4, 0 2px 6px rgba(0,0,0,.12)"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:4px; font-family:'Geist Mono',ui-monospace,monospace; font-size:12px; color:#6B6B6B"><span>$23.95</span><span>$60+</span></div>
+      </section>
+      <section data-sec="type" style="padding:22px 20px; border-bottom:1px solid #E8E8E6">
+        <h3 style="margin:0; font-size:17px; font-weight:600; letter-spacing:-0.02em">Job type</h3>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:14px">
+          <sc-for list="{{ fs.types }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.toggle }}" aria-pressed="{{ o.on }}" style="height:38px; padding:0 14px; border-radius:999px; border:0; background:{{ o.bg }}; color:{{ o.fg }}; font-size:14px; cursor:pointer">{{ o.label }}</button></sc-for>
+        </div>
+      </section>
+      <section data-sec="perks" style="padding:22px 20px; border-bottom:1px solid #E8E8E6">
+        <h3 style="margin:0; font-size:17px; font-weight:600; letter-spacing:-0.02em">Perks</h3>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:14px">
+          <sc-for list="{{ fs.perks }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.toggle }}" aria-pressed="{{ o.on }}" style="height:38px; padding:0 14px; border-radius:999px; border:0; background:{{ o.bg }}; color:{{ o.fg }}; font-size:14px; cursor:pointer">{{ o.label }}</button></sc-for>
+        </div>
+      </section>
+      <section data-sec="whv" style="padding:4px 20px; border-bottom:1px solid #E8E8E6">
+        <sc-for list="{{ fs.switches }}" as="x" hint-placeholder-count="2">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:64px; border-top:{{ x.line }}">
+            <span style="font-size:16px; font-weight:500; letter-spacing:-0.01em">{{ x.label }}</span>
+            <button role="switch" aria-checked="{{ x.on }}" aria-label="{{ x.label }}" onClick="{{ x.toggle }}" style="flex:none; width:50px; height:30px; border-radius:999px; border:0; padding:3px; background:{{ x.bg }}; transition:background .2s ease; cursor:pointer"><span style="display:block; width:24px; height:24px; border-radius:50%; background:#FFFFFF; box-shadow:0 1px 3px rgba(0,0,0,.2); transform:{{ x.tf }}; transition:transform .2s ease"></span></button>
+          </div>
+        </sc-for>
+      </section>
+      <section data-sec="starts" style="padding:22px 20px; border-bottom:1px solid #E8E8E6">
+        <h3 style="margin:0; font-size:17px; font-weight:600; letter-spacing:-0.02em">Starts soon</h3>
+        <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:3px; margin-top:14px; padding:3px; border-radius:999px; background:#F5F5F4">
+          <sc-for list="{{ fs.starts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="height:36px; padding:0 4px; border:0; border-radius:999px; background:{{ o.bg }}; box-shadow:{{ o.ring }}; color:{{ o.fg }}; font-size:13px; font-weight:{{ o.fw }}; white-space:nowrap; cursor:pointer">{{ o.label }}</button></sc-for>
+        </div>
+      </section>
+      <section data-sec="posted" style="padding:22px 20px; border-bottom:1px solid #E8E8E6">
+        <h3 style="margin:0; font-size:17px; font-weight:600; letter-spacing:-0.02em">Posted</h3>
+        <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:3px; margin-top:14px; padding:3px; border-radius:999px; background:#F5F5F4">
+          <sc-for list="{{ fs.posted }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="height:36px; padding:0 4px; border:0; border-radius:999px; background:{{ o.bg }}; box-shadow:{{ o.ring }}; color:{{ o.fg }}; font-size:13px; font-weight:{{ o.fw }}; white-space:nowrap; cursor:pointer">{{ o.label }}</button></sc-for>
+        </div>
+      </section>
+      <section data-sec="source" style="padding:22px 20px 28px">
+        <h3 style="margin:0 0 6px; font-size:17px; font-weight:600; letter-spacing:-0.02em">Source</h3>
+        <sc-for list="{{ fs.sources }}" as="o" hint-placeholder-count="5">
+          <button onClick="{{ o.toggle }}" role="checkbox" aria-checked="{{ o.on }}" style="width:100%; height:50px; padding:0; border:0; background:transparent; display:flex; align-items:center; gap:12px; font-size:15.5px; text-align:left; cursor:pointer">
+            <img src="{{ o.favicon }}" alt="" style="width:18px; height:18px; border-radius:5px">
+            <span style="flex:1">{{ o.label }}</span>
+            <span style="width:22px; height:22px; border-radius:7px; background:{{ o.bg }}; box-shadow:{{ o.ring }}; display:flex; align-items:center; justify-content:center"><sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="5 12.5 10 17.5 19 7"></polyline></svg></sc-if></span>
+          </button>
+        </sc-for>
+      </section>
+    </div>
+    <div style="flex:none; padding:12px 16px 28px; border-top:1px solid #E8E8E6; background:#FFFFFF">
+      <button onClick="{{ fs.apply }}" style="width:100%; height:54px; border-radius:999px; border:0; background:#0B0B0A; color:#FFFFFF; font-size:16px; font-weight:550; letter-spacing:-0.01em; cursor:pointer" style-active="transform:scale(.98)">Show <span style="font-family:'Geist Mono',ui-monospace,monospace; font-weight:500">{{ fs.count }}</span> {{ fs.word }}</button>
+    </div>
+  </div>
+
+  <div role="status" aria-live="polite" style="position:absolute; left:50%; bottom:{{ toast.bottom }}; z-index:70; transform:translateX(-50%) translateY({{ toast.y }}); opacity:{{ toast.op }}; transition:opacity .25s ease, transform .35s cubic-bezier(.2,.8,.2,1); height:44px; padding:0 18px 0 12px; border-radius:999px; background:#0B0B0A; color:#FFFFFF; display:flex; align-items:center; gap:9px; font-size:14.5px; font-weight:500; white-space:nowrap; pointer-events:none">
+    <span style="width:20px; height:20px; border-radius:50%; background:#00C97A; display:flex; align-items:center; justify-content:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#00261A" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="5 12.5 10 17.5 19 7"></polyline></svg></span>
+    {{ toast.text }}
+  </div>
+
+  <div aria-hidden="true" style="position:absolute; z-index:80; left:50%; bottom:8px; width:134px; height:5px; margin-left:-67px; border-radius:999px; background:rgba(11,11,10,.88); pointer-events:none"></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;results&quot;,&quot;saved&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;'home'|'results'|'saved'&quot;,&quot;section&quot;:&quot;Start state&quot;},&quot;sheet&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;&quot;,&quot;job&quot;,&quot;filters&quot;,&quot;sort&quot;,&quot;alert&quot;,&quot;email&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Start state&quot;},&quot;sheetH&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;half&quot;,&quot;full&quot;],&quot;default&quot;:&quot;half&quot;,&quot;tsType&quot;:&quot;'half'|'full'&quot;,&quot;section&quot;:&quot;Start state&quot;},&quot;query&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;job&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;},&quot;frame&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;boolean&quot;},&quot;focus&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;boolean&quot;},&quot;scroll&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static FULL = 789;
+  static HALF = 540;
+  static PH = ['barista in Auckland', 'live-in jobs, South Island', '$30+ an hour, no experience', 'fruit picking with accommodation'];
+  static SRC = { 'Seek': 'seek.co.nz', 'Trade Me': 'trademe.co.nz', 'Backpacker Board': 'backpackerboard.co.nz', 'PickNZ': 'picknz.co.nz', 'Facebook': 'facebook.com' };
+  static SRC_URL = { 'Seek': 'https://www.seek.co.nz/', 'Trade Me': 'https://www.trademe.co.nz/a/jobs', 'Backpacker Board': 'https://www.backpackerboard.co.nz/', 'PickNZ': 'https://www.picknz.co.nz/', 'Facebook': 'https://www.facebook.com/groups/' };
+  static ICON = { hosp: 'coffee', farm: 'kiwi', live: 'bed', tour: 'van', event: 'party', lodge: 'mountain' };
+  static CATW = { hosp: 'hospitality cafe restaurant bar barista food', farm: 'farm fruit picking picker orchard vineyard packhouse', live: 'live in hotel motel housekeeping', tour: 'tourism tour guide travel', event: 'events event festival crew', lodge: 'remote lodge lodges wilderness' };
+  static FLAGW = { bed: 'live in accommodation bed included', meals: 'meals', tips: 'tips', noexp: 'no experience', whv: 'working holiday visa whv', rare: 'rare find', closing: 'closing soon', today: 'starts today', week: 'starts this week', '2w': 'starts soon' };
+  static NORTH = ['Northland', 'Auckland', 'Waikato', 'Bay of Plenty', 'Hawke’s Bay', 'Wellington'];
+  static SOUTH = ['Nelson Tasman', 'Marlborough', 'Canterbury', 'West Coast', 'Otago', 'Southland'];
+  static TYPES = ['Full-time', 'Part-time', 'Casual', 'Seasonal'];
+  static PERKS = [['bed', 'Accommodation'], ['meals', 'Meals'], ['tips', 'Tips']];
+  static STARTS = [['any', 'Any time'], ['today', 'Today'], ['week', 'This week'], ['2w', '2 weeks']];
+  static STARTV = { today: 'Starts today', week: 'Starts this week', '2w': 'Starts within 2 weeks' };
+  static POSTED = [['any', 'Any time'], ['24', '24 h'], ['72', '3 days'], ['168', '7 days']];
+  static POSTEDV = { '24': 'Last 24 h', '72': 'Last 3 days', '168': 'Last 7 days' };
+  static SOURCES = [['Seek', 'Seek'], ['Trade Me', 'Trade Me'], ['Backpacker Board', 'Backpacker Board'], ['PickNZ', 'PickNZ'], ['Facebook', 'Facebook groups']];
+  static SORTS = [['relevant', 'Most relevant'], ['new', 'Newest'], ['pay', 'Highest pay'], ['near', 'Nearest'], ['rare', 'Rare finds']];
+  static STOP = new Set('in jobs job with a an the and for near at of to on this hour h per or nz new zealand'.split(' '));
+  static F0 = { regions: [], near: false, radius: 25, payMin: 23.95, payMax: 60, types: [], perks: [], whv: false, noexp: false, starts: 'any', posted: 'any', sources: [] };
+  static CATS = [
+    ['Hospitality', '4,812', 'coffee', 2, 'Baristas, chefs, bartenders, kitchen hands', -8],
+    ['Farm & fruit', '2,306', 'kiwi', 1, 'Picking, packing, vineyards', 8],
+    ['Live-in', '1,947', 'bed', 1, 'Bed included, often meals too', -6],
+    ['Tourism', '1,688', 'van', 1, 'Guides, front desk, cruises', 6],
+    ['Events', '412', 'party', 1, 'Festivals and summer crews', -10],
+    ['Remote lodges', '236', 'mountain', 2, 'Fiordland, the West Coast, Stewart Island', 5]
+  ];
+  static HOME_IDS = new Set('milford-kitchen ponsonby-barista fox-reception tepuke-kiwi greylynn-barista britomart-head blenheim-vineyard wanaka-housekeeper queenstown-bartender franz-guide cromwell-cherry wanaka-festival paihia-cafe waiheke-chef tekapo-frontdesk stewart-lodge kaikoura-deckhand hastings-packhouse wellington-dish moeraki-housekeeping queenstown-barista kingsland-barista'.split(' '));
+  // id, title, employer, area, city, region, cat, pay, min, max, type, source, hoursAgo, photo, hue, flags, lat, lng
+  static RAW = [
+    ['ponsonby-barista', 'Barista', 'Kōwhai Café', 'Ponsonby', 'Auckland', 'Auckland', 'hosp', '$27–29/h', 27, 29, 'Part-time', 'Backpacker Board', 2, 'ponsonby', 40, 'meals tips whv week', -36.8571, 174.7460],
+    ['britomart-head', 'Head barista', 'Ritual Espresso Bar', 'Britomart', 'Auckland', 'Auckland', 'hosp', '$30–34/h', 30, 34, 'Full-time', 'Seek', 30, null, 220, 'rare 2w', -36.8440, 174.7680],
+    ['greylynn-barista', 'Weekend barista', 'Fig & Fern', 'Grey Lynn', 'Auckland', 'Auckland', 'hosp', '$25–28/h', 25, 28, 'Casual', 'Facebook', 6, null, 30, 'tips noexp week', -36.8610, 174.7350],
+    ['matiatia', 'Barista & café all-rounder', 'Matiatia Wharf Café', 'Waiheke Island', 'Auckland', 'Auckland', 'hosp', '$27–30/h', 27, 30, 'Seasonal', 'Trade Me', 1, 'waiheke', 100, 'bed meals rare whv week', -36.7880, 175.0050],
+    ['kingsland-barista', 'Barista', 'Small Hours Coffee', 'Kingsland', 'Auckland', 'Auckland', 'hosp', '$26–29/h', 26, 29, 'Part-time', 'Backpacker Board', 14, null, 70, 'tips whv 2w', -36.8720, 174.7440],
+    ['tidal', 'Morning barista', 'Tidal Coffee', 'Takapuna', 'Auckland', 'Auckland', 'hosp', 'Pay not listed', null, null, 'Part-time', 'Seek', 9, null, 200, '2w', -36.7880, 174.7720],
+    ['milkhoney', 'Barista trainee', 'Milk & Honey Roasters', 'Mt Eden', 'Auckland', 'Auckland', 'hosp', '$24.50/h', 24.5, 24.5, 'Part-time', 'Trade Me', 20, null, 55, 'noexp whv week', -36.8780, 174.7640],
+    ['harbourside', 'Barista / front of house', 'Harbourside Social', 'Wynyard Quarter', 'Auckland', 'Auckland', 'hosp', '$26–28/h', 26, 28, 'Full-time', 'Seek', 26, null, 250, 'tips meals', -36.8410, 174.7600],
+    ['greyheron', 'Café barista', 'The Grey Heron', 'Devonport', 'Auckland', 'Auckland', 'hosp', '$27/h', 27, 27, 'Part-time', 'Facebook', 3, null, 160, 'closing week', -36.8310, 174.7960],
+    ['orakei', 'Barista', 'Ōrākei Bay Café', 'Ōrākei', 'Auckland', 'Auckland', 'hosp', '$25–27/h', 25, 27, 'Casual', 'Backpacker Board', 50, null, 130, 'noexp whv', -36.8580, 174.8110],
+    ['littlebean', 'Coffee cart barista', 'Little Bean Co.', 'Auckland CBD', '', 'Auckland', 'hosp', '$26/h', 26, 26, 'Casual', 'Facebook', 8, null, 15, 'tips noexp today', -36.8455, 174.7660],
+    ['parnell', 'Senior barista', 'Parnell Pantry', 'Parnell', 'Auckland', 'Auckland', 'hosp', '$29–31/h', 29, 31, 'Full-time', 'Seek', 4, null, 280, 'meals closing 2w', -36.8560, 174.7800],
+    ['longwhite', 'Barista', 'Long White Coffee', 'Newmarket', 'Auckland', 'Auckland', 'hosp', '$26–28/h', 26, 28, 'Part-time', 'Trade Me', 30, null, 190, '2w', -36.8690, 174.7780],
+    ['piha', 'Summer barista', 'Piha Surf Café', 'Piha', 'Auckland', 'Auckland', 'hosp', '$26/h', 26, 26, 'Seasonal', 'Facebook', 5, null, 210, 'bed rare whv week', -36.9540, 174.4700],
+    ['missionbay', 'Barista – beachfront kiosk', 'Tāmaki Drive Kiosk', 'Mission Bay', 'Auckland', 'Auckland', 'hosp', '$26–29/h', 26, 29, 'Seasonal', 'Backpacker Board', 6, null, 180, 'tips whv week', -36.8480, 174.8300],
+    ['milford-kitchen', 'Kitchen hand – lodge', 'Fiordland Sound Lodge', 'Milford Sound', '', 'Southland', 'lodge', '$25–30/h', 25, 30, 'Full-time', 'Backpacker Board', 3, 'milford', 160, 'bed meals noexp week', -44.6414, 167.8974],
+    ['fox-reception', 'Reception + housekeeping', 'Glacier Gateway Motel', 'Fox Glacier', '', 'West Coast', 'live', '$27/h', 27, 27, 'Full-time', 'Trade Me', 26, 'fox', 210, 'bed closing 2w', -43.4640, 170.0170],
+    ['tepuke-kiwi', 'Kiwifruit picker', 'Ōtawa Orchards', 'Te Puke', '', 'Bay of Plenty', 'farm', '$27/h', 27, 27, 'Seasonal', 'PickNZ', 1, 'tepuke', 110, 'noexp whv week', -37.7840, 176.3250],
+    ['blenheim-vineyard', 'Vineyard hand – shoot thinning', 'Wairau Valley Estate', 'Blenheim', '', 'Marlborough', 'farm', '$26–29/h', 26, 29, 'Seasonal', 'Backpacker Board', 4, 'blenheim', 90, 'noexp whv week', -41.5134, 173.9612],
+    ['wanaka-housekeeper', 'Housekeeper', 'Lakefront Lodge Wānaka', 'Wānaka', '', 'Otago', 'live', '$27–29/h', 27, 29, 'Full-time', 'Seek', 8, 'wanaka', 230, 'bed 2w', -44.6990, 169.1320],
+    ['queenstown-bartender', 'Bartender', 'The Pinehouse', 'Queenstown', '', 'Otago', 'hosp', '$28–32/h', 28, 32, 'Full-time', 'Trade Me', 22, 'queenstown', 260, 'tips closing 2w', -45.0312, 168.6626],
+    ['franz-guide', 'Glacier guide assistant', 'Southern Ice Guides', 'Franz Josef', '', 'West Coast', 'tour', '$28–31/h', 28, 31, 'Seasonal', 'Trade Me', 3, 'franz', 200, 'bed rare 2w', -43.3880, 170.1830],
+    ['cromwell-cherry', 'Cherry picker', 'Cromwell Cherry Co.', 'Cromwell', '', 'Otago', 'farm', '$26/h + bonus', 26, 26, 'Seasonal', 'PickNZ', 9, null, 10, 'bed noexp whv week', -45.0380, 169.2000],
+    ['wanaka-festival', 'Festival crew', 'Southern Sound Festival', 'Wānaka', '', 'Otago', 'event', '$26–30/h', 26, 30, 'Casual', 'Facebook', 12, null, 290, 'meals noexp 2w', -44.6990, 169.1400],
+    ['paihia-cafe', 'Café all-rounder', 'Wharf Street Kitchen', 'Paihia', '', 'Northland', 'hosp', '$25–27/h', 25, 27, 'Seasonal', 'Backpacker Board', 20, 'paihia', 190, 'bed whv week', -35.2820, 174.0910],
+    ['waiheke-chef', 'Chef de partie', 'Oneroa Bay Estate', 'Waiheke Island', 'Auckland', 'Auckland', 'hosp', '$30–35/h', 30, 35, 'Full-time', 'Seek', 28, 'waiheke', 100, 'meals closed', -36.7860, 175.0090],
+    ['tekapo-frontdesk', 'Front desk – holiday park', 'Tekapo Lakeside Holiday Park', 'Lake Tekapo', '', 'Canterbury', 'tour', '$26–28/h', 26, 28, 'Full-time', 'Backpacker Board', 7, 'tekapo', 200, 'bed noexp 2w', -44.0047, 170.4770],
+    ['stewart-lodge', 'Lodge host', 'Rakiura Retreat', 'Stewart Island', '', 'Southland', 'lodge', '$27–30/h', 27, 30, 'Full-time', 'Facebook', 34, 'stewart', 20, 'bed meals rare', -46.8970, 168.1270],
+    ['kaikoura-deckhand', 'Deckhand – wildlife cruises', 'Kaikōura Coast Cruises', 'Kaikōura', '', 'Canterbury', 'tour', '$26–30/h', 26, 30, 'Seasonal', 'Seek', 4, 'kaikoura', 220, 'noexp 2w', -42.4000, 173.6800],
+    ['hastings-packhouse', 'Packhouse – night shift', 'Heretaunga Packhouse', 'Hastings', '', 'Hawke’s Bay', 'farm', '$27–31/h', 27, 31, 'Seasonal', 'PickNZ', 5, null, 130, 'noexp whv week', -39.6390, 176.8400],
+    ['wellington-dish', 'Dishwasher', 'Lucky Duck Ramen', 'Te Aro', 'Wellington', 'Wellington', 'hosp', '$25/h', 25, 25, 'Part-time', 'Facebook', 3, null, 25, 'meals noexp week', -41.2940, 174.7760],
+    ['moeraki-housekeeping', 'Housekeeping – wilderness lodge', 'Moeraki Rainforest Retreat', 'Lake Moeraki', '', 'West Coast', 'lodge', '$27/h', 27, 27, 'Full-time', 'Backpacker Board', 50, 'moeraki', 150, 'bed meals closing', -43.7290, 169.2680],
+    ['queenstown-barista', 'Barista – lakefront', 'Wakatipu Coffee House', 'Queenstown', '', 'Otago', 'hosp', '$27–30/h', 27, 30, 'Part-time', 'Trade Me', 10, null, 195, 'tips whv 2w', -45.0312, 168.6650]
+  ];
+
+  state = this.init();
+  rootRef = React.createRef(); devRef = React.createRef(); homeInput = React.createRef();
+  homeScroll = React.createRef(); resScroll = React.createRef(); freshRef = React.createRef();
+  sheetScroll = React.createRef(); fsBody = React.createRef(); payTrack = React.createRef();
+
+  init() {
+    const p = this.props || {};
+    let q = p.query || 'barista auckland', screen = p.screen || 'home', job = p.job || 'ponsonby-barista';
+    if (!p.frame) {
+      try { const u = new URLSearchParams(location.search); if (u.get('q')) { q = u.get('q'); screen = 'results'; } } catch (e) {}
+    }
+    const sheet = p.sheet === 'email' ? 'alert' : (p.sheet || null);
+    return {
+      screen, prev: 'home', q, draft: screen === 'results' ? q : '', focused: !!p.focus, resFocus: false, ph: 0,
+      status: 'ready', view: 'cards', sort: 'relevant', f: { ...Component.F0 }, fd: { ...Component.F0 }, page: 1, busyMore: false,
+      sheet, jobId: job, sheetH: p.sheetH === 'full' ? 'full' : 'half', drag: null, descOpen: false,
+      saved: { 'ponsonby-barista': 1, 'britomart-head': 1, 'matiatia': 1, 'waiheke-chef': 1 }, applied: { 'britomart-head': 1 },
+      alertKind: p.sheet === 'email' ? 'email' : 'alert', freq: 'daily', email: '',
+      toast: '', toastOn: false, scrolled: false
+    };
+  }
+
+  componentDidMount() {
+    this.phT = setInterval(() => { if (this.state.screen === 'home' && !this.state.draft) this.setState(s => ({ ph: (s.ph + 1) % Component.PH.length })); }, 2800);
+    if (!this.props.frame) window.__rmActive = this;
+    this.onKey = e => { if (window.__rmActive === this && e.key === 'Escape' && this.state.sheet) this.setState({ sheet: null }); };
+    window.addEventListener('keydown', this.onKey);
+    const sc = this.props.scroll;
+    if (sc) { setTimeout(() => this.applyScroll(sc), 300); setTimeout(() => this.applyScroll(sc), 1200); }
+  }
+  componentWillUnmount() {
+    clearInterval(this.phT); clearTimeout(this.lt); clearTimeout(this.tt); clearTimeout(this.mt);
+    window.removeEventListener('keydown', this.onKey);
+  }
+  applyScroll(sc) {
+    const el = this.homeScroll.current; if (!el) return;
+    if (sc === 'end') el.scrollTop = el.scrollHeight;
+    else if (sc === 'fresh' && this.freshRef.current) el.scrollTop = this.freshRef.current.offsetTop - 8;
+  }
+
+  norm(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’']/g, ''); }
+  dist(lat, lng) {
+    const r = Math.PI / 180, a = -36.8485, b = 174.7633;
+    const x = Math.sin((lat - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(lat * r) * Math.sin((lng - b) * r / 2) ** 2;
+    return 12742 * Math.asin(Math.sqrt(x));
+  }
+  jobs() {
+    if (this._j) return this._j;
+    const south = new Set(Component.SOUTH);
+    this._j = Component.RAW.map((a, i) => {
+      const [id, title, employer, area, city, region, cat, pay, min, max, type, source, h, photo, hue, flags, lat, lng] = a;
+      const f = flags ? flags.split(' ') : [];
+      const has = k => f.includes(k);
+      const j = { i, id, title, employer, area, city, region, cat, pay, min, max, type, source, h, photo, hue, lat, lng,
+        bed: has('bed'), meals: has('meals'), tips: has('tips'), noexp: has('noexp'), whv: has('whv'), rare: has('rare'), closing: has('closing'), closed: has('closed'),
+        start: has('today') ? 'today' : has('week') ? 'week' : has('2w') ? '2w' : 'later' };
+      j.place = city ? area + ', ' + city : area;
+      j.km = this.dist(lat, lng);
+      j.titleW = this.norm(title).split(/[^a-z0-9]+/).filter(Boolean);
+      j.hay = this.norm([title, employer, area, city, region, south.has(region) ? 'south island' : 'north island', Component.CATW[cat], ...f.map(x => Component.FLAGW[x] || ''), type].join(' ')).split(/[^a-z0-9]+/).filter(Boolean);
+      return j;
+    });
+    this._by = {}; this._j.forEach(j => { this._by[j.id] = j; });
+    this._vocab = [...new Set(this._j.flatMap(j => j.hay).filter(w => w.length >= 4))];
+    return this._j;
+  }
+  parse(q) {
+    let pay = null;
+    const rest = (q || '').replace(/\$\s?(\d+(?:\.\d+)?)\s?\+?/g, (m, n) => { pay = +n; return ' '; });
+    return { pay, toks: this.norm(rest).split(/[^a-z0-9]+/).filter(t => t && !Component.STOP.has(t)) };
+  }
+  hit(j, t) { return j.hay.some(w => w.startsWith(t) || (w.length >= 4 && t.startsWith(w) && t.length - w.length <= 2)); }
+  matches(q) {
+    const { pay, toks } = this.parse(q);
+    const key = toks.join(' ') + (pay ? ' $' + pay : '');
+    const list = this.jobs().filter(j => !j.closed && toks.every(t => this.hit(j, t)) && (pay == null || (j.max != null && j.max >= pay)));
+    const sc = j => toks.filter(t => j.titleW.some(w => w.startsWith(t))).length;
+    list.sort((a, b) => sc(b) - sc(a) || a.i - b.i);
+    return { list, key, toks };
+  }
+  lev(a, b) {
+    const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[a.length][b.length];
+  }
+  didYouMean(toks) {
+    let changed = false;
+    const out = toks.map(t => {
+      if (this.jobs().some(j => this.hit(j, t))) return t;
+      let best = null, bd = 3;
+      this._vocab.forEach(w => { const d = this.lev(t, w); if (d < bd) { bd = d; best = w; } });
+      if (best) { changed = true; return best; }
+      return t;
+    });
+    return changed ? out.join(' ') : null;
+  }
+  base(key, n) {
+    if (key === 'barista auckland') return 248;
+    if (n <= 5) return n;
+    let x = 7; for (const c of key) x = (x * 31 + c.charCodeAt(0)) % 997;
+    return n * 9 + (x % 9);
+  }
+  countFor(base, n0, nf) { return nf === n0 ? base : nf ? Math.max(nf, Math.round(base * nf / n0)) : 0; }
+  applyF(list, f) {
+    const payOn = f.payMin > 23.95 || f.payMax < 60;
+    const rank = { today: 0, week: 1, '2w': 2, later: 3 };
+    return list.filter(j =>
+      (!f.regions.length || f.regions.includes(j.region)) &&
+      (!f.near || j.km <= f.radius) &&
+      (!payOn || (j.min != null && j.max >= f.payMin && (f.payMax >= 60 || j.min <= f.payMax))) &&
+      (!f.types.length || f.types.includes(j.type)) &&
+      f.perks.every(k => j[k]) &&
+      (!f.whv || j.whv) && (!f.noexp || j.noexp) &&
+      (f.starts === 'any' || rank[j.start] <= rank[f.starts]) &&
+      (f.posted === 'any' || j.h <= +f.posted) &&
+      (!f.sources.length || f.sources.includes(j.source)));
+  }
+  sortList(list, sort) {
+    const l = [...list];
+    if (sort === 'new') l.sort((a, b) => a.h - b.h);
+    else if (sort === 'pay') l.sort((a, b) => (b.max ?? -1) - (a.max ?? -1));
+    else if (sort === 'near') l.sort((a, b) => a.km - b.km);
+    else if (sort === 'rare') l.sort((a, b) => (b.rare ? 1 : 0) - (a.rare ? 1 : 0));
+    return l;
+  }
+  bits(f) {
+    const lo = f.payMin <= 23.95 ? '$23.95' : '$' + f.payMin;
+    const payOn = f.payMin > 23.95 || f.payMax < 60;
+    const many = (arr, map) => arr.length ? (map ? map(arr[0]) : arr[0]) + (arr.length > 1 ? ' +' + (arr.length - 1) : '') : null;
+    const perkName = k => (Component.PERKS.find(p => p[0] === k) || [])[1];
+    return [
+      { key: 'region', name: 'Region', val: many(f.regions), clear: { regions: [] } },
+      { key: 'near', name: 'Near me', val: f.near ? `Within ${f.radius} km` : null, clear: { near: false } },
+      { key: 'pay', name: 'Pay', val: payOn ? (f.payMax >= 60 ? lo + '+/h' : `${lo}–$${f.payMax}/h`) : null, clear: { payMin: 23.95, payMax: 60 } },
+      { key: 'whv', name: 'Open to working holiday visa', toggle: true, val: f.whv ? 'Open to working holiday visa' : null, clear: { whv: false } },
+      { key: 'noexp', name: 'No experience', toggle: true, val: f.noexp ? 'No experience' : null, clear: { noexp: false } },
+      { key: 'starts', name: 'Starts soon', val: f.starts !== 'any' ? Component.STARTV[f.starts] : null, clear: { starts: 'any' } },
+      { key: 'type', name: 'Job type', val: many(f.types), clear: { types: [] } },
+      { key: 'perks', name: 'Perks', val: many(f.perks, perkName), clear: { perks: [] } },
+      { key: 'posted', name: 'Posted', val: f.posted !== 'any' ? Component.POSTEDV[f.posted] : null, clear: { posted: 'any' } },
+      { key: 'source', name: 'Source', val: many(f.sources), clear: { sources: [] } }
+    ];
+  }
+
+  grad(h) {
+    return `radial-gradient(90% 80% at 15% 8%, oklch(0.95 0.045 ${h}) 0%, transparent 70%), radial-gradient(80% 90% at 95% 100%, oklch(0.87 0.085 ${(h + 45) % 360}) 0%, transparent 72%), oklch(0.925 0.045 ${(h + 20) % 360})`;
+  }
+  badges(j) {
+    const nb = label => ({ label, bg: '#F5F5F4', fg: '#3D3D3C', fw: 500, bd: 'none', dot: false });
+    const b = [];
+    if (j.h <= 12) b.push({ label: 'New', bg: '#00C97A', fg: '#00261A', fw: 600, bd: 'none', dot: false });
+    if (j.rare) b.push({ label: 'Rare find', bg: '#0B0B0A', fg: '#FFFFFF', fw: 600, bd: 'none', dot: true });
+    if (j.bed) b.push(nb('Accommodation'));
+    if (j.meals) b.push(nb('Meals'));
+    if (j.tips) b.push(nb('Tips'));
+    if (j.noexp) b.push(nb('No experience'));
+    if (j.whv) b.push(nb('WHV friendly'));
+    if (j.closing) b.push({ label: 'Closing soon', bg: '#FFFFFF', fg: '#0B0B0A', fw: 500, bd: 'inset 0 0 0 1px #D6D6D4', dot: false });
+    return b;
+  }
+  ago(h) { return h < 24 ? h + 'h ago' : Math.floor(h / 24) + 'd ago'; }
+  fav(src) { return 'https://www.google.com/s2/favicons?domain=' + Component.SRC[src] + '&sz=64'; }
+  media(j) {
+    return {
+      hasPhoto: !!j.photo, noPhoto: !j.photo, photo: j.photo ? 'assets/photos/' + j.photo + '.jpg' : '',
+      grad: this.grad(j.hue), icon: 'assets/icons/' + Component.ICON[j.cat] + '.png', rot: (j.hue % 15) - 7,
+      payFam: j.min == null ? "'Geist',system-ui,sans-serif" : "'Geist Mono',ui-monospace,monospace",
+      payC: j.min == null ? '#6B6B6B' : '#0B0B0A'
+    };
+  }
+  card(j) {
+    const saved = !!this.state.saved[j.id];
+    const badges = this.badges(j);
+    return {
+      ...this.media(j), id: j.id, title: j.title, pay: j.pay, source: j.source,
+      where: j.employer + ' · ' + j.place, badges, badges2: badges.slice(0, 2),
+      favicon: this.fav(j.source), ago: this.ago(j.h),
+      aria: `${j.title}, ${j.employer}, ${j.place}, ${j.pay}, on ${j.source}`,
+      open: e => { e.preventDefault(); this.openJob(j.id); },
+      saved, bmFill: saved ? '#0B0B0A' : 'none', saveAria: saved ? 'Remove from saved' : 'Save job',
+      save: e => { e.preventDefault(); e.stopPropagation(); this.toggleSave(j.id); }
+    };
+  }
+  tiles(lat, lng, W, H, z) {
+    const n = 256 * Math.pow(2, z), s = Math.sin(lat * Math.PI / 180);
+    const x = (lng + 180) / 360 * n, y = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * n;
+    const x0 = x - W / 2, y0 = y - H / 2, out = [];
+    for (let tx = Math.floor(x0 / 256); tx <= Math.floor((x0 + W) / 256); tx++)
+      for (let ty = Math.floor(y0 / 256); ty <= Math.floor((y0 + H) / 256); ty++)
+        out.push({ src: `https://a.basemaps.cartocdn.com/light_all/${z}/${tx}/${ty}@2x.png`, left: (tx * 256 - x0).toFixed(1) + 'px', top: (ty * 256 - y0).toFixed(1) + 'px' });
+    return out;
+  }
+  facts(j) {
+    if (j.id === 'ponsonby-barista') return ['Part-time', '25–30 h a week', 'Starts this week', 'Free coffee and staff meal', '1 year of café experience'];
+    const hours = { 'Part-time': '20–30 h a week', 'Full-time': '40 h a week', 'Casual': 'Flexible shifts', 'Seasonal': '40–50 h a week' }[j.type];
+    const start = { today: 'Starts today', week: 'Starts this week', '2w': 'Starts within 2 weeks', later: 'Flexible start date' }[j.start];
+    const perk = j.bed && j.meals ? 'Accommodation and meals included' : j.bed ? 'Accommodation included' : j.meals ? 'Staff meals' : j.tips ? 'Share of tips' : null;
+    const req = j.noexp ? 'No experience needed' : { hosp: '1 year of hospitality experience', farm: 'Good fitness for outdoor work', live: 'Housekeeping experience preferred', tour: 'Customer service experience', event: 'Event experience preferred', lodge: 'Lodge or hotel experience preferred' }[j.cat];
+    return [j.type, hours, start, perk, req, j.whv ? 'Open to working holiday visa' : null].filter(Boolean);
+  }
+  desc(j) {
+    const P = text => ({ text, isP: true, isH: false, isLi: false }), H = text => ({ text, isH: true, isP: false, isLi: false }), L = text => ({ text, isLi: true, isP: false, isH: false });
+    if (j.id === 'ponsonby-barista') return [
+      P('Kōwhai Café is a neighbourhood café on Ponsonby Road, open seven days from 6:30am. We roast in small batches and pour around 600 coffees on a Saturday.'),
+      H('What you’ll do'), L('Pull consistent espresso on a two-group machine'), L('Dial in the grinders each morning with the head barista'), L('Keep the bar clean and help close on weekdays'),
+      H('What we offer'), L('$27–29 an hour depending on experience, plus a share of tips'), L('Free coffee on shift and a staff meal after five hours'), L('Rosters out two weeks ahead'),
+      P('Open to working holiday visa holders with at least three months left on their visa.')
+    ];
+    const role = j.title.toLowerCase();
+    const intro = {
+      hosp: `${j.employer} is a busy spot in ${j.area}. We’re after a ${role} who enjoys fast service and a good team.`,
+      farm: `${j.employer} needs a ${role} for the season in ${j.area}. Work is outdoors and paid weekly, with early starts.`,
+      live: `${j.employer} in ${j.area} is looking for a ${role} for the season. Live on site with a small, friendly team.`,
+      tour: `${j.employer} runs trips and stays in ${j.area}. We need a ${role} who likes people and the outdoors.`,
+      event: `${j.employer} is hiring ${role} for this summer in ${j.area}. Long days, great crew, a week you won’t forget.`,
+      lodge: `${j.employer} is a remote lodge in ${j.area}. We need a ${role} who is happy far from town and close to nature.`
+    }[j.cat];
+    const todo = {
+      hosp: ['Serve customers and keep the floor moving', 'Help open or close the venue', 'Keep your station clean and stocked'],
+      farm: ['Pick or pack to quality standards', 'Work in a small crew with a supervisor', 'Follow health and safety on site'],
+      live: ['Turn over rooms to a high standard', 'Help at reception at busy times', 'Restock linen and supplies'],
+      tour: ['Welcome guests and handle bookings', 'Keep vehicles, gear and rooms ready', 'Share local knowledge with visitors'],
+      event: ['Set up and pack down sites', 'Help with bars, gates or info points', 'Work long days during the event'],
+      lodge: ['Look after guests in a small team', 'Help across kitchen, rooms and front of house', 'Keep the lodge running in all weather']
+    }[j.cat];
+    const offer = [j.min != null ? j.pay.replace('/h', ' an hour') : 'Pay discussed at interview'];
+    if (j.bed) offer.push('Accommodation on site'); if (j.meals) offer.push('Staff meals'); if (j.tips) offer.push('A share of tips');
+    return [P(intro), H('What you’ll do'), ...todo.map(L), H('What we offer'), ...offer.map(L), P(j.whv ? 'Open to working holiday visa holders.' : 'You must have the right to work in New Zealand.')];
+  }
+  jobView(j) {
+    const s = this.state, saved = !!s.saved[j.id];
+    const m = j.pay.match(/^(\$[\d.–]+)\/h(.*)$/);
+    const allDesc = this.desc(j);
+    const posted = j.h < 24 ? `${j.h} hour${j.h === 1 ? '' : 's'} ago` : `${Math.floor(j.h / 24)} day${Math.floor(j.h / 24) === 1 ? '' : 's'} ago`;
+    const closes = j.id === 'ponsonby-barista' ? '30 Oct' : j.closing ? '19 Oct' : ['31 Oct', '2 Nov', '6 Nov', '9 Nov'][j.i % 4];
+    const sim = this.jobs().filter(x => x.id !== j.id && !x.closed && x.cat === j.cat)
+      .sort((a, b) => ((b.region === j.region) - (a.region === j.region)) || a.i - b.i).slice(0, 6);
+    return {
+      ...this.media(j), title: j.title, employer: j.employer, place: j.place, source: j.source,
+      payMain: m ? m[1] : j.pay, payUnit: m ? '/hour' + m[2] : '',
+      badges: this.badges(j), tiles: this.tiles(j.lat, j.lng, 350, 128, 14),
+      facts: this.facts(j).map(text => ({ text })),
+      desc: s.descOpen ? allDesc : allDesc.slice(0, 4), collapsed: !s.descOpen, descLabel: s.descOpen ? 'Show less' : 'Show more',
+      toggleDesc: () => this.setState(st => ({ descOpen: !st.descOpen })),
+      posted: `Posted ${posted} · Closes ${closes}`, favicon: this.fav(j.source), url: Component.SRC_URL[j.source],
+      saved, bmFill: saved ? '#0B0B0A' : 'none', saveLabel: saved ? 'Saved' : 'Save',
+      save: () => this.toggleSave(j.id),
+      share: () => { try { navigator.clipboard && navigator.clipboard.writeText(`${j.title} at ${j.employer}, ${j.place} — ${Component.SRC_URL[j.source]}`); } catch (e) {} this.toast('Link copied'); },
+      report: () => this.toast('Thanks. We’ll review this listing.'),
+      employerGo: () => this.search(j.employer),
+      similar: sim.map(x => ({ ...this.media(x), title: x.title, pay: x.pay, aria: `${x.title}, ${x.employer}, ${x.pay}`, open: e => { e.preventDefault(); this.openJob(x.id); } }))
+    };
+  }
+
+  radar(size, on, blips) {
+    const h = React.createElement, sp = 7;
+    const rings = [0.16, 0.32, 0.48, 0.64, 0.8, 0.96].map((r, i) => h('div', { key: 'r' + i, style: {
+      position: 'absolute', left: '50%', top: '50%', width: size * r, height: size * r, marginLeft: -size * r / 2, marginTop: -size * r / 2,
+      borderRadius: '50%', border: '1px solid rgba(11,11,10,0.075)' } }));
+    const sweep = h('div', { key: 's', style: { position: 'absolute', inset: 0, borderRadius: '50%',
+      background: 'conic-gradient(from 0deg, rgba(0,201,122,0) 0deg, rgba(0,201,122,0) 280deg, rgba(0,201,122,0.12) 352deg, rgba(0,201,122,0.3) 359.4deg, rgba(0,201,122,0) 360deg)',
+      animation: `rdSpin ${sp}s linear infinite` } });
+    const ping = h('div', { key: 'p', style: { position: 'absolute', inset: '2%', borderRadius: '50%', border: '1px solid rgba(0,201,122,0.45)', animation: 'rdPing 4.2s cubic-bezier(.2,.6,.3,1) infinite' } });
+    const dots = blips ? [[38, 0.29], [118, 0.41], [206, 0.21], [296, 0.36], [252, 0.44]].map(([a, r], i) => {
+      const rad = a * Math.PI / 180;
+      return h('div', { key: 'b' + i, style: {
+        position: 'absolute', left: `calc(50% + ${(Math.sin(rad) * r * size).toFixed(1)}px - 3.5px)`, top: `calc(50% - ${(Math.cos(rad) * r * size).toFixed(1)}px - 3.5px)`,
+        width: 7, height: 7, borderRadius: '50%', background: '#00C97A', boxShadow: '0 0 0 4px rgba(0,201,122,.14)', opacity: 0,
+        animation: `rdBlip ${sp}s ease-out ${((a / 360) * sp).toFixed(2)}s infinite` } });
+    }) : [];
+    const mask = 'radial-gradient(closest-side, #000 32%, transparent 100%)';
+    return h('div', { 'aria-hidden': true, style: {
+      position: 'absolute', left: '50%', top: '50%', width: size, height: size, transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: -1,
+      opacity: on ? 1 : 0, transition: 'opacity .9s ease', WebkitMaskImage: mask, maskImage: mask } }, rings, sweep, ping, dots);
+  }
+  miniRadar(size) {
+    const h = React.createElement;
+    return h('span', { 'aria-hidden': true, style: { position: 'relative', display: 'inline-block', flex: 'none', width: size, height: size, borderRadius: '50%', overflow: 'hidden', boxShadow: 'inset 0 0 0 1px rgba(11,11,10,.14)' } },
+      h('span', { style: { position: 'absolute', inset: '27%', borderRadius: '50%', boxShadow: 'inset 0 0 0 1px rgba(11,11,10,.12)' } }),
+      h('span', { style: { position: 'absolute', inset: 0, borderRadius: '50%', background: 'conic-gradient(from 0deg, rgba(0,201,122,0) 0deg, rgba(0,201,122,0) 240deg, rgba(0,201,122,.28) 340deg, rgba(0,201,122,.95) 359deg, rgba(0,201,122,0) 360deg)', animation: 'rdSpin 1.6s linear infinite' } }),
+      h('span', { style: { position: 'absolute', left: '50%', top: '50%', width: 4, height: 4, margin: -2, borderRadius: '50%', background: '#0B0B0A' } }));
+  }
+
+  toast(text) {
+    clearTimeout(this.tt);
+    this.setState({ toast: text, toastOn: true });
+    this.tt = setTimeout(() => this.setState({ toastOn: false }), 1900);
+  }
+  toggleSave(id) {
+    const on = !this.state.saved[id];
+    this.setState(s => { const saved = { ...s.saved }; if (on) saved[id] = 1; else delete saved[id]; return { saved }; });
+    this.toast(on ? 'Saved' : 'Removed from saved');
+  }
+  openJob(id) {
+    this.setState({ sheet: 'job', jobId: id, sheetH: 'half', descOpen: false, drag: null });
+    setTimeout(() => { const el = this.sheetScroll.current; if (el) el.scrollTop = 0; }, 0);
+  }
+  search(q) {
+    q = (q || '').trim(); if (!q) return;
+    clearTimeout(this.lt);
+    this.setState(s => ({ screen: 'results', prev: s.screen === 'results' ? s.prev : s.screen, q, draft: q, status: 'loading', page: 1, sheet: null, focused: false }));
+    this.lt = setTimeout(() => this.setState({ status: 'ready' }), 950);
+    const r = this.resScroll.current; if (r) r.scrollTop = 0;
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  }
+  reload(ms) {
+    clearTimeout(this.lt);
+    this.setState({ status: 'loading', page: 1 });
+    this.lt = setTimeout(() => this.setState({ status: 'ready' }), ms);
+  }
+  setF(patch) { this.setState(s => ({ f: { ...s.f, ...patch } })); this.reload(550); }
+  openFilters(sec) {
+    this.setState(s => ({ sheet: 'filters', fd: { ...s.f, regions: [...s.f.regions], types: [...s.f.types], perks: [...s.f.perks], sources: [...s.f.sources] } }));
+    setTimeout(() => {
+      const b = this.fsBody.current; if (!b) return;
+      const el = sec ? b.querySelector(`[data-sec="${sec}"]`) : null;
+      b.scrollTop = el ? el.offsetTop : 0;
+    }, 20);
+  }
+  dragDown = e => {
+    if (e.target.closest && e.target.closest('button')) return;
+    const F = Component.FULL, HF = Component.HALF;
+    const dev = this.devRef.current, sc = dev ? dev.getBoundingClientRect().height / 844 : 1;
+    const y0 = e.clientY, h0 = this.state.sheetH === 'full' ? F : HF;
+    let moved = false, h = h0;
+    const mv = ev => { const dy = (ev.clientY - y0) / sc; if (Math.abs(dy) > 4) moved = true; h = Math.max(140, Math.min(F, h0 - dy)); if (moved) this.setState({ drag: { h } }); };
+    const up = () => {
+      window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+      if (!moved) { this.setState(s => ({ drag: null, sheetH: s.sheetH === 'full' ? 'half' : 'full' })); return; }
+      let next;
+      if (h0 === F) next = h < HF - 140 ? 'close' : h < F - 90 ? 'half' : 'full';
+      else next = h > HF + 70 ? 'full' : h < HF - 110 ? 'close' : 'half';
+      if (next === 'close') this.setState({ drag: null, sheet: null, sheetH: 'half' });
+      else this.setState({ drag: null, sheetH: next });
+    };
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  };
+  dragSmall = e => {
+    const dev = this.devRef.current, sc = dev ? dev.getBoundingClientRect().height / 844 : 1, y0 = e.clientY;
+    const up = ev => { window.removeEventListener('pointerup', up); if ((ev.clientY - y0) / sc > 50) this.setState({ sheet: null }); };
+    window.addEventListener('pointerup', up);
+  };
+  payDown = e => {
+    const tr = this.payTrack.current; if (!tr) return;
+    e.preventDefault();
+    const val = x => { const r = tr.getBoundingClientRect(); const t = Math.min(1, Math.max(0, (x - r.left) / r.width)); return t < 0.01 ? 23.95 : Math.min(60, Math.round(23.95 + t * 36.05)); };
+    const v0 = val(e.clientX), { payMin, payMax } = this.state.fd;
+    const which = Math.abs(v0 - payMin) === Math.abs(v0 - payMax) ? (v0 < payMin ? 'payMin' : 'payMax') : (Math.abs(v0 - payMin) < Math.abs(v0 - payMax) ? 'payMin' : 'payMax');
+    const set = v => this.setState(s => {
+      const fd = { ...s.fd };
+      if (which === 'payMin') fd.payMin = Math.min(v, Math.max(23.95, fd.payMax - 1)); else fd.payMax = Math.max(v, Math.ceil(fd.payMin + 1));
+      return { fd };
+    });
+    set(v0);
+    const mv = ev => set(val(ev.clientX));
+    const up = () => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); };
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
+  };
+  exportCsv = () => {
+    const rows = [['Title', 'Employer', 'Location', 'Pay', 'Source', 'Status', 'Link']];
+    Object.keys(this.state.saved).forEach(id => {
+      const j = this._by[id]; if (!j) return;
+      rows.push([j.title, j.employer, j.place, j.pay, j.source, j.closed ? 'Closed' : this.state.applied[id] ? 'Applied' : 'Saved', Component.SRC_URL[j.source]]);
+    });
+    const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+    try {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      a.download = 'radar-saved-jobs.csv'; document.body.appendChild(a); a.click(); a.remove();
+    } catch (e) {}
+    this.toast('CSV exported');
+  };
+
+  renderVals() {
+    const s = this.state, h = React.createElement, J = this.jobs();
+    const M = this.matches(s.q);
+    const pool = M.list;
+    const filtered = this.sortList(this.applyF(pool, s.f), s.sort);
+    const base = this.base(M.key, pool.length);
+    const count = this.countFor(base, pool.length, filtered.length);
+    const loading = s.status === 'loading';
+    const empty = !loading && !filtered.length;
+    const shown = filtered.slice(0, 12 * s.page);
+    const job = this._by[s.jobId] || J[0];
+    const bits = this.bits(s.f);
+    const active = bits.filter(b => b.val);
+    const fdCount = this.countFor(base, pool.length, this.applyF(pool, s.fd).length);
+    const fmt = n => n.toLocaleString('en-NZ');
+    const savedIds = Object.keys(s.saved).filter(id => this._by[id]);
+    const onP = on => on ? { bg: '#0B0B0A', fg: '#FFFFFF' } : { bg: '#F5F5F4', fg: '#1F1F1E' };
+    const seg = (on, pick, label) => ({ label, pick, bg: on ? '#FFFFFF' : 'transparent', ring: on ? '0 0 0 1px #E8E8E6' : 'none', fg: on ? '#0B0B0A' : '#6B6B6B', fw: on ? 600 : 500 });
+    const sw = (on, toggle) => ({ on, toggle, bg: on ? '#0B0B0A' : '#E3E3E1', tf: on ? 'translateX(20px)' : 'none' });
+    const fd = s.fd;
+    const tog = (k, v) => () => this.setState(st => { const arr = st.fd[k]; return { fd: { ...st.fd, [k]: arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v] } }; });
+    const setD = patch => () => this.setState(st => ({ fd: { ...st.fd, ...patch } }));
+    const pct = v => ((v - 23.95) / 36.05 * 100).toFixed(2) + '%';
+    const dym = empty && !active.length ? this.didYouMean(M.toks) : (empty ? this.didYouMean(M.toks) : null);
+    const dimOn = s.sheet === 'job' || s.sheet === 'sort' || s.sheet === 'alert';
+    const qEnc = encodeURIComponent(s.q);
+    const alertIsEmail = s.alertKind === 'email';
+    const nSaved = savedIds.length;
+    return {
+      rootRef: this.rootRef, devRef: this.devRef, homeInput: this.homeInput, homeScroll: this.homeScroll, resScroll: this.resScroll,
+      freshRef: this.freshRef, sheetScroll: this.sheetScroll, fsBody: this.fsBody, payTrack: this.payTrack,
+      activate: () => { window.__rmActive = this; },
+      is: { home: s.screen === 'home', results: s.screen === 'results', saved: s.screen === 'saved' },
+
+      goHome: e => { if (e && e.preventDefault) e.preventDefault(); this.setState({ screen: 'home', sheet: null, draft: '' }); },
+      goSaved: () => this.setState(st => ({ screen: 'saved', prev: st.screen === 'saved' ? st.prev : st.screen, sheet: null })),
+      goBack: () => this.setState(st => ({ screen: st.prev || 'home' })),
+      savedN: nSaved, savedHas: nSaved > 0, savedWord: nSaved === 1 ? 'job' : 'jobs', savedAria: `Saved jobs (${nSaved})`,
+
+      draft: s.draft, hasDraft: !!s.draft,
+      onDraft: e => this.setState({ draft: e.target.value }),
+      clearDraft: () => this.setState({ draft: '' }),
+      onFocus: () => this.setState({ focused: true }), onBlur: () => this.setState({ focused: false }),
+      onResFocus: () => this.setState({ resFocus: true }), onResBlur: () => this.setState({ resFocus: false }),
+      submitHome: e => { e.preventDefault(); this.search(s.draft.trim() || Component.PH[s.ph]); },
+      submitRes: e => { e.preventDefault(); this.search(s.draft); },
+      showPh: !s.draft,
+      phEl: h('span', { key: s.ph, style: { display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', animation: 'rdPh .55s cubic-bezier(.2,.8,.2,1)' } }, Component.PH[s.ph]),
+      bar: s.focused ? { bd: '#00C97A', sh: '0 0 0 4px rgba(0,201,122,.16), 0 12px 32px rgba(0,0,0,.06)' } : { bd: '#E8E8E8', sh: '0 1px 2px rgba(0,0,0,.04), 0 8px 28px rgba(0,0,0,.05)' },
+      radarHome: this.radar(600, s.focused, true),
+      emptyRadar: this.radar(520, true, false),
+      miniRadar: this.miniRadar(22), miniRadarSm: this.miniRadar(16),
+      pulseDot: h('span', { style: { width: 8, height: 8, borderRadius: '50%', background: '#00C97A', display: 'inline-block', flex: 'none', animation: 'rdPulse 2.2s ease-out infinite' } }),
+      suggestions: ['Live-in', 'Hospitality', 'Fruit picking', 'No experience', 'Starts this week', '$30+/h'].map(label => ({ label, pick: () => this.search(label) })),
+      fresh: J.filter(j => Component.HOME_IDS.has(j.id) && j.h <= 12).sort((a, b) => a.h - b.h).map(j => this.card(j)),
+      cats: Component.CATS.map(([label, cnt, icon, span, eg, rot]) => ({
+        label, count: cnt, span, eg, rot, wide: span === 2, icon: 'assets/icons/' + icon + '.png',
+        size: span === 2 ? '118px' : '84px', right: span === 2 ? '6%' : '6%', bottom: span === 2 ? '8%' : '7%',
+        aria: `${label}, ${cnt} jobs`, go: e => { e.preventDefault(); this.search(label); }
+      })),
+
+      onResScroll: e => { const v = e.currentTarget.scrollTop > 4; if (v !== this.state.scrolled) this.setState({ scrolled: v }); },
+      ui: { line: s.scrolled ? '0 1px 0 #E8E8E6' : 'none', ring: s.resFocus ? 'inset 0 0 0 1.5px #00C97A' : 'none' },
+      openFiltersAll: () => this.openFilters(null),
+      fCount: { has: active.length > 0, n: active.length },
+      pills: bits.map(b => ({
+        label: b.val || b.name, on: !!b.val, chev: !b.toggle, ...onP(!!b.val),
+        click: b.toggle ? () => this.setF({ [b.key]: !s.f[b.key] }) : () => this.openFilters(b.key)
+      })),
+      hdr: { show: !empty, ready: !loading, loading, count: fmt(count), word: count === 1 ? 'job' : 'jobs', q: s.q, meta: loading ? 'Checking 5 sources' : 'Updated 12 min ago' },
+      openSort: () => this.setState({ sheet: 'sort' }),
+      sortAria: 'Sort: ' + Component.SORTS.find(x => x[0] === s.sort)[1],
+      toggleView: () => this.setState(st => ({ view: st.view === 'cards' ? 'list' : 'cards' })),
+      viewIsCards: s.view === 'cards', viewIsList: s.view === 'list', viewLabel: s.view === 'cards' ? 'Cards' : 'List',
+      viewAria: s.view === 'cards' ? 'Switch to list view' : 'Switch to card view',
+      openAlert: () => this.setState({ sheet: 'alert', alertKind: 'alert' }),
+      show: { cards: !loading && !empty && s.view === 'cards', list: !loading && !empty && s.view === 'list', skel: loading, empty, foot: !loading && !empty },
+      cards: shown.map(j => this.card(j)),
+      skel: [{ w1: '46%', w2: '62%' }, { w1: '38%', w2: '54%' }, { w1: '52%', w2: '48%' }],
+      empty: {
+        q: s.q, tip: active.length && !dym ? 'Try removing a filter.' : 'Try fewer words.',
+        hasDym: !!dym, dymQ: dym || '', dym: () => this.search(dym),
+        hasFilters: active.length > 0, filters: active.map(b => ({ label: b.val, remove: () => this.setF(b.clear) }))
+      },
+      more: {
+        has: filtered.length > shown.length || s.busyMore, busy: s.busyMore, label: s.busyMore ? 'Loading' : 'Load more',
+        load: () => { if (s.busyMore) return; this.setState({ busyMore: true }); clearTimeout(this.mt); this.mt = setTimeout(() => this.setState(st => ({ busyMore: false, page: st.page + 1 })), 700); }
+      },
+      also: { seek: 'https://www.seek.co.nz/jobs?keywords=' + qEnc, tm: 'https://www.trademe.co.nz/a/jobs/search?search_string=' + qEnc },
+
+      savedList: savedIds.map(id => {
+        const j = this._by[id], c = this.card(j);
+        return { ...c, closed: j.closed, applied: !j.closed && !!s.applied[id], op: j.closed ? 0.5 : 1, filter: j.closed ? 'grayscale(1)' : 'none',
+          meta: j.closed ? 'No longer listed' : 'on ' + j.source, remove: () => this.toggleSave(id) };
+      }),
+      savedEmpty: nSaved === 0,
+      exportCsv: this.exportCsv,
+      openEmailSaved: () => this.setState({ sheet: 'alert', alertKind: 'email' }),
+
+      closeSheet: () => this.setState({ sheet: null, drag: null }),
+      dim: { op: dimOn ? 1 : 0, pe: dimOn ? 'auto' : 'none' },
+      dragDown: this.dragDown, dragSmall: this.dragSmall,
+      onSheetScroll: e => { if (this.state.sheet === 'job' && this.state.sheetH === 'half' && !this.state.drag && e.currentTarget.scrollTop > 28) this.setState({ sheetH: 'full' }); },
+      js: {
+        hidden: s.sheet !== 'job',
+        h: (s.drag ? s.drag.h : (s.sheetH === 'full' ? Component.FULL : Component.HALF)) + 'px',
+        tf: s.sheet === 'job' ? 'translateY(0)' : 'translateY(105%)',
+        tr: s.drag ? 'none' : 'height .42s cubic-bezier(.2,.8,.2,1), transform .42s cubic-bezier(.2,.8,.2,1)'
+      },
+      jv: this.jobView(job),
+
+      ss: { hidden: s.sheet !== 'sort', tf: s.sheet === 'sort' ? 'translateY(0)' : 'translateY(calc(100% + 24px))' },
+      sorts: Component.SORTS.map(([k, label]) => ({ label, on: s.sort === k, fw: s.sort === k ? 600 : 400, pick: () => { this.setState({ sort: k, sheet: null }); this.reload(450); } })),
+
+      email: s.email, onEmail: e => this.setState({ email: e.target.value }),
+      as: {
+        hidden: s.sheet !== 'alert', tf: s.sheet === 'alert' ? 'translateY(0)' : 'translateY(105%)',
+        isAlert: !alertIsEmail,
+        title: alertIsEmail ? 'Email me my saved jobs' : 'Get these jobs by email',
+        sub: alertIsEmail ? `We’ll send your ${nSaved} saved ${nSaved === 1 ? 'job' : 'jobs'} with links to the original listings.` : `New jobs matching “${s.q}”, straight to your inbox.`,
+        chips: [{ label: s.q }, ...active.map(b => ({ label: b.val }))],
+        freq: [['daily', 'Once a day'], ['instant', 'As they appear']].map(([k, label]) => seg(s.freq === k, () => this.setState({ freq: k }), label)),
+        cta: alertIsEmail ? 'Send' : 'Create alert',
+        submit: e => { e.preventDefault(); this.setState({ sheet: null }); this.toast(alertIsEmail ? 'Sent to ' + (s.email || 'your inbox') : 'Alert created'); }
+      },
+
+      fs: {
+        hidden: s.sheet !== 'filters', tf: s.sheet === 'filters' ? 'translateY(0)' : 'translateY(100%)',
+        clearC: JSON.stringify(fd) === JSON.stringify(Component.F0) ? '#9A9A98' : '#0B0B0A',
+        clear: () => this.setState({ fd: { ...Component.F0 } }),
+        north: Component.NORTH.map(r => ({ label: r, on: fd.regions.includes(r), ...onP(fd.regions.includes(r)), toggle: tog('regions', r) })),
+        south: Component.SOUTH.map(r => ({ label: r, on: fd.regions.includes(r), ...onP(fd.regions.includes(r)), toggle: tog('regions', r) })),
+        near: sw(fd.near, setD({ near: !fd.near })),
+        radiusOp: fd.near ? 1 : 0.45,
+        radius: [10, 25, 50, 100].map(km => seg(fd.near && fd.radius === km, setD({ radius: km, near: true }), km + ' km')),
+        payLabel: (fd.payMin <= 23.95 ? '$23.95' : '$' + fd.payMin) + ' – ' + (fd.payMax >= 60 ? '$60+' : '$' + fd.payMax) + '/h',
+        loP: pct(fd.payMin), hiP: pct(fd.payMax), hiR: (100 - parseFloat(pct(fd.payMax))).toFixed(2) + '%',
+        types: Component.TYPES.map(t => ({ label: t, on: fd.types.includes(t), ...onP(fd.types.includes(t)), toggle: tog('types', t) })),
+        perks: Component.PERKS.map(([k, label]) => ({ label, on: fd.perks.includes(k), ...onP(fd.perks.includes(k)), toggle: tog('perks', k) })),
+        switches: [
+          { label: 'Open to working holiday visa', line: 'none', ...sw(fd.whv, setD({ whv: !fd.whv })) },
+          { label: 'No experience', line: '1px solid #E8E8E6', ...sw(fd.noexp, setD({ noexp: !fd.noexp })) }
+        ],
+        starts: Component.STARTS.map(([k, label]) => seg(fd.starts === k, setD({ starts: k }), label)),
+        posted: Component.POSTED.map(([k, label]) => seg(fd.posted === k, setD({ posted: k }), label)),
+        sources: Component.SOURCES.map(([k, label]) => {
+          const on = fd.sources.includes(k);
+          return { label, on, favicon: this.fav(k), bg: on ? '#0B0B0A' : '#FFFFFF', ring: on ? 'none' : 'inset 0 0 0 1.5px #D6D6D4', toggle: tog('sources', k) };
+        }),
+        count: fmt(fdCount), word: fdCount === 1 ? 'job' : 'jobs',
+        apply: () => { this.setState(st => ({ f: { ...st.fd }, sheet: null })); this.reload(600); }
+      },
+
+      toast: { text: s.toast, op: s.toastOn ? 1 : 0, y: s.toastOn ? '0' : '12px', bottom: s.sheet === 'job' ? '124px' : (s.sheet === 'filters' ? '104px' : '34px') }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#E9E9E7;color:#0B0B0A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+*{box-sizing:border-box}
+a{color:#0B0B0A;text-decoration:none}
+a:hover{color:#0B0B0A}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #00C97A;outline-offset:3px}
+::selection{background:rgba(0,201,122,.22)}
+@keyframes rdSpin{to{transform:rotate(360deg)}}
+@keyframes rdPing{0%{transform:scale(.12);opacity:0}12%{opacity:1}100%{transform:scale(1);opacity:0}}
+@keyframes rdBlip{0%{opacity:0;transform:scale(.3)}4%{opacity:1;transform:scale(1)}45%{opacity:0;transform:scale(.9)}100%{opacity:0}}
+@keyframes rdPulse{0%{box-shadow:0 0 0 0 rgba(0,201,122,.55)}70%{box-shadow:0 0 0 7px rgba(0,201,122,0)}100%{box-shadow:0 0 0 0 rgba(0,201,122,0)}}
+@keyframes rdPh{from{opacity:0;transform:translateY(55%)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<section data-screen-label="Turn 1 · Home desktop" style="padding:72px 80px 120px; display:flex; flex-direction:column; gap:32px">
+  <div style="display:flex; flex-direction:column; gap:6px">
+    <div style="font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; color:#6B6B6B">Turn 1</div>
+    <div style="font-size:28px; font-weight:650; letter-spacing:-0.035em">Home · desktop 1440</div>
+  </div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:72px; align-items:flex-start">
+
+    <div id="1a" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C">
+        <span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">1a</span>
+        Home — full page. Click into the search bar to see the radar.
+      </div>
+
+      <div data-screen-label="1a Home desktop" style="width:1440px; background:#FFFFFF; border-radius:20px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+
+        <header style="position:relative; z-index:3; height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 40px">
+          <a href="#1a" aria-label="Radar home" style="display:flex; align-items:baseline; gap:3px; padding:4px 2px; border-radius:8px">
+            <span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+            <span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+          </a>
+          <span style="font-size:13px; color:#6B6B6B">Free · No account</span>
+        </header>
+
+        <section style="position:relative; z-index:0; isolation:isolate; display:flex; flex-direction:column; align-items:center; text-align:center; padding:96px 40px 136px">
+          <h1 style="margin:0; font-size:84px; font-weight:650; letter-spacing:-0.047em; line-height:1.02">
+            <span style="display:block">Every <span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#FCEEDC,#F1D5B1); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(-7deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.04); transition:transform .5s cubic-bezier(.3,1.6,.5,1)" style-hover="transform:rotate(6deg) scale(1.08)"><img src="assets/icons/coffee.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> job in</span>
+            <span style="display:block"><span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#ECF7DE,#CFE8B2); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(6deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.04); transition:transform .5s cubic-bezier(.3,1.6,.5,1)" style-hover="transform:rotate(-6deg) scale(1.08)"><img src="assets/icons/kiwi.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> New Zealand.</span>
+            <span style="display:block"><span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#E8F1FC,#C8DCF4); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(-4deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.04); transition:transform .5s cubic-bezier(.3,1.6,.5,1)" style-hover="transform:rotate(7deg) scale(1.08)"><img src="assets/icons/mountain.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> One search.</span>
+          </h1>
+          <p style="margin:26px 0 0; max-width:560px; font-size:19px; line-height:1.45; color:#6B6B6B; text-wrap:balance">Seek, Trade Me, Backpacker Board, PickNZ and Facebook groups, all in one place.</p>
+
+          <div style="position:relative; width:720px; margin-top:44px">
+            {{ radarHome }}
+            <form onSubmit="{{ submit }}" role="search" style="position:relative; display:flex; align-items:center; gap:6px; height:64px; padding:0 7px 0 24px; background:#FFFFFF; border:1px solid {{ bar.bd }}; border-radius:999px; box-shadow:{{ bar.sh }}; transition:border-color .2s ease, box-shadow .3s ease">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.2" strokeLinecap="round" style="flex:none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+              <div style="position:relative; flex:1; min-width:0; height:100%">
+                <input ref="{{ homeInput }}" value="{{ draft }}" onChange="{{ onDraft }}" onFocus="{{ onFocus }}" onBlur="{{ onBlur }}" aria-label="Search every job in New Zealand" autoComplete="off" style="position:absolute; inset:0; width:100%; height:100%; border:0; outline:none; background:transparent; padding:0 12px; font-size:19px; letter-spacing:-0.01em; color:#0B0B0A">
+                <sc-if value="{{ showPh }}" hint-placeholder-val="{{ true }}">
+                  <div aria-hidden="true" style="position:absolute; left:12px; right:8px; top:0; bottom:0; display:flex; align-items:center; overflow:hidden; pointer-events:none; font-size:19px; letter-spacing:-0.01em; color:#6B6B6B">{{ phEl }}</div>
+                </sc-if>
+              </div>
+              <button type="submit" style="flex:none; height:50px; padding:0 26px; border-radius:999px; border:0; background:#0B0B0A; color:#FFFFFF; font-size:16px; font-weight:550; letter-spacing:-0.01em; cursor:pointer; transition:background .15s ease, transform .15s ease" style-hover="background:#2A2A29" style-active="transform:scale(.97)">Search</button>
+            </form>
+          </div>
+
+          <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:22px; max-width:720px">
+            <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="6">
+              <button onClick="{{ s.pick }}" style="height:36px; padding:0 15px; border-radius:999px; border:0; background:#F5F5F4; font-size:14px; color:#1F1F1E; cursor:pointer; transition:background .15s ease, transform .15s ease" style-hover="background:#ECECEA" style-active="transform:scale(.97)">{{ s.label }}</button>
+            </sc-for>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:9px; margin-top:30px; font-size:13px; color:#6B6B6B">
+            {{ pulseDot }}
+            <span><span style="font-family:'Geist Mono',ui-monospace,monospace; color:#3D3D3C">12,480</span> jobs · updated today at <span style="font-family:'Geist Mono',ui-monospace,monospace; color:#3D3D3C">7:00</span></span>
+          </div>
+        </section>
+
+        <section style="position:relative; z-index:1; padding-bottom:112px">
+          <div style="padding:0 80px; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px">
+            <div>
+              <h2 style="margin:0; font-size:30px; font-weight:650; letter-spacing:-0.035em">Fresh today</h2>
+              <p style="margin:6px 0 0; font-size:15px; color:#6B6B6B">Posted since 7:00 this morning</p>
+            </div>
+            <div style="display:flex; gap:8px">
+              <button onClick="{{ railPrev }}" aria-label="Scroll back" style="width:40px; height:40px; border-radius:999px; border:0; background:#F5F5F4; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .15s ease" style-hover="background:#EAEAE8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+              <button onClick="{{ railNext }}" aria-label="Scroll forward" style="width:40px; height:40px; border-radius:999px; border:0; background:#F5F5F4; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .15s ease" style-hover="background:#EAEAE8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+            </div>
+          </div>
+          <div ref="{{ railRef }}" style="display:flex; gap:20px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:8px 80px 16px; scroll-padding-inline:80px">
+            <sc-for list="{{ fresh }}" as="job" hint-placeholder-count="5">
+              <a href="{{ job.href }}" onClick="{{ job.open }}" aria-label="{{ job.aria }}" style="flex:0 0 300px; scroll-snap-align:start; display:flex; flex-direction:column; gap:12px; border-radius:16px; outline-offset:4px; transition:transform .3s cubic-bezier(.2,.8,.2,1)" style-hover="transform:translateY(-3px)">
+                <div style="position:relative; width:100%; aspect-ratio:16/11; border-radius:14px; overflow:hidden; background:#F5F5F4">
+                  <sc-if value="{{ job.hasPhoto }}" hint-placeholder-val="{{ false }}">
+                    <img src="{{ job.photo }}" alt="" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block">
+                  </sc-if>
+                  <sc-if value="{{ job.noPhoto }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute; inset:0; background:{{ job.grad }}; display:flex; align-items:center; justify-content:center">
+                      <div style="width:62px; height:62px; border-radius:18px; background:rgba(255,255,255,.8); box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 6px 18px rgba(0,0,0,.05); display:flex; align-items:center; justify-content:center; font-size:29px; font-weight:650; letter-spacing:-0.04em; color:#0B0B0A">{{ job.initial }}</div>
+                    </div>
+                  </sc-if>
+                  <div style="position:absolute; inset:0; border-radius:14px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05); pointer-events:none"></div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:5px; padding:0 2px">
+                  <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px">
+                    <span style="min-width:0; font-size:16px; font-weight:600; letter-spacing:-0.015em; line-height:1.3">{{ job.title }}</span>
+                    <span style="flex:none; font-family:'Geist Mono',ui-monospace,monospace; font-size:13.5px; font-weight:500; letter-spacing:-0.02em">{{ job.pay }}</span>
+                  </div>
+                  <span style="font-size:14px; line-height:1.35; color:#6B6B6B">{{ job.where }}</span>
+                  <div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:5px">
+                    <sc-for list="{{ job.badges }}" as="b" hint-placeholder-count="2">
+                      <span style="height:23px; padding:0 9px; border-radius:999px; display:inline-flex; align-items:center; font-size:12px; font-weight:{{ b.fw }}; background:{{ b.bg }}; color:{{ b.fg }}; box-shadow:{{ b.bd }}">{{ b.label }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:7px; margin-top:4px; font-size:12.5px; color:#6B6B6B">
+                    <img src="{{ job.favicon }}" alt="" style="width:14px; height:14px; border-radius:4px; filter:grayscale(1); opacity:.75">
+                    <span>on {{ job.source }} · {{ job.ago }}</span>
+                  </div>
+                </div>
+              </a>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="position:relative; z-index:1; padding:0 80px 140px">
+          <h2 style="margin:0 0 20px; font-size:30px; font-weight:650; letter-spacing:-0.035em">Browse by type</h2>
+          <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); grid-auto-rows:236px; gap:14px">
+            <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+              <a href="#1a" onClick="{{ c.go }}" aria-label="{{ c.aria }}" style="grid-column:span {{ c.span }}; position:relative; overflow:hidden; border-radius:16px; background:#F5F5F4; padding:24px 26px; display:flex; flex-direction:column; justify-content:space-between; transition:background .25s ease, transform .3s cubic-bezier(.2,.8,.2,1)" style-hover="background:#EFEFED; transform:translateY(-2px)">
+                <div style="position:relative; z-index:1">
+                  <div style="font-size:22px; font-weight:600; letter-spacing:-0.03em">{{ c.label }}</div>
+                  <div style="margin-top:5px; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; color:#6B6B6B">{{ c.count }} jobs</div>
+                </div>
+                <div style="position:relative; z-index:1; max-width:{{ c.egW }}; font-size:14px; line-height:1.4; color:#6B6B6B; text-wrap:pretty">{{ c.eg }}</div>
+                <img src="{{ c.icon }}" alt="" style="position:absolute; right:{{ c.right }}; bottom:{{ c.bottom }}; width:{{ c.size }}; height:auto; transform:rotate({{ c.rot }}deg); filter:drop-shadow(0 16px 18px rgba(0,0,0,.10)); pointer-events:none">
+              </a>
+            </sc-for>
+          </div>
+        </section>
+
+        <footer style="position:relative; z-index:1; background:#0B0B0A; color:#FFFFFF; overflow:hidden">
+          <div style="padding:72px 80px 0; display:flex; justify-content:space-between; align-items:flex-start; gap:48px">
+            <div style="display:flex; flex-direction:column; gap:16px; max-width:440px">
+              <div style="display:flex; align-items:baseline; gap:3px">
+                <span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+                <span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+              </div>
+              <p style="margin:0; font-size:14px; line-height:1.6; color:#A3A3A1; text-wrap:pretty">Radar links to jobs posted on other websites. Always apply on the original listing. Never pay to get a job.</p>
+            </div>
+            <span style="font-size:13px; color:#A3A3A1">© 2026 Radar</span>
+          </div>
+          <div aria-hidden="true" style="margin-top:56px; height:330px; overflow:hidden; display:flex; justify-content:center">
+            <span style="font-size:520px; font-weight:700; letter-spacing:-0.075em; line-height:0.8; color:#1D1D1C; white-space:nowrap; user-select:none">Radar</span>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <div id="1b" style="display:flex; flex-direction:column; gap:14px">
+      <div style="display:flex; align-items:center; gap:10px; font-size:15px; color:#3D3D3C">
+        <span style="height:26px; padding:0 10px; border-radius:8px; background:#0B0B0A; color:#FFFFFF; font-family:'Geist Mono',ui-monospace,monospace; font-size:13px; font-weight:500; display:inline-flex; align-items:center">1b</span>
+        Home — first screen, search focused (radar sweep on)
+      </div>
+
+      <div data-screen-label="1b Home desktop focused" style="width:1440px; height:900px; background:#FFFFFF; border-radius:20px; overflow:hidden; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 30px 80px rgba(0,0,0,.08)">
+        <header style="position:relative; z-index:3; height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 40px">
+          <div style="display:flex; align-items:baseline; gap:3px; padding:4px 2px">
+            <span style="font-size:23px; font-weight:700; letter-spacing:-0.055em; line-height:1">Radar</span>
+            <span style="width:7px; height:7px; border-radius:50%; background:#00C97A; display:inline-block"></span>
+          </div>
+          <span style="font-size:13px; color:#6B6B6B">Free · No account</span>
+        </header>
+        <section style="position:relative; z-index:0; isolation:isolate; display:flex; flex-direction:column; align-items:center; text-align:center; padding:96px 40px 0">
+          <h1 style="margin:0; font-size:84px; font-weight:650; letter-spacing:-0.047em; line-height:1.02">
+            <span style="display:block">Every <span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#FCEEDC,#F1D5B1); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(-7deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.04)"><img src="assets/icons/coffee.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> job in</span>
+            <span style="display:block"><span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#ECF7DE,#CFE8B2); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(6deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.04)"><img src="assets/icons/kiwi.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> New Zealand.</span>
+            <span style="display:block"><span aria-hidden="true" style="display:inline-flex; align-items:center; justify-content:center; width:0.88em; height:0.88em; border-radius:0.23em; background:linear-gradient(160deg,#E8F1FC,#C8DCF4); vertical-align:-0.1em; margin:0 0.02em; transform:rotate(-4deg); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(0,0,0,.04)"><img src="assets/icons/mountain.png" alt="" style="width:76%; height:76%; object-fit:contain"></span> One search.</span>
+          </h1>
+          <p style="margin:26px 0 0; max-width:560px; font-size:19px; line-height:1.45; color:#6B6B6B; text-wrap:balance">Seek, Trade Me, Backpacker Board, PickNZ and Facebook groups, all in one place.</p>
+          <div style="position:relative; width:720px; margin-top:44px">
+            {{ radarFocused }}
+            <div style="position:relative; display:flex; align-items:center; gap:6px; height:64px; padding:0 7px 0 24px; background:#FFFFFF; border:1px solid #00C97A; border-radius:999px; box-shadow:0 0 0 4px rgba(0,201,122,.16), 0 12px 32px rgba(0,0,0,.06)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B0B0A" strokeWidth="2.2" strokeLinecap="round" style="flex:none"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+              <div style="position:relative; flex:1; min-width:0; height:100%; display:flex; align-items:center; padding:0 12px; overflow:hidden; font-size:19px; letter-spacing:-0.01em; color:#6B6B6B; text-align:left">
+                <span style="width:2px; height:24px; background:#0B0B0A; margin-right:2px; flex:none"></span>{{ phEl }}
+              </div>
+              <div style="flex:none; height:50px; padding:0 26px; border-radius:999px; background:#0B0B0A; color:#FFFFFF; font-size:16px; font-weight:550; letter-spacing:-0.01em; display:flex; align-items:center">Search</div>
+            </div>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:22px; max-width:720px">
+            <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="6">
+              <span style="height:36px; padding:0 15px; border-radius:999px; background:#F5F5F4; font-size:14px; color:#1F1F1E; display:inline-flex; align-items:center">{{ s.label }}</span>
+            </sc-for>
+          </div>
+          <div style="display:flex; align-items:center; gap:9px; margin-top:30px; font-size:13px; color:#6B6B6B">
+            {{ pulseDot }}
+            <span><span style="font-family:'Geist Mono',ui-monospace,monospace; color:#3D3D3C">12,480</span> jobs · updated today at <span style="font-family:'Geist Mono',ui-monospace,monospace; color:#3D3D3C">7:00</span></span>
+          </div>
+        </section>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;sweepSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:3,&quot;max&quot;:14,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;s&quot;,&quot;default&quot;:7,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Radar&quot;},&quot;showBlips&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Radar&quot;}}">
+class Component extends DCLogic {
+  state = { draft: '', focused: false, ph: 0 };
+  homeInput = React.createRef();
+  railRef = React.createRef();
+
+  static PH = ['barista in Auckland', 'live-in jobs, South Island', '$30+ an hour, no experience', 'fruit picking with accommodation'];
+  static SRC = { 'Seek': 'seek.co.nz', 'Trade Me': 'trademe.co.nz', 'Backpacker Board': 'backpackerboard.co.nz', 'PickNZ': 'picknz.co.nz', 'Facebook': 'facebook.com' };
+  // id, title, employer, town, region, island, pay, min, max, source, hoursAgo, photo, hue, flags
+  static RAW = [
+    ['milford-kitchen', 'Kitchen hand – lodge', 'Fiordland Sound Lodge', 'Milford Sound', 'Southland', 'South', '$25–30/h', 25, 30, 'Backpacker Board', 3, 'milford', 160, 'bed meals noexp'],
+    ['ponsonby-barista', 'Barista', 'Kōwhai Coffee Co.', 'Ponsonby, Auckland', 'Auckland', 'North', '$26–30/h', 26, 30, 'Seek', 2, 'ponsonby', 40, 'tips'],
+    ['fox-reception', 'Reception + housekeeping', 'Glacier Gateway Motel', 'Fox Glacier', 'West Coast', 'South', '$27/h', 27, 27, 'Trade Me', 26, 'fox', 210, 'bed closing'],
+    ['tepuke-kiwi', 'Kiwifruit picker', 'Ōtawa Orchards', 'Te Puke', 'Bay of Plenty', 'North', '$27/h', 27, 27, 'PickNZ', 1, 'tepuke', 110, 'noexp week'],
+    ['greylynn-barista', 'Weekend barista', 'Fig & Fern', 'Grey Lynn, Auckland', 'Auckland', 'North', '$25–28/h', 25, 28, 'Facebook', 6, null, 30, 'tips week'],
+    ['britomart-head', 'Head barista', 'Ritual Espresso Bar', 'Britomart, Auckland', 'Auckland', 'North', '$30–34/h', 30, 34, 'Seek', 30, null, 220, ''],
+    ['blenheim-vineyard', 'Vineyard hand – shoot thinning', 'Wairau Valley Estate', 'Blenheim', 'Marlborough', 'South', '$26–29/h', 26, 29, 'Backpacker Board', 4, 'blenheim', 90, 'noexp week'],
+    ['wanaka-housekeeper', 'Housekeeper', 'Lakefront Lodge Wānaka', 'Wānaka', 'Otago', 'South', '$27–29/h', 27, 29, 'Seek', 8, 'wanaka', 230, 'bed'],
+    ['queenstown-bartender', 'Bartender', 'The Pinehouse', 'Queenstown', 'Otago', 'South', '$28–32/h', 28, 32, 'Trade Me', 22, 'queenstown', 260, 'tips closing'],
+    ['franz-guide', 'Glacier guide assistant', 'Southern Ice Guides', 'Franz Josef', 'West Coast', 'South', '$28–31/h', 28, 31, 'Trade Me', 3, 'franz', 200, 'bed'],
+    ['cromwell-cherry', 'Cherry picker', 'Cromwell Cherry Co.', 'Cromwell', 'Otago', 'South', '$26/h + bonus', 26, 26, 'PickNZ', 9, null, 10, 'bed noexp'],
+    ['wanaka-festival', 'Festival crew', 'Southern Sound Festival', 'Wānaka', 'Otago', 'South', '$26–30/h', 26, 30, 'Facebook', 12, null, 290, 'meals noexp'],
+    ['paihia-cafe', 'Café all-rounder', 'Wharf Street Kitchen', 'Paihia', 'Northland', 'North', '$25–27/h', 25, 27, 'Backpacker Board', 20, 'paihia', 190, 'bed week'],
+    ['waiheke-chef', 'Chef de partie', 'Oneroa Bay Estate', 'Waiheke Island', 'Auckland', 'North', '$30–35/h', 30, 35, 'Seek', 28, 'waiheke', 100, 'meals closing'],
+    ['tekapo-frontdesk', 'Front desk – holiday park', 'Tekapo Lakeside Holiday Park', 'Lake Tekapo', 'Canterbury', 'South', '$26–28/h', 26, 28, 'Backpacker Board', 7, 'tekapo', 200, 'bed noexp'],
+    ['stewart-lodge', 'Lodge host', 'Rakiura Retreat', 'Stewart Island', 'Southland', 'South', '$27–30/h', 27, 30, 'Facebook', 34, 'stewart', 20, 'bed meals'],
+    ['kaikoura-deckhand', 'Deckhand – wildlife cruises', 'Kaikōura Coast Cruises', 'Kaikōura', 'Canterbury', 'South', '$26–30/h', 26, 30, 'Seek', 4, 'kaikoura', 220, 'noexp'],
+    ['hastings-packhouse', 'Packhouse – night shift', 'Heretaunga Packhouse', 'Hastings', 'Hawke’s Bay', 'North', '$27–31/h', 27, 31, 'PickNZ', 5, null, 130, 'noexp week'],
+    ['wellington-dish', 'Dishwasher', 'Lucky Duck Ramen', 'Te Aro, Wellington', 'Wellington', 'North', '$25/h', 25, 25, 'Facebook', 3, null, 25, 'meals noexp week'],
+    ['moeraki-housekeeping', 'Housekeeping – wilderness lodge', 'Moeraki Rainforest Retreat', 'Lake Moeraki', 'West Coast', 'South', '$27/h', 27, 27, 'Backpacker Board', 50, 'moeraki', 150, 'bed meals closing'],
+    ['queenstown-barista', 'Barista – lakefront', 'Wakatipu Coffee House', 'Queenstown', 'Otago', 'South', '$27–30/h', 27, 30, 'Trade Me', 10, null, 195, 'tips'],
+    ['kingsland-barista', 'Barista', 'Small Hours Coffee', 'Kingsland, Auckland', 'Auckland', 'North', '$26–29/h', 26, 29, 'Backpacker Board', 14, null, 70, 'tips']
+  ];
+  static CATS = [
+    ['Hospitality', '4,812', 'coffee', 2, 'Baristas, chefs, bartenders, kitchen hands', -8],
+    ['Farm & fruit', '2,306', 'kiwi', 1, 'Picking, packing, vineyards', 8],
+    ['Live-in', '1,947', 'bed', 1, 'Bed included, often meals too', -6],
+    ['Tourism', '1,688', 'van', 1, 'Guides, front desk, cruises', 6],
+    ['Events', '412', 'party', 1, 'Festivals and summer crews', -10],
+    ['Remote lodges', '236', 'mountain', 2, 'Fiordland, the West Coast, Stewart Island', 5]
+  ];
+
+  componentDidMount() {
+    this.phT = setInterval(() => this.setState(s => ({ ph: (s.ph + 1) % Component.PH.length })), 2800);
+  }
+  componentWillUnmount() { clearInterval(this.phT); }
+
+  jobs() {
+    if (!this._jobs) this._jobs = Component.RAW.map(a => {
+      const [id, title, employer, town, region, island, pay, min, max, source, h, photo, hue, flags] = a;
+      const f = flags.split(' ');
+      return { id, title, employer, town, region, island, pay, min, max, source, h, photo, hue,
+        bed: f.includes('bed'), meals: f.includes('meals'), tips: f.includes('tips'), noexp: f.includes('noexp'), week: f.includes('week'), closing: f.includes('closing') };
+    });
+    return this._jobs;
+  }
+  grad(h) {
+    return `radial-gradient(90% 80% at 15% 8%, oklch(0.95 0.045 ${h}) 0%, transparent 70%), radial-gradient(80% 90% at 95% 100%, oklch(0.87 0.085 ${(h + 45) % 360}) 0%, transparent 72%), oklch(0.925 0.045 ${(h + 20) % 360})`;
+  }
+  badges(j) {
+    const nb = label => ({ label, bg: '#F5F5F4', fg: '#3D3D3C', fw: 500, bd: 'none' });
+    const b = [];
+    if (j.h <= 12) b.push({ label: 'New', bg: '#00C97A', fg: '#00261A', fw: 600, bd: 'none' });
+    if (j.bed) b.push(nb('Bed included'));
+    if (j.meals) b.push(nb('Meals'));
+    if (j.tips) b.push(nb('Tips'));
+    if (j.noexp) b.push(nb('No experience'));
+    if (j.closing) b.push({ label: 'Closing soon', bg: '#FFFFFF', fg: '#0B0B0A', fw: 500, bd: 'inset 0 0 0 1px #D6D6D4' });
+    return b;
+  }
+  ago(h) { return h < 24 ? h + 'h ago' : Math.floor(h / 24) + 'd ago'; }
+  card(j) {
+    return {
+      ...j,
+      hasPhoto: !!j.photo, noPhoto: !j.photo,
+      photo: j.photo ? 'assets/photos/' + j.photo + '.jpg' : '',
+      grad: this.grad(j.hue), initial: j.source[0],
+      where: j.employer + ' · ' + j.town,
+      badges: this.badges(j),
+      favicon: 'https://www.google.com/s2/favicons?domain=' + Component.SRC[j.source] + '&sz=64',
+      ago: this.ago(j.h),
+      href: '#' + j.id,
+      aria: `${j.title}, ${j.employer}, ${j.town}, ${j.pay}, on ${j.source}`,
+      open: e => e.preventDefault()
+    };
+  }
+  radar(size, on) {
+    const h = React.createElement;
+    const sp = this.props.sweepSeconds ?? 7;
+    const showBlips = this.props.showBlips ?? true;
+    const rings = [0.16, 0.32, 0.48, 0.64, 0.8, 0.96].map((r, i) => h('div', { key: 'r' + i, style: {
+      position: 'absolute', left: '50%', top: '50%', width: size * r, height: size * r, marginLeft: -size * r / 2, marginTop: -size * r / 2,
+      borderRadius: '50%', border: '1px solid rgba(11,11,10,0.075)' } }));
+    const sweep = h('div', { key: 's', style: { position: 'absolute', inset: 0, borderRadius: '50%',
+      background: 'conic-gradient(from 0deg, rgba(0,201,122,0) 0deg, rgba(0,201,122,0) 280deg, rgba(0,201,122,0.12) 352deg, rgba(0,201,122,0.3) 359.4deg, rgba(0,201,122,0) 360deg)',
+      animation: `rdSpin ${sp}s linear infinite` } });
+    const ping = h('div', { key: 'p', style: { position: 'absolute', inset: '2%', borderRadius: '50%', border: '1px solid rgba(0,201,122,0.45)', animation: 'rdPing 4.2s cubic-bezier(.2,.6,.3,1) infinite' } });
+    const blips = showBlips ? [[38, 0.29], [118, 0.41], [206, 0.21], [296, 0.36], [252, 0.44]].map(([a, r], i) => {
+      const rad = a * Math.PI / 180;
+      return h('div', { key: 'b' + i, style: {
+        position: 'absolute', left: `calc(50% + ${(Math.sin(rad) * r * size).toFixed(1)}px - 3.5px)`, top: `calc(50% - ${(Math.cos(rad) * r * size).toFixed(1)}px - 3.5px)`,
+        width: 7, height: 7, borderRadius: '50%', background: '#00C97A', boxShadow: '0 0 0 4px rgba(0,201,122,.14)', opacity: 0,
+        animation: `rdBlip ${sp}s ease-out ${((a / 360) * sp).toFixed(2)}s infinite` } });
+    }) : [];
+    const mask = 'radial-gradient(closest-side, #000 32%, transparent 100%)';
+    return h('div', { 'aria-hidden': true, style: {
+      position: 'absolute', left: '50%', top: '50%', width: size, height: size, transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: -1,
+      opacity: on ? 1 : 0, transition: 'opacity .9s ease', WebkitMaskImage: mask, maskImage: mask } }, rings, sweep, ping, blips);
+  }
+
+  submit = e => {
+    e.preventDefault();
+    if (!this.state.draft.trim()) this.setState({ draft: Component.PH[this.state.ph] });
+  };
+
+  renderVals() {
+    const s = this.state;
+    const h = React.createElement;
+    const jobs = this.jobs();
+    const fresh = jobs.filter(j => j.h <= 12).sort((a, b) => a.h - b.h).map(j => this.card(j));
+    const on = s.focused;
+    const rail = d => () => { const r = this.railRef.current; if (r) r.scrollBy({ left: d * 640, behavior: 'smooth' }); };
+    return {
+      draft: s.draft,
+      onDraft: e => this.setState({ draft: e.target.value }),
+      onFocus: () => this.setState({ focused: true }),
+      onBlur: () => this.setState({ focused: false }),
+      homeInput: this.homeInput,
+      railRef: this.railRef,
+      submit: this.submit,
+      showPh: !s.draft,
+      phEl: h('span', { key: s.ph, style: { display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', animation: 'rdPh .55s cubic-bezier(.2,.8,.2,1)' } }, Component.PH[s.ph]),
+      bar: on
+        ? { bd: '#00C97A', sh: '0 0 0 4px rgba(0,201,122,.16), 0 12px 32px rgba(0,0,0,.06)' }
+        : { bd: '#E8E8E8', sh: '0 1px 2px rgba(0,0,0,.04), 0 8px 28px rgba(0,0,0,.05)' },
+      radarHome: this.radar(1040, on),
+      radarFocused: this.radar(1040, true),
+      pulseDot: h('span', { style: { width: 8, height: 8, borderRadius: '50%', background: '#00C97A', display: 'inline-block', flex: 'none', animation: 'rdPulse 2.2s ease-out infinite' } }),
+      suggestions: ['Live-in', 'Hospitality', 'Fruit picking', 'No experience', 'Starts this week', '$30+/h'].map(label => ({
+        label, pick: () => { this.setState({ draft: label }); this.homeInput.current && this.homeInput.current.focus(); }
+      })),
+      fresh,
+      railPrev: rail(-1),
+      railNext: rail(1),
+      cats: Component.CATS.map(([label, count, icon, span, eg, rot]) => ({
+        label, count, span, eg, rot,
+        icon: 'assets/icons/' + icon + '.png',
+        size: span === 2 ? '172px' : '124px',
+        right: span === 2 ? '7%' : '8%',
+        bottom: span === 2 ? '10%' : '9%',
+        egW: span === 2 ? '46%' : '52%',
+        aria: `${label}, ${count} jobs`,
+        go: e => { e.preventDefault(); this.setState({ draft: label }); }
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
