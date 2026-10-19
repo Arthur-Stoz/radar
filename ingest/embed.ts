@@ -16,12 +16,16 @@ async function load(cacheDir: string): Promise<Extractor> {
 }
 
 /** Embed texts in batches; returns Int8 vectors in input order. */
-export async function embedAll(texts: string[], opts: { cacheDir: string; batch?: number; log?: (m: string) => void }): Promise<Int8Array[]> {
+export async function embedAll(texts: string[], opts: { cacheDir: string; batch?: number; log?: (m: string) => void; stopAt?: number }): Promise<Int8Array[]> {
   const fe = await load(opts.cacheDir);
   const size = opts.batch ?? 32;
   const out: Int8Array[] = [];
   const t0 = Date.now();
   for (let i = 0; i < texts.length; i += size) {
+    if (opts.stopAt && Date.now() > opts.stopAt) {
+      opts.log?.(`embeddings: time budget reached at ${i}/${texts.length}; the rest is embedded next run`);
+      break;
+    }
     const res = await fe(texts.slice(i, i + size), { pooling: 'mean', normalize: true });
     for (const v of res.tolist()) out.push(quantize(v));
     if (opts.log && (i / size) % 50 === 0 && i) {

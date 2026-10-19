@@ -1,7 +1,9 @@
 // Relevance eval (BUILD.md §9.3): `npm run eval` against the real DB (DATA_DIR, default ./.data).
 // Each case checks the top results with a predicate; prints a pass/fail table.
 
+import { readFileSync } from 'node:fs';
 import { search, type CardJob, type SearchInput } from '../lib/search';
+import { cvChips, cvVector } from './cv-match';
 
 type Pred = (j: CardJob) => boolean;
 interface Case {
@@ -64,7 +66,16 @@ const CASES: Case[] = [
   { name: 'cleaner', input: { q: 'cleaner' }, pred: tc(/clean|housekeep|janitor|custodian|room attendant/) },
 ];
 
-function run() {
+async function run() {
+  // CV fixture (a fake hospitality CV) + no query → hospitality roles dominate the top 10 (BUILD.md §9.3).
+  const cvText = readFileSync('tests/fixtures/cv-hospitality.txt', 'utf8');
+  CASES.push({
+    name: 'CV: hospitality, no query',
+    input: { cv: { vector: await cvVector(cvText), chips: cvChips(cvText) } },
+    pred: tc(/barista|caf[eé]|coffee|chef|cook|kitchen|wait|server|food|beverage|f&b|bar|restaurant|hospitality|host|front of house|housekeep|hotel|catering|deli/),
+    extra: (r) => (r.results[0]?.match != null ? null : 'no match score'),
+  });
+
   const rows: { case: string; results: number; ok: string; share: string; pass: string; note: string }[] = [];
   let passed = 0;
   for (const c of CASES) {
@@ -95,4 +106,4 @@ function run() {
   process.exit(pct >= 90 ? 0 : 1);
 }
 
-run();
+void run();

@@ -135,7 +135,7 @@ interface SourceResult {
   durationMs: number;
 }
 
-async function runSource(source: Source, http: Http, prevBySource: Map<string, PrevJob>, budget: number, now: Date): Promise<SourceResult> {
+async function runSource(source: Source, http: Http, prevBySource: Map<string, PrevJob>, budget: number, now: Date, detailCutoff: number): Promise<SourceResult> {
   const t0 = Date.now();
   let left = budget;
   const counters = { pages: 0, details: 0, errors: 0 };
@@ -144,7 +144,7 @@ async function runSource(source: Source, http: Http, prevBySource: Map<string, P
     now,
     log: (m) => log(m),
     previous: (sid) => prevBySource.get(sid),
-    takeDetail: () => (left-- > 0),
+    takeDetail: () => Date.now() < detailCutoff && left-- > 0,
     counters,
   };
   const raws: RawJob[] = [];
@@ -172,6 +172,8 @@ async function main() {
   const prevFile = resolve(process.env.PREV_DB || dbFile);
   const budget = Number(process.env.DETAIL_BUDGET || 1500);
   const only = (process.env.ONLY_SOURCES || '').split(',').filter(Boolean);
+  // Time budget (CI): stop detail pages 15 min and embeddings 4 min before the deadline; the next run continues.
+  const deadline = process.env.INGEST_DEADLINE_MIN ? t0 + Number(process.env.INGEST_DEADLINE_MIN) * 60_000 : Infinity;
 
   const prev = loadPrevious(prevFile);
   // OFFLINE=1: no fetching; rebuild the DB from the previous one (re-deriving locations and tags).
@@ -197,7 +199,7 @@ async function main() {
     });
   }
 
-  const results = await Promise.all(sources.map((s) => runSource(s, http, prevBySource.get(s.id) || new Map(), budget, now)));
+  const results = await Promise.all(sources.map((s) => runSource(s, http, prevBySource.get(s.id) || new Map(), budget, now, deadline - 15 * 60_000)));
 
   // ---- Normalize + merge with previous ----
   const jobs = new Map<string, Job>();
@@ -281,8 +283,8 @@ async function main() {
     log(`embeddings skipped (${toEmbed.length} missing)`);
   } else if (toEmbed.length) {
     log(`embeddings: computing ${toEmbed.length} (reused ${vectors.size})`);
-    const vs = await embedAll(toEmbed.map(embeddingText), { cacheDir: join(cacheDir, 'models'), log });
-    toEmbed.forEach((j, i) => vectors.set(j.id, vs[i]));
+    const vs = await embedAll(toEmbed.map(embeddingText), { cacheDir: join(cacheDir, 'models'), log, stopAt: deadline - 4 * 60_000 });
+    toEmbed.forEach((j, i) => vs[i] && vectors.set(j.id, vs[i]));
   }
 
   // ---- Sort newest first (stable rowids for "newest" queries) ----

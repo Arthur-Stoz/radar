@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Typecheck, lint, unit tests, build (Linux, Node 22)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/cache@v4
+        with:
+          path: .cache/models
+          key: model-Xenova-all-MiniLM-L6-v2-q8-v1
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  e2e:
+    name: E2E, Lighthouse and relevance eval on the published data
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      DATA_URL: https://github.com/${{ github.repository }}/releases/download/data-latest/radar.db.gz
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Is there published data yet?
+        id: data
+        run: |
+          if gh release view data-latest --repo "${{ github.repository }}" >/dev/null 2>&1; then echo "ok=true" >> "$GITHUB_OUTPUT"; else echo "ok=false" >> "$GITHUB_OUTPUT"; echo "::notice::No data-latest release yet; run the Ingest workflow first."; fi
+      - uses: actions/setup-node@v5
+        if: steps.data.outputs.ok == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/cache@v4
+        if: steps.data.outputs.ok == 'true'
+        with:
+          path: .cache/models
+          key: model-Xenova-all-MiniLM-L6-v2-q8-v1
+      - if: steps.data.outputs.ok == 'true'
+        run: npm ci && npx playwright install --with-deps chromium && npm run build
+      - name: Start like Hostinger does (only DATA_URL set)
+        if: steps.data.outputs.ok == 'true'
+        run: |
+          PORT=3000 npm start > server.log 2>&1 &
+          for i in $(seq 1 120); do
+            if curl -sf localhost:3000/api/health | grep -q '"ok":true'; then curl -s localhost:3000/api/health; echo; exit 0; fi
+            sleep 2
+          done
+          cat server.log; exit 1
+      - name: Relevance eval
+        if: steps.data.outputs.ok == 'true'
+        run: npm run eval
+      - name: Playwright (1440 px and 390 px)
+        if: steps.data.outputs.ok == 'true'
+        run: npm run e2e
+        env:
+          E2E_BASE_URL: http://localhost:3000
+      - name: Lighthouse (mobile, median of 3)
+        if: steps.data.outputs.ok == 'true'
+        run: node scripts/lighthouse.mjs http://localhost:3000
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-report
+          path: |
+            playwright-report
+            server.log
+          retention-days: 7

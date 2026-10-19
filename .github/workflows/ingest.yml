@@ -1,0 +1,68 @@
+name: Ingest
+
+# Collects every source, builds radar.db and publishes it to the "data-latest" release (BUILD.md §8).
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+    inputs:
+      force_publish:
+        description: 'Publish even if the job count dropped more than 40 %'
+        type: boolean
+        default: false
+
+concurrency:
+  group: ingest
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SITE_URL: ${{ vars.SITE_URL }}
+      CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
+      DISABLED_SOURCES: ${{ vars.DISABLED_SOURCES }}
+      ENABLED_SOURCES: ${{ vars.ENABLED_SOURCES }}
+      DETAIL_BUDGET: ${{ vars.DETAIL_BUDGET || '1500' }}
+      INGEST_DEADLINE_MIN: '50'
+      TRADEME_CONSUMER_KEY: ${{ secrets.TRADEME_CONSUMER_KEY }}
+      TRADEME_CONSUMER_SECRET: ${{ secrets.TRADEME_CONSUMER_SECRET }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Cache the embedding model
+        uses: actions/cache@v4
+        with:
+          path: .cache/models
+          key: model-Xenova-all-MiniLM-L6-v2-q8-v1
+      - run: npm ci
+      - name: Download the previous database (reuses descriptions and embeddings)
+        run: |
+          mkdir -p .data
+          if gh release download data-latest -p radar.db.gz -D .data --clobber; then
+            gunzip -f .data/radar.db.gz && ls -la .data
+          else
+            echo "No previous release yet: full run."
+          fi
+      - name: Ingest
+        run: npm run ingest
+        env:
+          FORCE_PUBLISH: ${{ inputs.force_publish && '1' || '' }}
+      - name: Publish to the data-latest release
+        run: |
+          gh release view data-latest >/dev/null 2>&1 || gh release create data-latest --title "Radar data (latest)" --notes "Database built by the ingest workflow every 4 hours. Do not edit by hand." --latest=false
+          gh release upload data-latest .data/radar.db.gz .data/manifest.json --clobber
+      - name: Summary
+        if: always()
+        run: |
+          if [ -f .data/manifest.json ]; then
+            node -e "const m=require('./.data/manifest.json');const rows=Object.entries(m.sources).map(([k,v])=>'| '+k+' | '+v.status+' | '+v.active+' | '+v.new+' | '+v.removed+' | '+v.errors+' |').join('\n');console.log('### Radar ingest\n\n**'+m.total+' live jobs** (previous '+m.previous_total+'), built '+m.built_at+'\n\n| Source | Status | Live | New | Removed | Errors |\n|---|---|---:|---:|---:|---:|\n'+rows)" >> "$GITHUB_STEP_SUMMARY"
+          fi
