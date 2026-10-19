@@ -1,11 +1,12 @@
 // Seek NZ (Tier A — the owner holds written permission to collect listings).
+// Details come from the GraphQL endpoint the site itself uses (JSON, ~20x lighter than the job page).
 // Method: the JSON search API that nz.seek.com's own frontend calls, partitioned so that every
 // partition stays under the API's pagination cap; detail pages (window.SEEK_REDUX_DATA) only for
 // new listings, within the run's detail budget.
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { RawJob, Source, SourceContext } from '../types';
-import { pool } from '../http';
+import { BlockedError, pool } from '../http';
 
 const API = 'https://nz.seek.com/api/jobsearch/v5/search';
 const PAGE_SIZE = 100;
@@ -72,6 +73,30 @@ export function parseSeekDetail(html: string): { description: string | null; exp
   }
 }
 
+const GQL = 'https://nz.seek.com/graphql';
+const GQL_QUERY = 'query jobDetails($jobId: ID!) { jobDetails(id: $jobId) { job { id content(platform: WEB) expiresAt { dateTimeUtc } salary { label } } } }';
+
+/** Job details through the JSON endpoint Seek's own frontend uses; falls back to the job page. */
+export async function fetchSeekDetail(ctx: SourceContext, r: RawJob): Promise<ReturnType<typeof parseSeekDetail>> {
+  try {
+    const res = await ctx.http.text(GQL, {
+      method: 'POST',
+      body: JSON.stringify({ operationName: 'jobDetails', variables: { jobId: r.sourceId }, query: GQL_QUERY }),
+      headers: { 'content-type': 'application/json', accept: 'application/json', 'seek-request-brand': 'seek', 'seek-request-country': 'NZ' },
+    });
+    if (res.status === 200) {
+      const job = JSON.parse(res.text)?.data?.jobDetails?.job;
+      if (job) return { description: job.content || null, expiresAt: job.expiresAt?.dateTimeUtc || null, payText: job.salary?.label || null };
+      return null; // listing gone
+    }
+  } catch (e) {
+    if (e instanceof BlockedError) throw e;
+  }
+  const page = await ctx.http.text(r.url);
+  if (page.status === 404 || page.status === 410) return null;
+  return parseSeekDetail(page.text);
+}
+
 async function* walk(ctx: SourceContext, p: Params, seen: Set<string>, depth: number): AsyncGenerator<RawJob> {
   const first = await ctx.http.json<any>(url(p, 1));
   ctx.counters.pages++;
@@ -133,22 +158,25 @@ export const seek: Source = {
     need.sort((a, b) => (b.postedAt || '').localeCompare(a.postedAt || ''));
     const todo = need.filter(() => ctx.takeDetail());
     ctx.log(`seek: fetching ${todo.length} detail pages (${need.length - todo.length} deferred)`);
+    let blockedInARow = 0;
     await pool(todo, 2, async (r) => {
+      if (blockedInARow >= 5) return; // circuit breaker: the site is refusing us, stop asking this run
       try {
-        const res = await ctx.http.text(r.url);
+        const d = await fetchSeekDetail(ctx, r);
         ctx.counters.details++;
-        if (ctx.counters.details % 250 === 0) ctx.log(`seek: ${ctx.counters.details}/${todo.length} detail pages`);
-        if (res.status === 404 || res.status === 410) return;
-        const d = parseSeekDetail(res.text);
-        if (d?.description) {
+        blockedInARow = 0;
+        if (ctx.counters.details % 250 === 0) ctx.log(`seek: ${ctx.counters.details}/${todo.length} details`);
+        if (!d) return;
+        if (d.description) {
           r.descriptionHtml = d.description;
           r.hasDetail = true;
         }
-        if (d?.expiresAt) r.expiresAt = d.expiresAt;
-        if (!r.payText && d?.payText) r.payText = d.payText;
+        if (d.expiresAt) r.expiresAt = d.expiresAt;
+        if (!r.payText && d.payText) r.payText = d.payText;
       } catch (e) {
         ctx.counters.errors++;
-        ctx.log(`seek: detail failed ${r.url}: ${(e as Error).message}`);
+        if (e instanceof BlockedError && ++blockedInARow === 5) ctx.log('seek: details blocked 5 times in a row; skipping the rest this run');
+        else if (!(e instanceof BlockedError)) ctx.log(`seek: detail failed ${r.url}: ${(e as Error).message}`);
       }
     });
     yield* batch;
