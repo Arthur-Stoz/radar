@@ -10,7 +10,7 @@
     "predev": "node scripts/prepare-assets.mjs",
     "dev": "next dev",
     "prebuild": "node scripts/prepare-assets.mjs",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "ingest": "tsx ingest/run.ts",
     "test": "vitest run",
