@@ -254,6 +254,10 @@ Seek 79 % (9,706 photos + 3,767 logos) · Trade Me 66 % (5,186 + 1,401) · Green
 SmartRecruiters 86 % · PickNZ 78 % · NZ Government Jobs, jobs.co.nz, SeasonalJobs NZ 0 % (their pages carry no per-ad picture or logo:
 only site defaults / "no logo" placeholders). Overall 69 %.
 
+Published by the GitHub ingest run 39362290087 (release data-latest, 29,386 jobs, 1,500 brands checked): Seek 80 % · Trade Me 68 % ·
+Greenhouse 96 % · Lever, Ashby, SmartRecruiters 100 % · PickNZ 79 % · NZ Government Jobs, jobs.co.nz, SeasonalJobs NZ 0 % · overall 71 %.
+CI green on the pushed commit (build, E2E, Lighthouse, eval).
+
 Tests: unit 115 · E2E 37 passed at 1440/390 (+1 mobile-only skip) · eval 31/31 · typecheck, lint, `npm run build` (webpack) clean.
 
 Left
