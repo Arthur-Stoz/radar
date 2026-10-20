@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
 import { getCvServerState, getCvState, OPEN_CV_EVENT, subscribeCv } from '@/lib/cvState';
 
@@ -32,26 +32,13 @@ export function CvButton({ getQuery, compact = false }: { getQuery?: () => strin
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const id = useId();
+  const close = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     const onOpen = () => setOpen(true);
     window.addEventListener(OPEN_CV_EVENT, onOpen);
     return () => window.removeEventListener(OPEN_CV_EVENT, onOpen);
   }, []);
-
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => {
-      if (root.current && !root.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    document.addEventListener('mousedown', onDown);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onDown);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [open]);
 
   return (
     <div ref={root} className="relative flex-none">
@@ -66,7 +53,7 @@ export function CvButton({ getQuery, compact = false }: { getQuery?: () => strin
       >
         <LensIcon active={!!cv.profile} />
       </button>
-      {open && <CvPanel id={id} getQuery={getQuery} onClose={() => setOpen(false)} />}
+      {open && <CvPanel id={id} anchor={root} getQuery={getQuery} onClose={close} />}
     </div>
   );
 }
@@ -111,7 +98,7 @@ export function CvDropZone() {
   }, []);
   if (!over) return null;
   return (
-    <div className="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center bg-bg/80 backdrop-blur-sm" aria-hidden="true">
+    <div className="pointer-events-none fixed inset-0 z-(--z-drop) flex items-center justify-center bg-bg/80 backdrop-blur-sm" aria-hidden="true">
       <div className="rounded-[20px] border-2 border-dashed border-accent bg-bg px-10 py-8 text-center">
         <p className="m-0 text-[20px] font-[650] tracking-[-0.02em]">Drop your CV to match jobs</p>
         <p className="m-0 mt-1 text-[14px] text-muted">Read on your device. Never uploaded.</p>

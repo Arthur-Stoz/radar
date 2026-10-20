@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useId, useRef, useState } from 'react';
 import { CvButton } from './CvButton';
 import { RadarSweep } from './RadarSweep';
+import { Portal, useAnchoredStyle } from './Floating';
 
 interface Suggestion {
   kind: 'title' | 'company' | 'place' | 'combo';
@@ -37,6 +38,7 @@ export function SearchBar({
   const [active, setActive] = useState(-1);
   const [open, setOpen] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+  const form = useRef<HTMLFormElement>(null);
   const listId = useId();
   const reqId = useRef(0);
   const hero = variant === 'hero';
@@ -123,22 +125,24 @@ export function SearchBar({
   };
 
   const showList = open && focused && items.length > 0;
-  const barHeight = hero ? 'h-[56px] sm:h-[64px]' : 'h-11';
+  const listPos = useAnchoredStyle(form, showList, { align: 'stretch', offset: 8, maxHeight: 440 });
+  const barHeight = hero ? 'h-(--hero-bar-h)' : 'h-11';
 
   return (
-    <div className={`relative ${hero ? 'w-full max-w-[720px]' : 'w-full'}`}>
+    <div className={`relative ${hero ? 'w-full max-w-(--hero-bar-max)' : 'w-full'}`}>
       {hero && <RadarSweep on={focused} />}
       <form
+        ref={form}
         role="search"
         onSubmit={submit}
-        className={`relative flex items-center gap-1.5 rounded-full border bg-bg transition-[border-color,box-shadow] duration-200 ${barHeight} ${hero ? 'pl-5 pr-[7px] sm:pl-6' : 'pl-4 pr-1.5'}`}
+        className={`relative flex items-center gap-1.5 rounded-full border bg-bg transition-[border-color,box-shadow] duration-200 ${barHeight} ${hero ? 'pl-5 pr-[7px] sm:pl-7 sm:pr-2' : 'pl-4 pr-1.5'}`}
         style={{
           borderColor: focused ? 'var(--accent)' : hero ? 'var(--line)' : 'var(--line)',
           boxShadow: focused ? '0 0 0 4px var(--accent-soft), 0 12px 32px rgba(0,0,0,.06)' : hero ? 'var(--shadow-bar)' : 'none',
           background: hero ? 'var(--bg)' : 'var(--surface)',
         }}
       >
-        <svg width={hero ? 20 : 17} height={hero ? 20 : 17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="flex-none text-ink" aria-hidden="true">
+        <svg width={hero ? 22 : 17} height={hero ? 22 : 17} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="flex-none text-ink" aria-hidden="true">
           <circle cx="11" cy="11" r="7" />
           <line x1="16.5" y1="16.5" x2="21" y2="21" />
         </svg>
@@ -167,11 +171,11 @@ export function SearchBar({
             autoComplete="off"
             enterKeyHint="search"
             placeholder={hero ? '' : 'Search jobs, places, companies'}
-            className={`absolute inset-0 h-full w-full border-0 bg-transparent px-3 tracking-[-0.01em] text-ink outline-none placeholder:text-muted ${hero ? 'text-[17px] sm:text-[19px]' : 'text-[15px]'}`}
+            className={`absolute inset-0 h-full w-full border-0 bg-transparent px-3 tracking-[-0.01em] text-ink outline-none placeholder:text-muted ${hero ? 'text-(length:--hero-bar-font)' : 'text-[15px]'}`}
             style={{ outline: 'none' }}
           />
           {hero && !value && (
-            <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 right-2 flex items-center overflow-hidden text-[17px] tracking-[-0.01em] text-muted sm:text-[19px]">
+            <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 right-2 flex items-center overflow-hidden text-(length:--hero-bar-font) tracking-[-0.01em] text-muted">
               <span key={ph} className="block truncate" style={{ animation: 'rdPh .55s cubic-bezier(.2,.8,.2,1)' }}>
                 {PLACEHOLDERS[ph]}
               </span>
@@ -182,7 +186,7 @@ export function SearchBar({
         {hero ? (
           <button
             type="submit"
-            className="h-[44px] flex-none rounded-full bg-ink px-5 text-[15px] font-[550] tracking-[-0.01em] text-on-ink transition-[background,transform] duration-150 hover:opacity-90 active:scale-[.97] sm:h-[50px] sm:px-[26px] sm:text-[16px]"
+            className="h-(--hero-btn-h) flex-none rounded-full bg-ink px-5 text-[16px] font-[550] tracking-[-0.01em] text-on-ink transition-[background,transform] duration-150 hover:opacity-90 active:scale-[.97] sm:px-[30px] sm:text-[17px]"
           >
             Search
           </button>
@@ -196,12 +200,13 @@ export function SearchBar({
         )}
       </form>
 
+      <Portal>
       <ul
         id={listId}
         role="listbox"
         aria-label="Suggestions"
-        className={`absolute left-0 right-0 z-30 mt-2 overflow-hidden rounded-[20px] border border-line bg-bg p-1.5 text-left ${showList ? '' : 'hidden'}`}
-        style={{ boxShadow: 'var(--shadow-pop)' }}
+        className={`z-(--z-popover) m-0 list-none overflow-y-auto rounded-[20px] border border-line bg-bg p-1.5 text-left text-ink ${showList ? '' : 'hidden'}`}
+        style={{ ...listPos, boxShadow: 'var(--shadow-pop)' }}
       >
         {items.map((s, i) => (
           <li
@@ -225,6 +230,7 @@ export function SearchBar({
           </li>
         ))}
       </ul>
+      </Portal>
     </div>
   );
 }

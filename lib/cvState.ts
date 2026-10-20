@@ -5,7 +5,8 @@ import type { ProfileChip } from './profile';
 // Lightweight CV state (sessionStorage only). The heavy reader/embedder lives in cvClient.ts and is loaded on demand.
 
 export interface CvProfile {
-  vector: number[];
+  /** Mean embedding of the CV, or null when the on-device model could not load (keyword-only matching). */
+  vector: number[] | null;
   chips: ProfileChip[];
   /** Region id or "" for all of New Zealand. */
   loc: string;

@@ -5,6 +5,7 @@ import type { CardJob } from '@/lib/search';
 import { ago, gradient, hueOf, payLabel } from '@/lib/format';
 import { Badge, badgesFor } from './Badges';
 import { workTypeText } from './JobPreview';
+import { JobImage } from './JobImage';
 
 export interface CardProps {
   job: CardJob;
@@ -34,13 +35,21 @@ export const JobCard = forwardRef<HTMLAnchorElement, CardProps>(function JobCard
       } ${seen && !selected ? 'opacity-[.62] hover:opacity-100' : ''}`}
       style={selected ? { boxShadow: 'inset 0 0 0 1.5px var(--ink)' } : undefined}
     >
-      <div
-        aria-hidden="true"
-        className="flex h-11 w-11 flex-none items-center justify-center rounded-[12px] text-[18px] font-[650] tracking-[-0.04em] text-[#0B0B0A] sm:h-12 sm:w-12"
-        style={{ background: gradient(hueOf(name)) }}
-      >
-        {name.slice(0, 1).toUpperCase()}
-      </div>
+      <JobImage
+        src={job.imageUrl}
+        kind={job.imageKind}
+        className="h-14 w-14 flex-none rounded-[14px] sm:h-16 sm:w-16"
+        logoPadding="p-1.5"
+        fallback={
+          <div
+            aria-hidden="true"
+            className="flex h-14 w-14 flex-none items-center justify-center rounded-[14px] text-[20px] font-[650] tracking-[-0.04em] text-[#0B0B0A] sm:h-16 sm:w-16"
+            style={{ background: gradient(hueOf(name)) }}
+          >
+            {name.slice(0, 1).toUpperCase()}
+          </div>
+        }
+      />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex items-start justify-between gap-3">
           <h2 className="m-0 line-clamp-2 min-w-0 text-[16px] font-semibold leading-[1.3] tracking-[-0.015em]">{job.title}</h2>

@@ -6,6 +6,7 @@ import type { CardJob } from '@/lib/search';
 import { agoLong, payLabel } from '@/lib/format';
 import { TAG_LABELS, WORK_TYPE_LABELS, type WorkType } from '@/lib/tags';
 import { Badge, SourceMark } from './Badges';
+import { JobImage } from './JobImage';
 
 const noopSubscribe = () => () => {};
 
@@ -28,7 +29,13 @@ export function JobPreview({ job, full = false, headingLevel = 2 }: { job: CardJ
 
   return (
     <article className="flex flex-col gap-5" aria-labelledby={`job-${job.id}-title`}>
+      {job.imageUrl && job.imageKind === 'photo' && (
+        <JobImage src={job.imageUrl} kind="photo" eager className="aspect-[16/7] w-full rounded-[16px]" fallback={null} />
+      )}
       <header className="flex flex-col gap-2">
+        {job.imageUrl && job.imageKind === 'logo' && (
+          <JobImage src={job.imageUrl} kind="logo" eager alt={job.company ? `${job.company} logo` : ''} className="mb-1 h-16 w-16 rounded-[14px]" logoPadding="p-2" fallback={null} />
+        )}
         <H id={`job-${job.id}-title`} className={`m-0 font-[650] leading-[1.15] tracking-[-0.035em] ${headingLevel === 1 ? 'text-[30px] sm:text-[40px]' : 'text-[24px] sm:text-[28px]'}`}>
           {job.title}
         </H>

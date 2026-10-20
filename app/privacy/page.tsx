@@ -12,6 +12,7 @@ export default function PrivacyPage() {
     ['No tracking cookies', 'Radar sets no cookies. Your theme choice and the jobs you have already opened are kept in your own browser storage, and you can clear them any time.'],
     ['Your CV stays on your device', 'If you use CV match, the file is read in your browser. Only a list of numbers (a summary vector) and the skills you confirm are sent to rank jobs. The CV text is never uploaded or stored.'],
     ['What the server logs', 'Like any website, the host keeps standard access logs (address, page, time, browser) for security and to fix errors. We do not sell or share them.'],
+    ['Job pictures', 'Job photos and company logos are loaded straight from the image servers of the site that published the ad (Seek, Trade Me…), without telling them which Radar page you were on.'],
     ['Leaving Radar', 'When you click "View on…", you go to the original job site. Its own privacy policy applies there.'],
   ];
   return (

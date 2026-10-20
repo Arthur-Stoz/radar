@@ -14,6 +14,9 @@ export interface Job {
   title: string;
   company: string | null;
   companyLogo: string | null;
+  /** Best picture for cards: the ad's own photo, else the company logo, else none (BUILD: never invented). */
+  imageUrl: string | null;
+  imageKind: 'photo' | 'logo' | null;
   location: Location;
   workType: WorkType[];
   category: string | null;
@@ -40,6 +43,27 @@ export interface Job {
 const KEEP_RAW = new Set(['backpackerboard', 'picknz', 'jobsconz', 'seasonaljobs']);
 
 export const jobId = (source: string, sourceId: string) => hash(`${source}:${sourceId}`);
+
+/** An absolute http(s) picture URL, or null. */
+export function cleanImageUrl(u: string | null | undefined, base?: string): string | null {
+  if (!u || typeof u !== 'string') return null;
+  try {
+    const url = new URL(decodeEntities(u.trim()), base);
+    if (url.protocol === 'http:') url.protocol = 'https:';
+    if (url.protocol !== 'https:' || url.href.length > 600) return null;
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
+export function pickImage(r: Pick<RawJob, 'image' | 'companyLogo' | 'url'>): { imageUrl: string | null; imageKind: 'photo' | 'logo' | null } {
+  const photo = cleanImageUrl(r.image, r.url);
+  if (photo) return { imageUrl: photo, imageKind: 'photo' };
+  const logo = cleanImageUrl(r.companyLogo, r.url);
+  if (logo) return { imageUrl: logo, imageKind: 'logo' };
+  return { imageUrl: null, imageKind: null };
+}
 
 function cleanTitle(t: string): string {
   return decodeEntities(t)
@@ -90,6 +114,7 @@ export function normalize(source: string, r: RawJob, now: Date): Job | null {
     title,
     company: r.company ? decodeEntities(r.company).replace(/\s+/g, ' ').trim() : null,
     companyLogo: r.companyLogo || null,
+    ...pickImage(r),
     location,
     workType,
     category: r.category || null,

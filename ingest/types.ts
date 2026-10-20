@@ -8,6 +8,10 @@ export interface RawJob {
   title: string;
   company?: string | null;
   companyLogo?: string | null;
+  /** The ad's own picture (JSON-LD image, API photo, branded cover). Never a site-wide default. */
+  image?: string | null;
+  /** The detail page was read for pictures (lets older stored listings be re-read once). */
+  imageChecked?: boolean;
   location?: string | null;
   region?: string | null;
   city?: string | null;
@@ -47,6 +51,15 @@ export interface SourceContext {
   /** Returns true and decrements when a detail fetch is allowed. */
   takeDetail: () => boolean;
   counters: { pages: number; details: number; errors: number };
+  /** Small key → value store persisted from run to run in the DB (e.g. which Seek brands have a cover photo). */
+  cache: SourceCache;
+  /** Epoch ms after which optional extra requests (details, picture checks) should stop. */
+  stopAt: number;
+}
+
+export interface SourceCache {
+  get(key: string): { value: string; checkedAt: string } | undefined;
+  set(key: string, value: string): void;
 }
 
 export interface Source {

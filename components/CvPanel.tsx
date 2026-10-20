@@ -1,16 +1,20 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useRef, useState, type RefObject } from 'react';
 import { REGIONS } from '@/lib/regions';
 import { processCv } from '@/lib/cvClient';
 import { clearCv, saveProfile, type CvProfile } from '@/lib/cvState';
 import type { ProfileChip } from '@/lib/profile';
 import { LensIcon, useCv } from './CvButton';
+import { Dropdown } from './Dropdown';
+import { Portal, useAnchoredStyle, useDismiss, useIsPhone } from './Floating';
+
+const LOC_OPTIONS = [{ value: '', label: 'All of New Zealand' }, ...REGIONS.map((r) => ({ value: r.id, label: r.name }))];
 
 const mb = (n: number) => `${Math.round(n / 1e5) / 10} MB`;
 
-export default function CvPanel({ id, getQuery, onClose }: { id: string; getQuery?: () => string; onClose: () => void }) {
+export default function CvPanel({ id, anchor, getQuery, onClose }: { id: string; anchor: RefObject<HTMLElement | null>; getQuery?: () => string; onClose: () => void }) {
   const router = useRouter();
   const cv = useCv();
   const [paste, setPaste] = useState(false);
@@ -18,6 +22,10 @@ export default function CvPanel({ id, getQuery, onClose }: { id: string; getQuer
   const [draft, setDraft] = useState<CvProfile | null>(null);
   const [newChip, setNewChip] = useState('');
   const fileInput = useRef<HTMLInputElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const phone = useIsPhone();
+  const pos = useAnchoredStyle(anchor, !phone, { align: 'end', offset: 14, width: 400, maxHeight: 680 });
+  useDismiss([anchor, panel], true, onClose);
   const busy = cv.status === 'reading' || cv.status === 'loading-model' || cv.status === 'embedding';
   const profile = draft ?? cv.profile;
 
@@ -54,12 +62,15 @@ export default function CvPanel({ id, getQuery, onClose }: { id: string; getQuer
   };
 
   return (
+    <Portal>
+      {phone && <div className="fixed inset-0 z-(--z-backdrop) bg-black/30" aria-hidden="true" />}
         <div
+          ref={panel}
           id={id}
           role="dialog"
           aria-label="Match with your CV"
-          className="fixed inset-x-3 bottom-3 z-50 max-h-[85dvh] overflow-y-auto rounded-[20px] border border-line bg-bg p-5 text-left sm:absolute sm:inset-x-auto sm:bottom-auto sm:right-0 sm:top-[calc(100%+14px)] sm:w-[400px]"
-          style={{ boxShadow: 'var(--shadow-pop)', animation: 'rdFade .15s ease' }}
+          className={`overflow-y-auto overscroll-contain rounded-[20px] border border-line bg-bg p-5 text-left text-ink ${phone ? 'fixed inset-x-3 bottom-3 z-(--z-sheet) max-h-[85dvh]' : 'z-(--z-popover)'}`}
+          style={{ ...(phone ? null : pos), boxShadow: 'var(--shadow-pop)', animation: 'rdFade .15s ease' }}
         >
           <div className="mb-3 flex items-center justify-between">
             <h2 className="m-0 text-[17px] font-[650] tracking-[-0.02em]">Match with your CV</h2>
@@ -93,6 +104,11 @@ export default function CvPanel({ id, getQuery, onClose }: { id: string; getQuer
               <p className="m-0 text-[14px] text-muted">
                 From <span className="text-ink">{profile.fileName}</span>. Remove anything that’s wrong, add what’s missing.
               </p>
+              {!profile.vector && (
+                <p className="m-0 rounded-[12px] bg-surface p-3 text-[13px]" role="status">
+                  The smart matcher could not load on this device, so jobs are matched on these skills and titles only.
+                </p>
+              )}
               <ul className="m-0 flex list-none flex-wrap gap-1.5 p-0" aria-label="What we found in your CV">
                 {profile.chips.map((c) => (
                   <li key={`${c.kind}-${c.label}`}>
@@ -121,17 +137,10 @@ export default function CvPanel({ id, getQuery, onClose }: { id: string; getQuer
                   Add
                 </button>
               </div>
-              <label className="flex flex-col gap-1.5 text-[14px]">
-                Where do you want to work?
-                <select value={profile.loc} onChange={(e) => update({ loc: e.target.value })} className="h-10 rounded-full border border-line bg-bg px-3 text-[14px]">
-                  <option value="">All of New Zealand</option>
-                  {REGIONS.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <div className="flex flex-col gap-1.5 text-[14px]">
+                <span>Where do you want to work?</span>
+                <Dropdown block ariaLabel="Where do you want to work?" value={profile.loc} onChange={(v) => update({ loc: v })} options={LOC_OPTIONS} />
+              </div>
               <div className="flex items-center gap-2">
                 <button type="button" onClick={showMatches} className="h-11 flex-1 rounded-full bg-ink px-5 text-[15px] font-[550] text-on-ink hover:opacity-90">
                   Show my matches
@@ -217,5 +226,6 @@ export default function CvPanel({ id, getQuery, onClose }: { id: string; getQuer
             </div>
           )}
         </div>
+    </Portal>
   );
 }

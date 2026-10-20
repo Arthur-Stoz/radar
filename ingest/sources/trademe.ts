@@ -47,7 +47,9 @@ export function trademeToRaw(l: any): RawJob {
     url: `https://www.trademe.co.nz/a/jobs/listing/${l.ListingId}`,
     title: String(l.Title || '').trim(),
     company: l.Company || l.Agency?.Name || null,
-    companyLogo: l.Branding?.LargeSquareLogo || l.Agency?.Logo || null,
+    companyLogo: l.Branding?.LargeSquareLogo || l.Branding?.LargeWideLogo || l.Agency?.Logo || null,
+    // The listing's photo (the API gives an 85 px thumbnail; "full" is the same picture at ~690 px), else the ad's banner.
+    image: (typeof l.PictureHref === 'string' ? l.PictureHref.replace('/photoserver/thumb/', '/photoserver/full/') : null) || l.Branding?.LargeBannerURL || null,
     location: [l.Suburb && l.Suburb !== l.District ? l.Suburb : null, l.District, l.Region].filter(Boolean).join(', ') || l.JobLocation || null,
     region: l.Region || null,
     city: l.District || null,

@@ -211,3 +211,51 @@ SeasonalJobs NZ 173 · PickNZ 97 · Backpacker Board 0 (blocked) · Workable 0 �
 Left / ideas
 - Ask Backpacker Board to allow `RadarNZ/1.0` (or GitHub Actions IPs). More ATS companies (`ingest/ats-companies.json`).
 - Hostinger setup itself is a manual step for the owner (DEPLOY_FR.md); `SITE_URL` / `CONTACT_EMAIL` to fill once the domain is known.
+
+## Phase H — Production fixes and UI pass (2026-10-20)
+
+Done
+- **CV upload failed on every file in production.** Real cause: the readers and the model were served from `public/vendor` and
+  `public/models`, two git-ignored folders that only `npm run build`'s `prebuild` hook (`scripts/prepare-assets.mjs`) creates. A host that
+  runs `next build --webpack` directly skips npm's `pre*` hooks, so `/vendor/pdfjs/pdf.min.mjs`, `/vendor/mammoth.browser.min.js`,
+  `/vendor/transformers/*` and `/models/*` all answered 404 (reproduced locally with a Hostinger-like build), and the generic catch showed
+  "Something went wrong". Fix: `app/cv-assets/[...path]` serves pdf.js, mammoth, transformers.js + ONNX wasm from `node_modules` at
+  runtime (allow-listed paths, correct MIME types) and the MiniLM model from `public/models`, the ingest cache, or a one-time server-side
+  download into `DATA_DIR/models`. `build` is now `next build --webpack`.
+- Precise CV errors (file size, unsupported type, scanned PDF, password-protected / damaged PDF, reader not loaded, old .doc); the real
+  error is logged to the console (`[cv] …`). A module worker that fails to start is now detected (it used to hang). If the model cannot
+  load, the CV still works: chips-only matching (`/api/match` accepts `vector: null`; FTS on the chip terms stands in for the cosine) with
+  a note in the panel. E2E: PDF, DOCX, TXT, paste with the model blocked, error messages.
+- **Floating layers**: every popover, menu, autocomplete list, CV panel and bottom sheet now renders in a portal on `<body>`
+  (`components/Floating.tsx`: anchored positioning that flips above / clamps to the viewport and follows scroll; shared outside-click / Esc).
+  Z-indexes come from one scale (`--z-*` in `globals.css`). Cause of the CV panel under the cards on Home: the hero is an `isolate z-0`
+  stacking context and the "Fresh today" section (`z-[1]`) painted over anything inside it.
+- Phones: the decorative radar sweep (1040 px) widened the layout viewport to 715 px on a 390 px phone (pages zoomed out, bottom panels
+  off-screen). Clipped (`overflow-x: clip` on the hero and `html`).
+- **Region filter did nothing**: region and town facets shared ids ("auckland", "wellington"…), so ticking a region removed it again.
+  Towns that collide now use `<slug>-city`. Active filters show as removable chips. `/job/[id]` breadcrumb region links were built from the
+  name ("hawke-s-bay", "manawat-whanganui") and did not filter: now region ids. E2E covers region, town, type, pay, posted, perks, source.
+- **Sort** is a custom menu (`components/Dropdown.tsx`: listbox, arrows/Home/End/Enter/Esc, checked option, outside click, light + dark);
+  the CV panel's region `<select>` uses it too. Mobile filter sheets have a sticky "Done" header.
+- **Home**: "Free · No account" removed; hero tightened and the bar is ~15–20 % bigger (74 px, 22 px text, 840 px max). Spacing and hero
+  sizes are tokens (`--space-*`, `--hero-*` in `globals.css`); the title scales with the window height. Search bar centre vs screen centre:
+  1440×800 → 427/400, 1366×768 → 418/384, 390×844 → 380/422 (asserted in E2E: within 15 %).
+- **Job pictures**: `image_url` + `image_kind` ('photo' | 'logo') in the DB, URL only. Order: the ad's own photo (Trade Me listing photo
+  at "full" size or ad banner; Seek branded-ad cover; JSON-LD `image`), else the company logo (Seek/Trade Me branding, JSON-LD
+  `hiringOrganization.logo`, PickNZ employer logo, ATS og:image per company), else nothing. Site-wide defaults (a picture shared by 3+
+  companies of one source, e.g. a board's og:image) are dropped. Seek covers: brand id from the logo URL, checked on the branding gateway
+  (`/jdpCover` redirect vs 404) at 1 req/s within `IMAGE_BUDGET` (default 1500/run) plus the GraphQL details; results cached in the new
+  `source_cache` table for 30 days. Cards: 56–64 px thumbnail (photo cover / logo contained on white), rail: photo at the top, preview and
+  `/job`: 16:7 photo banner or logo tile; lazy, `referrerPolicy="no-referrer"`, fixed boxes (CLS 0), monogram fallback on error.
+  The app still reads older DBs without the columns. No image proxy.
+
+Local ingest 2026-10-20 (29,822 live jobs, 59 min, 3,000 Seek brands checked of 6,212): jobs with a picture —
+Seek 79 % (9,706 photos + 3,767 logos) · Trade Me 66 % (5,186 + 1,401) · Greenhouse 96 % · Lever 100 % · Ashby 99 % ·
+SmartRecruiters 86 % · PickNZ 78 % · NZ Government Jobs, jobs.co.nz, SeasonalJobs NZ 0 % (their pages carry no per-ad picture or logo:
+only site defaults / "no logo" placeholders). Overall 69 %.
+
+Tests: unit 115 · E2E 37 passed at 1440/390 (+1 mobile-only skip) · eval 31/31 · typecheck, lint, `npm run build` (webpack) clean.
+
+Left
+- Seek covers fill in over the next runs (1,500 brands per run; 6,212 brands in all).
+- jobs.co.nz employer logos are 32 px favicons (not used); NZ Government Jobs has no logos in its pages.

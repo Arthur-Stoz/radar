@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useId, useRef, useState } from 'react';
+import { Dropdown } from './Dropdown';
+import { Portal, useAnchoredStyle, useDismiss, useIsPhone } from './Floating';
 import type { FacetCount, SearchResult } from '@/lib/search';
 
 export interface FilterState {
@@ -15,34 +17,22 @@ export interface FilterState {
 
 function Popover({ label, active, children, wide = false }: { label: string; active: boolean; children: (close: () => void) => React.ReactNode; wide?: boolean }) {
   const [open, setOpen] = useState(false);
-  const root = useRef<HTMLDivElement>(null);
+  const anchor = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
   const id = useId();
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => {
-      if (root.current && !root.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', onDown);
-    document.addEventListener('keydown', onKey, true);
-    return () => {
-      document.removeEventListener('mousedown', onDown);
-      document.removeEventListener('keydown', onKey, true);
-    };
-  }, [open]);
+  const phone = useIsPhone();
+  const close = useCallback(() => setOpen(false), []);
+  const pos = useAnchoredStyle(anchor, open && !phone, { width: wide ? 420 : 300, maxHeight: 560 });
+  useDismiss([anchor, panel], open, close);
   return (
-    <div ref={root} className="relative flex-none">
+    <>
       <button
+        ref={anchor}
         type="button"
         aria-expanded={open}
-        aria-controls={id}
+        aria-controls={open ? id : undefined}
         onClick={() => setOpen((o) => !o)}
-        className={`inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-[14px] text-[14px] transition-colors ${
+        className={`inline-flex h-9 flex-none items-center gap-1.5 whitespace-nowrap rounded-full px-[14px] text-[14px] transition-colors ${
           active ? 'bg-ink text-on-ink' : 'bg-surface text-ink-2 hover:bg-surface-2'
         }`}
       >
@@ -52,20 +42,29 @@ function Popover({ label, active, children, wide = false }: { label: string; act
         </svg>
       </button>
       {open && (
-        <>
-          <div className="fixed inset-0 z-40 bg-black/30 sm:hidden" aria-hidden="true" onClick={() => setOpen(false)} />
+        <Portal>
+          {phone && <div className="fixed inset-0 z-(--z-backdrop) bg-black/30" aria-hidden="true" />}
           <div
+            ref={panel}
             id={id}
             role="dialog"
             aria-label={label}
-            className={`fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-y-auto rounded-t-[20px] border border-line bg-bg p-4 sm:absolute sm:inset-x-auto sm:bottom-auto sm:left-0 sm:top-[calc(100%+8px)] sm:max-h-[min(70vh,560px)] sm:rounded-[20px] ${wide ? 'sm:w-[420px]' : 'sm:w-[300px]'}`}
-            style={{ boxShadow: 'var(--shadow-pop)', animation: 'rdFade .15s ease' }}
+            className={`overflow-y-auto overscroll-contain border border-line bg-bg p-4 text-ink ${phone ? 'fixed inset-x-0 bottom-0 z-(--z-sheet) max-h-[80dvh] rounded-t-[20px]' : 'z-(--z-popover) rounded-[20px]'}`}
+            style={{ ...(phone ? null : pos), boxShadow: 'var(--shadow-pop)', animation: 'rdFade .15s ease' }}
           >
-            {children(() => setOpen(false))}
+            {phone && (
+              <div className="sticky -top-4 z-(--z-raised) -mx-4 -mt-4 mb-2 flex items-center justify-between border-b border-line bg-bg px-4 py-3">
+                <span className="text-[15px] font-[650]">{label}</span>
+                <button type="button" onClick={close} className="h-8 rounded-full bg-surface px-4 text-[14px] font-medium">
+                  Done
+                </button>
+              </div>
+            )}
+            {children(close)}
           </div>
-        </>
+        </Portal>
       )}
-    </div>
+    </>
   );
 }
 
@@ -193,18 +192,42 @@ export function FilterBar({ facets, state, onChange }: { facets: SearchResult['f
   );
 }
 
-export function SortSelect({ value, onChange, hasQuery }: { value: string; onChange: (v: string) => void; hasQuery: boolean }) {
+const SORTS = [
+  { value: 'best', label: 'Best match' },
+  { value: 'new', label: 'Newest' },
+  { value: 'pay', label: 'Highest pay' },
+];
+
+export function SortSelect({ value, onChange }: { value: string; onChange: (v: string) => void; hasQuery?: boolean }) {
+  return <Dropdown options={SORTS} value={value} onChange={onChange} prefix="Sort:" ariaLabel="Sort results" align="end" />;
+}
+
+const prettySlug = (v: string) => v.replace(/-city$/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+/** The active filters as removable chips (under the filter bar). */
+export function ActiveFilters({ facets, state, onChange }: { facets: SearchResult['facets']; state: FilterState; onChange: (patch: Partial<FilterState>) => void }) {
+  const label = (list: FacetCount[], v: string) => list.find((x) => x.value === v)?.label ?? prettySlug(v);
+  const chips: { key: string; label: string; remove: () => void }[] = [
+    ...state.loc.map((v) => ({ key: `loc-${v}`, label: label([...facets.region, ...facets.city], v), remove: () => onChange({ loc: state.loc.filter((x) => x !== v) }) })),
+    ...state.type.map((v) => ({ key: `type-${v}`, label: label(facets.type, v), remove: () => onChange({ type: state.type.filter((x) => x !== v) }) })),
+    ...(state.pay ? [{ key: 'pay', label: `$${state.pay}+/h`, remove: () => onChange({ pay: null }) }] : []),
+    ...(state.posted ? [{ key: 'posted', label: label(facets.posted, state.posted), remove: () => onChange({ posted: null }) }] : []),
+    ...state.tags.map((v) => ({ key: `tag-${v}`, label: label(facets.tags, v), remove: () => onChange({ tags: state.tags.filter((x) => x !== v) }) })),
+    ...state.source.map((v) => ({ key: `src-${v}`, label: label(facets.source, v), remove: () => onChange({ source: state.source.filter((x) => x !== v) }) })),
+  ];
+  if (!chips.length) return null;
   return (
-    <label className="inline-flex h-9 flex-none items-center gap-1 rounded-full border border-line px-3.5 text-[14px]">
-      <span className="text-muted">Sort:</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className="cursor-pointer appearance-none bg-transparent pr-1 font-medium outline-none" aria-label="Sort results">
-        <option value="best">{hasQuery ? 'Best match' : 'Best match'}</option>
-        <option value="new">Newest</option>
-        <option value="pay">Highest pay</option>
-      </select>
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <polyline points="6 9 12 15 18 9" />
-      </svg>
-    </label>
+    <ul className="m-0 flex list-none flex-wrap gap-1.5 p-0" aria-label="Active filters">
+      {chips.map((c) => (
+        <li key={c.key}>
+          <button type="button" onClick={c.remove} aria-label={`Remove filter ${c.label}`} className="inline-flex h-7 items-center gap-1.5 rounded-full bg-accent-soft px-3 text-[13px] text-ink hover:bg-surface-2">
+            {c.label}
+            <span aria-hidden="true" className="text-muted">
+              ×
+            </span>
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -9,6 +9,10 @@ import { getStore } from '@/lib/db';
 import { payLabel } from '@/lib/format';
 import { aliasOf, getExpired, getJob, similarJobs } from '@/lib/jobs';
 import { siteUrl } from '@/lib/config';
+import { REGIONS } from '@/lib/regions';
+import { fold } from '@/lib/text';
+
+const regionIdOf = (name: string) => REGIONS.find((r) => fold(r.name) === fold(name))?.id ?? '';
 
 export const dynamic = 'force-dynamic';
 
@@ -89,7 +93,7 @@ export default async function JobPage({ params }: Props) {
           {job.region && (
             <>
               <span aria-hidden="true">›</span>
-              <Link href={`/search?loc=${encodeURIComponent((job.region || '').toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, ''))}`} className="hover:text-ink">
+              <Link href={`/search?loc=${encodeURIComponent(regionIdOf(job.region))}`} className="hover:text-ink">
                 {job.region}
               </Link>
             </>

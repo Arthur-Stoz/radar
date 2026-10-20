@@ -16,6 +16,8 @@ export interface FetchOpts {
   userAgent?: string;
   retries?: number;
   timeoutMs?: number;
+  /** 'manual' returns 3xx answers as they are (see `location`). */
+  redirect?: 'follow' | 'manual';
 }
 
 export interface HttpStats {
@@ -86,7 +88,7 @@ export class Http {
     return { meta: join(this.cacheDir, key + '.json'), body: join(this.cacheDir, key + '.body') };
   }
 
-  async text(url: string, opts: FetchOpts = {}): Promise<{ status: number; text: string; fromCache: boolean; url: string }> {
+  async text(url: string, opts: FetchOpts = {}): Promise<{ status: number; text: string; fromCache: boolean; url: string; location?: string | null }> {
     const u = new URL(url);
     const gate = this.gate(u.host);
     const retries = opts.retries ?? 4;
@@ -120,7 +122,7 @@ export class Http {
           method: opts.method || (opts.body ? 'POST' : 'GET'),
           headers,
           body: opts.body,
-          redirect: 'follow',
+          redirect: opts.redirect ?? 'follow',
           signal: AbortSignal.timeout(opts.timeoutMs ?? 30_000),
         });
       } catch (e) {
@@ -158,7 +160,7 @@ export class Http {
           }
         }
         if (!res.ok) this.stats.errors++;
-        return { status: res.status, text, fromCache: false, url: res.url || url };
+        return { status: res.status, text, fromCache: false, url: res.url || url, location: res.headers.get('location') };
       }
       gate.delay(1000 * 2 ** attempt);
     }

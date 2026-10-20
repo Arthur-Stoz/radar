@@ -18,14 +18,20 @@ export async function fillFromDetail(
   ctx: SourceContext,
   list: RawJob[],
   tag: string,
-  opts: { userAgent?: string; parse?: DetailParser } = {},
+  opts: {
+    userAgent?: string;
+    parse?: DetailParser;
+    /** Company logo shown on the page (absolute URL), when the site has one per employer. */
+    logo?: (html: string, url: string) => string | null;
+  } = {},
 ): Promise<RawJob[]> {
   const parse = opts.parse ?? jsonLdParser;
   const keep: RawJob[] = [];
   const need: RawJob[] = [];
   for (const r of list) {
     const prev = ctx.previous(r.sourceId);
-    if (prev?.hasDetail && prev.raw) {
+    // Listings stored before pictures were collected are read once more when the site shows a logo.
+    if (prev?.hasDetail && prev.raw && (prev.raw.imageChecked || !opts.logo)) {
       keep.push({ ...prev.raw, ...stripEmpty(r), description: prev.description, hasDetail: true });
     } else need.push(r);
   }
@@ -41,6 +47,9 @@ export async function fillFromDetail(
       }
       const d = parse(res.text, r);
       if (!d) return;
+      d.imageChecked = true;
+      const logo = opts.logo?.(res.text, r.url);
+      if (logo) d.companyLogo = logo;
       for (const [k, v] of Object.entries(d)) {
         const key = k as keyof RawJob;
         if (v != null && v !== '' && !(Array.isArray(v) && !v.length) && (r[key] == null || r[key] === '' || key === 'descriptionHtml'))

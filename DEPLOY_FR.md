@@ -40,7 +40,7 @@ Pour lancer une collecte à la main : *Actions* → *Ingest* → bouton **Run wo
    | Framework | **Next.js** |
    | Version de Node.js | **22** |
    | Commande d'installation | `npm ci` (ou `npm install`) |
-   | Commande de build | `npm run build` |
+   | Commande de build | `npm run build` (ou `npx next build --webpack`) |
    | Commande de démarrage | `npm start` |
    | Dossier de sortie | laisser par défaut (`.next`) |
 

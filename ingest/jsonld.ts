@@ -41,6 +41,23 @@ const str = (v: any): string | null => {
   return null;
 };
 
+/** First URL of a schema.org image / logo value (string, ImageObject or an array of them). */
+export function imageUrlOf(v: any): string | null {
+  if (!v) return null;
+  if (typeof v === 'string') return v.trim() || null;
+  if (Array.isArray(v)) return imageUrlOf(v[0]);
+  if (typeof v === 'object') return imageUrlOf(v.url || v.contentUrl);
+  return null;
+}
+
+/** The page's og:image (or twitter:image). Callers must not treat a site-wide default as the ad's picture. */
+export function ogImage(html: string): string | null {
+  const m =
+    /<meta[^>]+(?:property|name)=["'](?:og:image(?::secure_url)?|twitter:image)["'][^>]*content=["']([^"']+)["']/i.exec(html) ||
+    /<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["'](?:og:image|twitter:image)["']/i.exec(html);
+  return m ? decodeEntities(m[1]).trim() || null : null;
+}
+
 /** Map a schema.org JobPosting to RawJob fields (caller adds sourceId/url). */
 export function jobPostingToRaw(jp: any): Omit<RawJob, 'sourceId' | 'url'> {
   const locs = Array.isArray(jp.jobLocation) ? jp.jobLocation : jp.jobLocation ? [jp.jobLocation] : [];
@@ -65,7 +82,8 @@ export function jobPostingToRaw(jp: any): Omit<RawJob, 'sourceId' | 'url'> {
   return {
     title: str(jp.title) || '',
     company: str(jp.hiringOrganization),
-    companyLogo: typeof jp.hiringOrganization === 'object' ? str(jp.hiringOrganization.logo) : null,
+    companyLogo: typeof jp.hiringOrganization === 'object' ? imageUrlOf(jp.hiringOrganization?.logo) : null,
+    image: imageUrlOf(jp.image),
     location: locParts.join(', ') || str(jp.jobLocation?.name) || null,
     remote: jp.jobLocationType === 'TELECOMMUTE',
     workTypes: types.map((t: any) => String(t).replace(/_/g, ' ')),

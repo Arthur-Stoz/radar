@@ -7,7 +7,6 @@ export function SiteHeader({ children }: { children?: React.ReactNode }) {
       <Logo />
       {children}
       <div className="flex flex-none items-center gap-2 text-[13px] text-muted">
-        <span className="hidden sm:inline">Free · No account</span>
         <ThemeToggle />
       </div>
     </header>

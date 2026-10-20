@@ -4,6 +4,7 @@
 //
 // Env: DATA_DIR (default ./.data), PREV_DB (previous DB to reuse; default DATA_DIR/radar.db),
 //      DETAIL_BUDGET (detail pages per source per run, default 1500), ONLY_SOURCES (comma list),
+//      IMAGE_BUDGET (Seek brand covers checked per run, default 1500),
 //      SKIP_EMBEDDINGS=1, DISABLED_SOURCES, ENABLED_SOURCES.
 
 import Database from 'better-sqlite3';
@@ -21,9 +22,9 @@ import { parseLocation } from '../lib/geo';
 import { extractSummary } from '../lib/summary';
 import { detectTags } from '../lib/tags';
 import { htmlToText } from '../lib/text';
-import { embeddingText, normalize, type Job } from './normalize';
+import { embeddingText, normalize, pickImage, type Job } from './normalize';
 import { ALL_SOURCES, activeSources } from './sources';
-import type { PrevJob, RawJob, Source, SourceContext } from './types';
+import type { PrevJob, RawJob, Source, SourceCache, SourceContext } from './types';
 
 const DAY = 864e5;
 const MAX_AGE_DAYS = 60;
@@ -56,8 +57,9 @@ function loadPrevious(file: string) {
   const jobs = new Map<string, PrevRow>();
   const statuses = new Map<string, SourceStatusRow>();
   const expired: ExpiredRow[] = [];
+  const cache = new Map<string, { value: string; checkedAt: string }>();
   let total = 0;
-  if (!existsSync(file)) return { jobs, statuses, total, expired };
+  if (!existsSync(file)) return { jobs, statuses, total, expired, cache };
   try {
     const db = new Database(file, { readonly: true });
     const rows = db.prepare('SELECT j.*, v.v AS v FROM jobs j LEFT JOIN vectors v ON v.rowid = j.rowid').all() as (PrevRow & Record<string, unknown>)[];
@@ -69,12 +71,17 @@ function loadPrevious(file: string) {
     } catch {
       // older DB without the table
     }
+    try {
+      for (const c of db.prepare('SELECT * FROM source_cache').all() as { key: string; value: string; checked_at: string }[]) cache.set(c.key, { value: c.value, checkedAt: c.checked_at });
+    } catch {
+      // older DB without the table
+    }
     db.close();
     log(`previous DB: ${rows.length} jobs`);
   } catch (e) {
     log(`previous DB unreadable, starting fresh: ${(e as Error).message}`);
   }
-  return { jobs, statuses, total, expired };
+  return { jobs, statuses, total, expired, cache };
 }
 
 /** Rebuild a Job from a previous DB row (used to keep jobs of a failed source, or not-yet-expired ones). */
@@ -89,6 +96,8 @@ function jobFromRow(r: Record<string, unknown>): Job {
     title: s('title')!,
     company: s('company'),
     companyLogo: s('company_logo'),
+    imageUrl: s('image_url'),
+    imageKind: s('image_kind') as Job['imageKind'],
     location: {
       raw: s('loc_raw') || '',
       suburb: s('suburb'),
@@ -135,7 +144,7 @@ interface SourceResult {
   durationMs: number;
 }
 
-async function runSource(source: Source, http: Http, prevBySource: Map<string, PrevJob>, budget: number, now: Date, detailCutoff: number): Promise<SourceResult> {
+async function runSource(source: Source, http: Http, prevBySource: Map<string, PrevJob>, budget: number, now: Date, detailCutoff: number, cache: SourceCache): Promise<SourceResult> {
   const t0 = Date.now();
   let left = budget;
   const counters = { pages: 0, details: 0, errors: 0 };
@@ -146,6 +155,8 @@ async function runSource(source: Source, http: Http, prevBySource: Map<string, P
     previous: (sid) => prevBySource.get(sid),
     takeDetail: () => Date.now() < detailCutoff && left-- > 0,
     counters,
+    cache,
+    stopAt: detailCutoff,
   };
   const raws: RawJob[] = [];
   try {
@@ -199,7 +210,11 @@ async function main() {
     });
   }
 
-  const results = await Promise.all(sources.map((s) => runSource(s, http, prevBySource.get(s.id) || new Map(), budget, now, deadline - 15 * 60_000)));
+  const cache: SourceCache = {
+    get: (k) => prev.cache.get(k),
+    set: (k, value) => void prev.cache.set(k, { value, checkedAt: now.toISOString() }),
+  };
+  const results = await Promise.all(sources.map((s) => runSource(s, http, prevBySource.get(s.id) || new Map(), budget, now, deadline - 15 * 60_000, cache)));
 
   // ---- Normalize + merge with previous ----
   const jobs = new Map<string, Job>();
@@ -270,6 +285,7 @@ async function main() {
   const before = jobs.size;
   const final = dedup([...jobs.values()]);
   log(`dedup: ${before} → ${final.length}`);
+  dropSiteDefaultImages(final);
 
   // ---- Embeddings (reuse when contentHash unchanged) ----
   const vectors = new Map<string, Int8Array>();
@@ -389,8 +405,9 @@ async function main() {
     model: EMBED_MODEL,
     sources_ok: String(succeeded.size),
     sources_total: String(sources.length),
-  }, [...expiredRows.values()]);
+  }, [...expiredRows.values()], prev.cache);
   replaceFile(tmp, dbFile);
+  logImageCoverage(final);
 
   const gz = join(dataDir, 'radar.db.gz');
   await gzipFile(dbFile, gz + '.tmp');
@@ -409,6 +426,46 @@ async function main() {
 
   printTable(statuses);
   log(`done: ${total} jobs, db ${(manifest.db_bytes / 1e6).toFixed(1)} MB, gz ${(manifest.bytes / 1e6).toFixed(1)} MB, ${http.stats.requests} requests, ${((Date.now() - t0) / 60000).toFixed(1)} min`);
+}
+
+/**
+ * A picture shared by jobs of several different companies within one source is a site-wide default
+ * (og:image of the job board, "no logo" placeholder…), not the ad's own: drop it. Seek and Trade Me pictures come
+ * from structured branding fields and are kept.
+ */
+function dropSiteDefaultImages(jobs: Job[]) {
+  const companies = new Map<string, Set<string>>();
+  for (const j of jobs) {
+    if (!j.imageUrl || j.source === 'seek' || j.source === 'trademe') continue;
+    const k = `${j.source} ${j.imageUrl}`;
+    let s = companies.get(k);
+    if (!s) companies.set(k, (s = new Set()));
+    s.add((j.company || '').toLowerCase());
+  }
+  let dropped = 0;
+  for (const j of jobs) {
+    const isDefault = (u: string | null) => !!u && (companies.get(`${j.source} ${u}`)?.size ?? 0) >= 3;
+    if (!isDefault(j.imageUrl)) continue;
+    dropped++;
+    // A default photo falls back to the company logo, unless that is a default too.
+    const logo = j.imageKind === 'photo' ? pickImage({ companyLogo: j.companyLogo, url: j.sourceUrl }) : { imageUrl: null, imageKind: null };
+    Object.assign(j, isDefault(logo.imageUrl) ? { imageUrl: null, imageKind: null } : logo);
+  }
+  if (dropped) log(`images: ${dropped} site-wide default pictures dropped`);
+}
+
+function logImageCoverage(jobs: Job[]) {
+  const by = new Map<string, { n: number; photo: number; logo: number }>();
+  for (const j of jobs) {
+    let s = by.get(j.source);
+    if (!s) by.set(j.source, (s = { n: 0, photo: 0, logo: 0 }));
+    s.n++;
+    if (j.imageKind === 'photo') s.photo++;
+    else if (j.imageKind === 'logo') s.logo++;
+  }
+  console.table(
+    [...by.entries()].map(([source, s]) => ({ source, jobs: s.n, photo: s.photo, logo: s.logo, 'with image %': Math.round(((s.photo + s.logo) / s.n) * 100) })),
+  );
 }
 
 /** Recompute derived fields from stored ones (used by OFFLINE rebuilds after parser changes). */

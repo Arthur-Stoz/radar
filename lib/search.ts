@@ -26,7 +26,7 @@ export interface SearchInput {
   /** Optional query vector (normalized) for semantic blending. */
   vector?: number[] | null;
   /** CV match: the CV's mean vector (computed on the device) and the confirmed profile chips. */
-  cv?: { vector: number[]; chips: { kind: string; label: string; terms: string[] }[] } | null;
+  cv?: { vector: number[] | null; chips: { kind: string; label: string; terms: string[] }[] } | null;
 }
 
 export interface CardJob {
@@ -56,6 +56,9 @@ export interface CardJob {
   descriptionStart: string;
   category: string | null;
   expiresAt: string | null;
+  /** The ad's photo or the company logo (URL on the source's CDN), or null: cards then show the monogram. */
+  imageUrl: string | null;
+  imageKind: 'photo' | 'logo' | null;
   score?: number;
   /** CV match 0–100 and the user's chips found in this job. */
   match?: number;
@@ -107,8 +110,18 @@ for (const p of PLACES) if (p.kind === 'town') CITY_BY_SLUG.set(citySlug(p.city)
 const REGION_IDS = new Set(REGIONS.map((r) => r.id));
 const REGION_NAME = new Map(REGIONS.map((r) => [r.id, r.name]));
 
+/** URL value of a town facet. Towns that share their slug with a region ("auckland", "wellington"…) get a "-city" suffix. */
+export function cityValue(city: string): string {
+  const s = citySlug(city);
+  return REGION_IDS.has(s) ? `${s}-city` : s;
+}
+
 export function resolveLoc(v: string): { kind: 'region'; id: string } | { kind: 'city'; city: string; regionId: string } | null {
   const s = citySlug(v);
+  if (s.endsWith('-city') && REGION_IDS.has(s.slice(0, -5))) {
+    const c = CITY_BY_SLUG.get(s.slice(0, -5));
+    if (c) return { kind: 'city', ...c };
+  }
   // A slug that is both a region and a city ("auckland", "wellington", "nelson", "gisborne") means the region.
   if (REGION_IDS.has(s)) return { kind: 'region', id: s };
   const c = CITY_BY_SLUG.get(s);
@@ -551,7 +564,7 @@ function computeFacets(candidates: LightJob[], f: Filters, names: Map<string, st
   const byCount = (a: FacetCount, b: FacetCount) => b.count - a.count;
   return {
     region: REGIONS.map((r) => ({ value: r.id, label: r.name, count: regionCounts.get(r.id) || 0 })),
-    city: [...cityCounts.entries()].map(([c, n]) => ({ value: citySlug(c), label: c, count: n, parent: cityRegion.get(c) })).sort(byCount).slice(0, 80),
+    city: [...cityCounts.entries()].map(([c, n]) => ({ value: cityValue(c), label: c, count: n, parent: cityRegion.get(c) })).sort(byCount).slice(0, 80),
     type: ['full-time', 'part-time', 'casual', 'contract', 'temp', 'seasonal', 'internship'].map((t) => ({
       value: t,
       label: { 'full-time': 'Full time', 'part-time': 'Part time', casual: 'Casual', contract: 'Contract', temp: 'Temporary', seasonal: 'Seasonal', internship: 'Internship' }[t]!,
@@ -597,6 +610,8 @@ interface JobRow {
   description: string;
   category: string | null;
   expires_at: string | null;
+  image_url: string | null;
+  image_kind: string | null;
 }
 
 const ATS = new Set(['greenhouse', 'lever', 'smartrecruiters', 'workable', 'ashby']);
@@ -642,15 +657,29 @@ export function rowToCard(r: JobRow, names: Map<string, string>, descLen = 600):
     descriptionStart: desc,
     category: r.category,
     expiresAt: r.expires_at,
+    imageUrl: r.image_url?.startsWith('https://') ? r.image_url : null,
+    imageKind: r.image_url ? (r.image_kind === 'photo' ? 'photo' : 'logo') : null,
   };
 }
 
-const CARD_COLS =
+const BASE_COLS =
   'rowid, id, title, company, suburb, city, region, loc_raw, is_remote, work_types, pay_text, pay_min, pay_max, pay_period, hourly_min, hourly_max, below_min_wage, posted_ts, source, summary, highlights, tags, also_on, description, category, expires_at';
+const colsByStore = new WeakMap<Store, string>();
+
+/** Card columns; a DB built before pictures were collected (no image_url column) still works. */
+function cardCols(store: Store): string {
+  let c = colsByStore.get(store);
+  if (!c) {
+    const has = (store.db.prepare('PRAGMA table_info(jobs)').all() as { name: string }[]).some((x) => x.name === 'image_url');
+    c = `${BASE_COLS}, ${has ? 'image_url, image_kind' : 'NULL AS image_url, NULL AS image_kind'}`;
+    colsByStore.set(store, c);
+  }
+  return c;
+}
 
 export function loadCards(store: Store, rowids: number[]): CardJob[] {
   if (!rowids.length) return [];
-  const rows = store.db.prepare(`SELECT ${CARD_COLS} FROM jobs WHERE rowid IN (${rowids.map(() => '?').join(',')})`).all(...rowids) as JobRow[];
+  const rows = store.db.prepare(`SELECT ${cardCols(store)} FROM jobs WHERE rowid IN (${rowids.map(() => '?').join(',')})`).all(...rowids) as JobRow[];
   const byId = new Map(rows.map((r) => [r.rowid, r]));
   const names = sourceNameMap(store);
   return rowids.map((id) => byId.get(id)).filter((r): r is JobRow => !!r).map((r) => rowToCard(r, names));
@@ -659,7 +688,7 @@ export function loadCards(store: Store, rowids: number[]): CardJob[] {
 export function getJob(id: string): (CardJob & { description: string; sourceUrl: string }) | null {
   const store = getStore();
   if (!store) return null;
-  const r = store.db.prepare(`SELECT ${CARD_COLS}, source_url FROM jobs WHERE id = ?`).get(id) as (JobRow & { source_url: string }) | undefined;
+  const r = store.db.prepare(`SELECT ${cardCols(store)}, source_url FROM jobs WHERE id = ?`).get(id) as (JobRow & { source_url: string }) | undefined;
   if (!r) return null;
   return { ...rowToCard(r, sourceNameMap(store), 0), description: r.description, sourceUrl: r.source_url };
 }
@@ -695,10 +724,18 @@ function scoreCv(
   maxRel: number,
   now: number,
 ): { j: LightJob; score: number; match?: number; why: string[] }[] {
+  // Without a CV vector (the on-device model did not load), a full-text match on the chip terms stands in for the cosine.
+  let kw: Map<number, number> | null = null;
+  let maxKw = 0;
+  if (!cv.vector) {
+    const terms = [...new Set(cv.chips.filter((c) => c.kind !== 'visa').flatMap((c) => c.terms).filter((t) => t.length > 1))];
+    kw = runFts(store, terms.map(ftsPhrase).join(' OR '));
+    for (const r of kw.values()) maxKw = Math.max(maxKw, r);
+  }
   // Stage 1: cosine (+ bm25 when there is a query) over every candidate.
   const stage1 = filtered.map((j) => {
     const v = vectors.get(j.rowid);
-    const cos = v ? Math.max(0, cosineQ(cv.vector, v)) : 0;
+    const cos = cv.vector ? (v ? Math.max(0, cosineQ(cv.vector, v)) : 0) : maxKw > 0 ? 0.7 * ((kw!.get(j.rowid) || 0) / maxKw) : 0;
     const bm = rel && maxRel > 0 ? (rel.get(j.rowid) || 0) / maxRel : 0;
     const fresh = Math.exp(-Math.max(0, (now - j.postedTs) / DAY) / 14);
     return { j, cos, bm, fresh, score: 0.6 * cos + 0.15 * bm + 0.05 * fresh };

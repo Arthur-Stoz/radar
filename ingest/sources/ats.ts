@@ -6,6 +6,8 @@
 import companies from '../ats-companies.json';
 import { pool } from '../http';
 import type { RawJob, Source, SourceContext } from '../types';
+import { ogImage } from '../jsonld';
+import { cleanImageUrl } from '../normalize';
 
 type Company = { slug: string; name: string };
 type AtsId = 'greenhouse' | 'lever' | 'smartrecruiters' | 'workable' | 'ashby';
@@ -36,6 +38,10 @@ async function forCompanies(ctx: SourceContext, ats: AtsId, fn: (c: Company) => 
   await pool(companyList(ats), 2, async (c) => {
     try {
       const jobs = await fn(c);
+      if (jobs.length && !jobs.some((j) => j.companyLogo)) {
+        const logo = await companyLogo(ctx, ats, c, jobs[0].url);
+        if (logo) for (const j of jobs) j.companyLogo = logo;
+      }
       out.push(...jobs);
       ctx.log(`${ats}/${c.slug}: ${jobs.length} NZ jobs`);
     } catch (e) {
@@ -44,6 +50,25 @@ async function forCompanies(ctx: SourceContext, ats: AtsId, fn: (c: Company) => 
     }
   });
   return out;
+}
+
+/**
+ * The employer's logo, read from the og:image of one of its public job pages (ATS boards set it to the company logo).
+ * Cached between runs for two weeks: one request per company at most.
+ */
+async function companyLogo(ctx: SourceContext, ats: AtsId, c: Company, jobUrl: string): Promise<string | null> {
+  const key = `ats-logo:${ats}:${c.slug}`;
+  const hit = ctx.cache.get(key);
+  if (hit && Date.now() - Date.parse(hit.checkedAt) < 14 * 864e5) return hit.value || null;
+  try {
+    const res = await ctx.http.text(jobUrl);
+    if (res.status >= 400) return hit?.value || null;
+    const logo = cleanImageUrl(ogImage(res.text), jobUrl);
+    ctx.cache.set(key, logo || '');
+    return logo;
+  } catch {
+    return hit?.value || null;
+  }
 }
 
 function make(id: AtsId, name: string, homepage: string, hosts: string[], fetchAll: (ctx: SourceContext) => Promise<RawJob[]>): Source {

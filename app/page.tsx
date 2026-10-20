@@ -30,8 +30,8 @@ export default function Home() {
     <>
       <SiteHeader />
       <main id="main">
-        <section className="relative isolate z-0 flex flex-col items-center px-5 pb-20 pt-12 text-center sm:px-10 sm:pb-[136px] sm:pt-[96px]">
-          <h1 className="m-0 text-[44px] font-[650] leading-[1.02] tracking-[-0.047em] sm:text-[64px] lg:text-[84px]">
+        <section className="relative isolate z-0 flex flex-col items-center overflow-x-clip px-5 pb-(--space-hero-bottom) pt-(--space-hero-top) text-center sm:px-10">
+          <h1 className="m-0 text-(length:--hero-title) font-[650] leading-[1.02] tracking-[-0.047em]">
             <span className="block">
               Every <Tile icon="coffee" from="#FCEEDC" to="#F1D5B1" rot={-7} /> job in
             </span>
@@ -42,17 +42,17 @@ export default function Home() {
               <Tile icon="mountain" from="#E8F1FC" to="#C8DCF4" rot={-4} /> One search.
             </span>
           </h1>
-          <p className="mt-[26px] max-w-[560px] text-[17px] leading-[1.45] text-muted sm:text-[19px]" style={{ textWrap: 'balance' }}>
+          <p className="mt-(--space-hero-title-sub) mb-0 max-w-[640px] text-[17px] lg:max-w-[900px] leading-[1.45] text-muted sm:text-[19px]" style={{ textWrap: 'balance' }}>
             {data && data.sources.length ? `${sourcesSentence(data.sources)}, all in one place.` : 'Every job board in New Zealand, all in one place.'}
           </p>
 
-          <div className="relative mt-9 flex w-full justify-center sm:mt-11">
+          <div className="relative mt-(--space-hero-sub-bar) flex w-full justify-center">
             <SearchBar variant="hero" />
           </div>
 
           {data ? (
             <>
-              <div className="mt-[22px] flex max-w-[720px] flex-wrap justify-center gap-2">
+              <div className="mt-(--space-hero-bar-chips) flex max-w-(--hero-bar-max) flex-wrap justify-center gap-2">
                 {data.quick.map((c) => (
                   <Link
                     key={c.label}
@@ -63,10 +63,10 @@ export default function Home() {
                   </Link>
                 ))}
               </div>
-              <LiveLine className="mt-[30px]" total={data.total} sources={data.sources.length} builtAt={data.builtAt} />
+              <LiveLine className="mt-(--space-hero-chips-live)" total={data.total} sources={data.sources.length} builtAt={data.builtAt} />
             </>
           ) : (
-            <div className="mt-[30px] flex items-center gap-[9px] text-[13px] text-muted" role="status">
+            <div className="mt-(--space-hero-chips-live) flex items-center gap-[9px] text-[13px] text-muted" role="status">
               <span className="pulse-dot" aria-hidden="true" />
               Loading jobs… this takes a few seconds the first time.
               <AutoRefresh seconds={5} />
@@ -77,8 +77,8 @@ export default function Home() {
         {data && data.fresh.length > 0 && <FreshRail jobs={data.fresh} />}
 
         {data && (
-          <section className="relative z-[1] px-5 pb-24 sm:px-10 lg:px-20 lg:pb-[140px]" aria-labelledby="browse-h">
-            <h2 id="browse-h" className="mb-5 text-[24px] font-[650] tracking-[-0.035em] sm:text-[30px]">
+          <section className="relative z-[1] px-5 pb-(--space-section) sm:px-10 lg:px-20" aria-labelledby="browse-h">
+            <h2 id="browse-h" className="mb-(--space-section-head) mt-0 text-[24px] font-[650] tracking-[-0.035em] sm:text-[30px]">
               Browse by type
             </h2>
             <div className="grid auto-rows-[188px] grid-cols-2 gap-3 sm:auto-rows-[236px] sm:gap-[14px] lg:grid-cols-4">

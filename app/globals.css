@@ -49,6 +49,61 @@
   color-scheme: dark;
 }
 
+/* Layering scale: every z-index in the app comes from here (Tailwind: z-(--z-popover)).
+   Floating layers render in a portal on <body> (components/Floating.tsx), so these values are compared globally. */
+:root {
+  --z-raised: 1;
+  --z-sticky: 20;
+  --z-header: 30;
+  --z-popover: 1000;
+  --z-backdrop: 1100;
+  --z-sheet: 1110;
+  --z-drop: 1200;
+  --z-modal: 1300;
+  --z-skip: 1400;
+}
+
+/* Vertical rhythm and hero sizes (Home + Search). Adjust spacing here, not in the components. */
+:root {
+  --space-hero-top: 36px;
+  --space-hero-title-sub: 14px;
+  --space-hero-sub-bar: 22px;
+  --space-hero-bar-chips: 16px;
+  --space-hero-chips-live: 18px;
+  --space-hero-bottom: 56px;
+  --space-section: 56px;
+  --space-section-head: 16px;
+  --space-page-top: 14px;
+  --hero-title: 44px;
+  --hero-bar-h: 64px;
+  --hero-bar-font: 19px;
+  --hero-bar-max: 840px;
+  --hero-btn-h: 50px;
+}
+@media (min-width: 640px) {
+  :root {
+    --space-hero-top: 24px;
+    --space-hero-title-sub: 16px;
+    --space-hero-sub-bar: 26px;
+    --space-hero-bottom: 72px;
+    --space-section: 72px;
+    --space-section-head: 18px;
+    --space-page-top: 20px;
+    --hero-title: 64px;
+    --hero-bar-h: 74px;
+    --hero-bar-font: 22px;
+    --hero-btn-h: 58px;
+  }
+}
+@media (min-width: 1024px) {
+  /* Scales with the window height so the search bar sits near the middle of the first screen. */
+  :root {
+    --space-hero-top: clamp(8px, 2vh, 32px);
+    --hero-title: clamp(52px, 8vh, 84px);
+    --space-section: 88px;
+  }
+}
+
 @theme inline {
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
@@ -61,6 +116,7 @@
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
   --color-on-ink: var(--on-ink);
   --radius-sm: 12px;
   --radius-md: 20px;
@@ -69,6 +125,10 @@
 }
 
 @layer base {
+  html {
+    overflow-x: clip;
+  }
+
   html,
   body {
     background: var(--bg);

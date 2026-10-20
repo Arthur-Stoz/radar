@@ -32,7 +32,7 @@ export function KeyboardHelp() {
   }, [open]);
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-5" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+    <div className="fixed inset-0 z-(--z-modal) flex items-center justify-center p-5" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
       <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} aria-hidden="true" />
       <div className="relative w-full max-w-[380px] rounded-[20px] bg-bg p-6" style={{ boxShadow: 'var(--shadow-pop)' }}>
         <div className="mb-4 flex items-center justify-between">

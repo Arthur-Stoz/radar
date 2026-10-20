@@ -3,6 +3,7 @@ import { RailArrows } from './RailArrows';
 import type { CardJob } from '@/lib/search';
 import { ago, gradient, hueOf, payLabel, placePhoto } from '@/lib/format';
 import { Badge, badgesFor, SourceMark } from './Badges';
+import { JobImage } from './JobImage';
 
 export function CompanyTile({ name, className = '' }: { name: string; className?: string }) {
   return (
@@ -19,8 +20,8 @@ export function CompanyTile({ name, className = '' }: { name: string; className?
 
 export function FreshRail({ jobs }: { jobs: CardJob[] }) {
   return (
-    <section className="relative z-[1] pb-20 lg:pb-28" aria-labelledby="fresh-h">
-      <div className="mb-[18px] flex items-end justify-between gap-4 px-5 sm:px-10 lg:px-20">
+    <section className="relative z-[1] pb-(--space-section)" aria-labelledby="fresh-h">
+      <div className="mb-(--space-section-head) flex items-end justify-between gap-4 px-5 sm:px-10 lg:px-20">
         <div>
           <h2 id="fresh-h" className="m-0 text-[24px] font-[650] tracking-[-0.035em] sm:text-[30px]">
             Fresh today
@@ -40,12 +41,20 @@ export function FreshRail({ jobs }: { jobs: CardJob[] }) {
               className="flex flex-[0_0_260px] snap-start flex-col gap-3 rounded-2xl outline-offset-4 transition-transform duration-300 hover:-translate-y-[3px] sm:flex-[0_0_300px]"
             >
               <div className="relative aspect-[16/11] w-full overflow-hidden rounded-[14px] bg-surface">
-                {photo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={photo} alt="" loading="lazy" className="absolute inset-0 block h-full w-full object-cover" />
-                ) : (
-                  <CompanyTile name={j.company || j.title} className="absolute inset-0" />
-                )}
+                <JobImage
+                  src={j.imageUrl}
+                  kind={j.imageKind}
+                  className="absolute inset-0"
+                  logoPadding="p-[16%]"
+                  fallback={
+                    photo ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={photo} alt="" loading="lazy" className="absolute inset-0 block h-full w-full object-cover" />
+                    ) : (
+                      <CompanyTile name={j.company || j.title} className="absolute inset-0" />
+                    )
+                  }
+                />
                 <div className="pointer-events-none absolute inset-0 rounded-[14px]" style={{ boxShadow: 'inset 0 0 0 1px rgba(0,0,0,.05)' }} />
               </div>
               <div className="flex flex-col gap-[5px] px-0.5">

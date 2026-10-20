@@ -14,6 +14,11 @@ export function parseSitemap(xml: string): { loc: string; lastmod: string | null
   return out;
 }
 
+/** The employer logo WP Job Board shows on the job page (not the PickNZ site logo). */
+export function picknzLogo(html: string): string | null {
+  return /<img[^>]+src=["'](https:\/\/jobs\.picknz\.co\.nz\/wp-content\/uploads\/wpjobboard\/job\/\d+\/company-logo\/[^"']+)["']/i.exec(html)?.[1] ?? null;
+}
+
 export const picknz: Source = {
   id: 'picknz',
   name: 'PickNZ',
@@ -27,7 +32,7 @@ export const picknz: Source = {
     const cutoff = ctx.now.getTime() - 120 * 864e5;
     const urls = parseSitemap(r.text).filter((u) => /\/job\//.test(u.loc) && (!u.lastmod || Date.parse(u.lastmod) > cutoff));
     const list: RawJob[] = urls.map((u) => ({ sourceId: u.loc.replace(/\/$/, '').split('/').pop()!, url: u.loc, title: '' }));
-    const filled = await fillFromDetail(ctx, list, 'picknz');
+    const filled = await fillFromDetail(ctx, list, 'picknz', { logo: picknzLogo });
     for (const j of filled) {
       if (!j.title) continue;
       if (j.expiresAt && Date.parse(j.expiresAt) < ctx.now.getTime()) continue;

@@ -3,7 +3,7 @@ import { TAG_LABELS } from '../lib/tags';
 import { normTitle } from './dedup';
 import type { Job } from './normalize';
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export const SCHEMA = `
 CREATE TABLE jobs (
@@ -15,6 +15,8 @@ CREATE TABLE jobs (
   title TEXT NOT NULL,
   company TEXT,
   company_logo TEXT,
+  image_url TEXT,
+  image_kind TEXT,
   loc_raw TEXT,
   suburb TEXT,
   city TEXT,
@@ -58,6 +60,7 @@ CREATE VIRTUAL TABLE jobs_fts USING fts5(
   tokenize='porter unicode61 remove_diacritics 2'
 );
 CREATE VIRTUAL TABLE jobs_trgm USING fts5(title, company, content='', contentless_delete=1, tokenize='trigram remove_diacritics 1');
+CREATE TABLE source_cache (key TEXT PRIMARY KEY, value TEXT NOT NULL, checked_at TEXT NOT NULL);
 
 CREATE TABLE vectors (rowid INTEGER PRIMARY KEY, v BLOB NOT NULL);
 
@@ -127,14 +130,15 @@ export function writeDb(
   statuses: SourceStatusRow[],
   meta: Record<string, string>,
   expired: ExpiredRow[] = [],
+  cache: Map<string, { value: string; checkedAt: string }> = new Map(),
 ): void {
   const db = new Database(file);
   db.pragma('journal_mode = OFF');
   db.pragma('synchronous = OFF');
   db.exec(SCHEMA);
 
-  const ins = db.prepare(`INSERT INTO jobs (rowid,id,source,source_id,source_url,title,company,company_logo,loc_raw,suburb,city,region,region_id,is_remote,is_hybrid,work_types,category,pay_text,pay_min,pay_max,pay_period,hourly_min,hourly_max,below_min_wage,posted_at,posted_ts,expires_at,first_seen,last_seen,description,summary,highlights,tags,also_on,content_hash,has_detail,missed,raw)
-    VALUES (@rowid,@id,@source,@source_id,@source_url,@title,@company,@company_logo,@loc_raw,@suburb,@city,@region,@region_id,@is_remote,@is_hybrid,@work_types,@category,@pay_text,@pay_min,@pay_max,@pay_period,@hourly_min,@hourly_max,@below_min_wage,@posted_at,@posted_ts,@expires_at,@first_seen,@last_seen,@description,@summary,@highlights,@tags,@also_on,@content_hash,@has_detail,@missed,@raw)`);
+  const ins = db.prepare(`INSERT INTO jobs (rowid,id,source,source_id,source_url,title,company,company_logo,image_url,image_kind,loc_raw,suburb,city,region,region_id,is_remote,is_hybrid,work_types,category,pay_text,pay_min,pay_max,pay_period,hourly_min,hourly_max,below_min_wage,posted_at,posted_ts,expires_at,first_seen,last_seen,description,summary,highlights,tags,also_on,content_hash,has_detail,missed,raw)
+    VALUES (@rowid,@id,@source,@source_id,@source_url,@title,@company,@company_logo,@image_url,@image_kind,@loc_raw,@suburb,@city,@region,@region_id,@is_remote,@is_hybrid,@work_types,@category,@pay_text,@pay_min,@pay_max,@pay_period,@hourly_min,@hourly_max,@below_min_wage,@posted_at,@posted_ts,@expires_at,@first_seen,@last_seen,@description,@summary,@highlights,@tags,@also_on,@content_hash,@has_detail,@missed,@raw)`);
   const insFts = db.prepare('INSERT INTO jobs_fts (rowid,title,company,location,tags,category,description) VALUES (?,?,?,?,?,?,?)');
   const insTrgm = db.prepare('INSERT INTO jobs_trgm (rowid,title,company) VALUES (?,?,?)');
   const insVec = db.prepare('INSERT INTO vectors (rowid,v) VALUES (?,?)');
@@ -152,6 +156,8 @@ export function writeDb(
         title: j.title,
         company: j.company,
         company_logo: j.companyLogo,
+        image_url: j.imageUrl,
+        image_kind: j.imageKind,
         loc_raw: j.location.raw,
         suburb: j.location.suburb,
         city: j.location.city,
@@ -199,6 +205,9 @@ export function writeDb(
     for (const e of expired) insE.run(e);
     const insA = db.prepare('INSERT OR IGNORE INTO aliases VALUES (?,?)');
     for (const j of jobs) for (const a of j.aliases) insA.run(a, j.id);
+
+    const insC = db.prepare('INSERT INTO source_cache (key,value,checked_at) VALUES (?,?,?)');
+    for (const [k, v] of cache) insC.run(k, v.value, v.checkedAt);
 
     const insM = db.prepare('INSERT INTO meta (key,value) VALUES (?,?)');
     for (const [k, v] of Object.entries(meta)) insM.run(k, v);

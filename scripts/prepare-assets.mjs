@@ -1,27 +1,13 @@
-// Copies the browser assets the CV matcher needs into public/ so that nothing is loaded from a
-// third-party CDN: transformers.js + its ONNX runtime wasm, the embedding model, pdf.js, mammoth.
-// Runs automatically before `npm run dev` and `npm run build` (predev / prebuild).
+// Pre-fetches the embedding model the CV matcher runs in the browser into public/models, so dev/CI never wait for it.
+// Optional: app/cv-assets serves the readers from node_modules and downloads the model at runtime when this did not run.
 import { copyFileSync, existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 const root = process.cwd();
 const pub = join(root, 'public');
-const nm = join(root, 'node_modules');
 
 const MODEL = 'Xenova/all-MiniLM-L6-v2';
 const MODEL_FILES = ['config.json', 'tokenizer.json', 'tokenizer_config.json', 'special_tokens_map.json', 'onnx/model_quantized.onnx'];
-
-function copy(src, dest) {
-  mkdirSync(dirname(dest), { recursive: true });
-  if (existsSync(dest) && statSync(dest).size === statSync(src).size) return;
-  copyFileSync(src, dest);
-}
-
-const tf = join(nm, '@huggingface/transformers/dist');
-for (const f of ['transformers.min.js', 'ort-wasm-simd-threaded.jsep.mjs', 'ort-wasm-simd-threaded.jsep.wasm']) copy(join(tf, f), join(pub, 'vendor/transformers', f));
-copy(join(nm, 'pdfjs-dist/build/pdf.min.mjs'), join(pub, 'vendor/pdfjs/pdf.min.mjs'));
-copy(join(nm, 'pdfjs-dist/build/pdf.worker.min.mjs'), join(pub, 'vendor/pdfjs/pdf.worker.min.mjs'));
-copy(join(nm, 'mammoth/mammoth.browser.min.js'), join(pub, 'vendor/mammoth.browser.min.js'));
 
 // Model: reuse the ingest cache when present, otherwise download once from Hugging Face.
 const modelDir = join(pub, 'models', MODEL);
@@ -36,11 +22,12 @@ for (const f of MODEL_FILES) {
     continue;
   }
   const url = `https://huggingface.co/${MODEL}/resolve/main/${f}`;
-  const res = await fetch(url);
-  if (!res.ok) {
-    if (f === 'special_tokens_map.json') continue; // optional
-    throw new Error(`prepare-assets: cannot download ${url} (${res.status})`);
+  const res = await fetch(url).catch(() => null);
+  if (!res?.ok) {
+    // Not fatal: app/cv-assets downloads the model at runtime.
+    if (f !== 'special_tokens_map.json') console.warn(`prepare-assets: cannot download ${url} (${res?.status ?? 'network error'})`);
+    continue;
   }
   writeFileSync(dest, Buffer.from(await res.arrayBuffer()));
 }
-console.log('prepare-assets: browser assets ready in public/vendor and public/models');
+console.log('prepare-assets: model ready in public/models');

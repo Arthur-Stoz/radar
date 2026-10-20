@@ -74,20 +74,65 @@ export function parseSeekDetail(html: string): { description: string | null; exp
 }
 
 const GQL = 'https://nz.seek.com/graphql';
-const GQL_QUERY = 'query jobDetails($jobId: ID!) { jobDetails(id: $jobId) { job { id content(platform: WEB) expiresAt { dateTimeUtc } salary { label } } } }';
+const GQL_QUERY = 'query jobDetails($jobId: ID!) { jobDetails(id: $jobId) { job { id content(platform: WEB) expiresAt { dateTimeUtc } salary { label } products { branding { id cover { url } } } } } }';
+const GQL_QUERY_BASIC = 'query jobDetails($jobId: ID!) { jobDetails(id: $jobId) { job { id content(platform: WEB) expiresAt { dateTimeUtc } salary { label } } } }';
+
+// Branded Seek ads carry a cover photo. The brand id is the one in the listing's logo URL; the branding gateway
+// answers /<brand>/jdpCover with a redirect to the cover (or 404 when the brand has none). Results are cached
+// between runs in the DB (source_cache), so each brand is checked once a month at most.
+const BRANDING = 'https://bx-branding-gateway.cloud.seek.com.au';
+const COVER_KEY = (brand: string) => `seek-cover:${brand}`;
+const COVER_TTL = 30 * 864e5;
+
+export function seekBrandId(logoUrl: string | null | undefined): string | null {
+  return /^https:\/\/bx-branding-gateway\.cloud\.seek\.com\.au\/([A-Za-z0-9.-]+)\//.exec(logoUrl || '')?.[1] ?? null;
+}
+
+async function checkCovers(ctx: SourceContext, batch: RawJob[]): Promise<void> {
+  const jobsPerBrand = new Map<string, number>();
+  for (const r of batch) {
+    const b = seekBrandId(r.companyLogo);
+    if (b) jobsPerBrand.set(b, (jobsPerBrand.get(b) || 0) + 1);
+  }
+  const stale = (b: string) => {
+    const hit = ctx.cache.get(COVER_KEY(b));
+    return !hit || Date.now() - Date.parse(hit.checkedAt) > COVER_TTL;
+  };
+  // Brands with the most jobs first.
+  const todo = [...jobsPerBrand.entries()].filter(([b]) => stale(b)).sort((a, b) => b[1] - a[1]).map(([b]) => b).slice(0, Number(process.env.IMAGE_BUDGET || 1500));
+  ctx.log(`seek: checking ${todo.length} brand covers (${jobsPerBrand.size} brands)`);
+  let done = 0;
+  await pool(todo, 2, async (b) => {
+    if (Date.now() > ctx.stopAt) return;
+    try {
+      const res = await ctx.http.text(`${BRANDING}/${b}/jdpCover`, { redirect: 'manual', retries: 1, timeoutMs: 15_000 });
+      if (res.status >= 300 && res.status < 400 && res.location) ctx.cache.set(COVER_KEY(b), new URL(res.location, BRANDING).href);
+      else if (res.status === 404) ctx.cache.set(COVER_KEY(b), '');
+      if (++done % 500 === 0) ctx.log(`seek: ${done}/${todo.length} brand covers checked`);
+    } catch {
+      // try again next run
+    }
+  });
+}
 
 /** Job details through the JSON endpoint Seek's own frontend uses; falls back to the job page. */
 export async function fetchSeekDetail(ctx: SourceContext, r: RawJob): Promise<ReturnType<typeof parseSeekDetail>> {
   try {
-    const res = await ctx.http.text(GQL, {
-      method: 'POST',
-      body: JSON.stringify({ operationName: 'jobDetails', variables: { jobId: r.sourceId }, query: GQL_QUERY }),
-      headers: { 'content-type': 'application/json', accept: 'application/json', 'seek-request-brand': 'seek', 'seek-request-country': 'NZ' },
-    });
-    if (res.status === 200) {
-      const job = JSON.parse(res.text)?.data?.jobDetails?.job;
-      if (job) return { description: job.content || null, expiresAt: job.expiresAt?.dateTimeUtc || null, payText: job.salary?.label || null };
-      return null; // listing gone
+    for (const query of [GQL_QUERY, GQL_QUERY_BASIC]) {
+      const res = await ctx.http.text(GQL, {
+        method: 'POST',
+        body: JSON.stringify({ operationName: 'jobDetails', variables: { jobId: r.sourceId }, query }),
+        headers: { 'content-type': 'application/json', accept: 'application/json', 'seek-request-brand': 'seek', 'seek-request-country': 'NZ' },
+      });
+      if (res.status !== 200) break;
+      const body = JSON.parse(res.text);
+      // A schema change in the optional branding fields must not cost us the description: retry without them.
+      if (body?.errors?.length && !body?.data?.jobDetails && query === GQL_QUERY) continue;
+      const job = body?.data?.jobDetails?.job;
+      if (!job) return null; // listing gone
+      const branding = job.products?.branding;
+      if (branding?.id) ctx.cache.set(COVER_KEY(branding.id), branding.cover?.url || '');
+      return { description: job.content || null, expiresAt: job.expiresAt?.dateTimeUtc || null, payText: job.salary?.label || null };
     }
   } catch (e) {
     if (e instanceof BlockedError) throw e;
@@ -159,6 +204,7 @@ export const seek: Source = {
     const todo = need.filter(() => ctx.takeDetail());
     ctx.log(`seek: fetching ${todo.length} detail pages (${need.length - todo.length} deferred)`);
     let blockedInARow = 0;
+    const covers = checkCovers(ctx, batch);
     await pool(todo, 2, async (r) => {
       if (blockedInARow >= 5) return; // circuit breaker: the site is refusing us, stop asking this run
       try {
@@ -179,6 +225,12 @@ export const seek: Source = {
         else if (!(e instanceof BlockedError)) ctx.log(`seek: detail failed ${r.url}: ${(e as Error).message}`);
       }
     });
+    await covers;
+    for (const r of batch) {
+      const b = seekBrandId(r.companyLogo);
+      const cover = b ? ctx.cache.get(COVER_KEY(b))?.value : null;
+      if (cover) r.image = cover;
+    }
     yield* batch;
   },
 };

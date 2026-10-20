@@ -16,8 +16,9 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: 'invalid_json' }, { status: 400 });
   }
-  const vector = body.vector;
-  if (!Array.isArray(vector) || vector.length !== EMBED_DIM || !vector.every((x) => typeof x === 'number' && Number.isFinite(x))) {
+  // vector may be null: the on-device model did not load, so matching uses the chips only.
+  const vector = body.vector ?? null;
+  if (vector !== null && (!Array.isArray(vector) || vector.length !== EMBED_DIM || !vector.every((x) => typeof x === 'number' && Number.isFinite(x)))) {
     return NextResponse.json({ error: 'invalid_vector' }, { status: 400 });
   }
   const chips = (Array.isArray(body.chips) ? body.chips : [])
@@ -25,6 +26,7 @@ export async function POST(req: NextRequest) {
     .filter((c): c is { kind: string; label: string; terms?: unknown } => !!c && typeof c === 'object' && typeof (c as { label?: unknown }).label === 'string')
     .map((c) => ({ kind: String(c.kind || 'skill').slice(0, 12), label: c.label.slice(0, 60), terms: strList(c.terms, 12).map((t) => t.toLowerCase()) }))
     .map((c) => ({ ...c, terms: c.terms.length ? c.terms : [c.label.toLowerCase()] }));
+  if (!vector && !chips.length) return NextResponse.json({ error: 'empty_profile' }, { status: 400 });
   const pay = Number(body.pay);
   const page = Math.max(1, Math.min(50, Number(body.page) || 1));
   const res = search({
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest) {
     posted: (['24h', '3d', '7d', '30d'].includes(String(body.posted)) ? body.posted : null) as Posted | null,
     sort: (['best', 'new', 'pay'].includes(String(body.sort)) ? body.sort : 'best') as Sort,
     page,
-    cv: { vector: vector as number[], chips },
+    cv: { vector: vector as number[] | null, chips },
   });
   if (page === 1 && res.results.length) res.results = await rerank(chips.map((c) => c.label), res.results);
   return NextResponse.json(res, { headers: { 'cache-control': 'no-store' } });

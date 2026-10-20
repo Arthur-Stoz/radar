@@ -1,12 +1,12 @@
 // CV matcher worker (BUILD.md §6.2): embeds CV chunks on the device with the same model as the
 // server (Xenova/all-MiniLM-L6-v2, q8). Everything is served by Radar itself: no CDN, no upload.
-import { env, pipeline } from '/vendor/transformers/transformers.min.js';
+import { env, pipeline } from '/cv-assets/vendor/transformers/transformers.min.js';
 
 env.allowRemoteModels = false;
 env.allowLocalModels = true;
-env.localModelPath = '/models/';
+env.localModelPath = '/cv-assets/models/';
 env.useBrowserCache = true;
-env.backends.onnx.wasm.wasmPaths = '/vendor/transformers/';
+env.backends.onnx.wasm.wasmPaths = '/cv-assets/vendor/transformers/';
 env.backends.onnx.wasm.numThreads = 1;
 
 const MODEL = 'Xenova/all-MiniLM-L6-v2';

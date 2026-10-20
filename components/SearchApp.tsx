@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CardJob, SearchResult } from '@/lib/search';
 import { fold } from '@/lib/text';
-import { FilterBar, SortSelect, type FilterState } from './Filters';
+import { ActiveFilters, FilterBar, SortSelect, type FilterState } from './Filters';
 import { JobCard } from './JobCard';
 import { JobPreview } from './JobPreview';
 import { LiveLine } from './LiveLine';
@@ -15,6 +15,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { OPEN_CV_EVENT, useCv } from './CvButton';
 import { LazyCvDropZone } from './LazyIslands';
 import { clearCv } from '@/lib/cvState';
+import { Portal } from './Floating';
 
 const SEEN_KEY = 'radar-seen';
 const list = (v: string | null) => (v ? v.split(',').filter(Boolean) : []);
@@ -56,7 +57,7 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
   const [seen, setSeen] = useState<Set<string>>(new Set());
   const cv = useCv();
   const cvOn = params.get('cv') === '1' && !!cv.profile;
-  const cvSig = cvOn && cv.profile ? `${cv.profile.chips.map((c) => c.label).join(',')}|${cv.profile.vector.slice(0, 4).join(',')}` : '';
+  const cvSig = cvOn && cv.profile ? `${cv.profile.chips.map((c) => c.label).join(',')}|${(cv.profile.vector?.slice(0, 4).join(',') ?? 'kw')}` : '';
   const fetchKey = `${key}|${cvSig}`;
   const firstKey = useRef(`${key}|`);
   const sentinel = useRef<HTMLDivElement>(null);
@@ -262,7 +263,7 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
 
   return (
     <>
-      <div className="sticky top-0 z-30 border-b border-line bg-bg">
+      <div className="sticky top-0 z-(--z-header) border-b border-line bg-bg">
         <header className="flex h-16 items-center gap-3 px-5 sm:h-[72px] sm:gap-6 sm:px-10">
           <div className="hidden sm:block">
             <Logo />
@@ -274,14 +275,13 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
             <SearchBar variant="compact" initial={q} onSearch={(nq) => update({ q: nq })} />
           </div>
           <div className="ml-auto flex flex-none items-center gap-2 text-[13px] text-muted">
-            <span className="hidden lg:inline">Free · No account</span>
             <ThemeToggle />
           </div>
         </header>
       </div>
 
       <main id="main" className="px-5 pb-24 sm:px-10">
-        <div className="flex flex-col gap-3 pb-4 pt-5 sm:pt-7">
+        <div className="flex flex-col gap-3 pb-3 pt-(--space-page-top)">
           {data.chips.length > 0 && (
             <ul className="m-0 flex list-none flex-wrap gap-1.5 p-0" aria-label="Understood from your search">
               {data.chips.map((c) => (
@@ -343,11 +343,14 @@ export function SearchApp({ initial, builtAt }: { initial: SearchResult; builtAt
           </div>
         </div>
 
-        <div className="sticky top-16 z-20 -mx-5 flex items-center justify-between gap-3 border-b border-transparent bg-bg px-5 py-2.5 sm:top-[72px] sm:mx-0 sm:px-0">
+        <div className="sticky top-16 z-(--z-sticky) -mx-5 flex items-center justify-between gap-3 border-b border-transparent bg-bg px-5 py-2.5 sm:top-[72px] sm:mx-0 sm:px-0">
           <FilterBar facets={data.facets} state={state} onChange={(patch) => update(patch as Record<string, string[] | number | null>)} />
           <div className="hidden flex-none sm:block">
             <SortSelect value={sortValue} hasQuery={!!q} onChange={(v) => update({ sort: v === (q ? 'best' : 'new') ? null : v })} />
           </div>
+        </div>
+        <div className="pt-1 empty:hidden">
+          <ActiveFilters facets={data.facets} state={state} onChange={(patch) => update(patch as Record<string, string[] | number | null>)} />
         </div>
         <div className="flex items-center justify-between gap-3 pb-3 pt-1">
           {data.typicalPay ? (
@@ -457,7 +460,8 @@ function BottomSheet({ job, onClose }: { job: CardJob; onClose: () => void }) {
     };
   }, []);
   return (
-    <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label={job.title}>
+    <Portal>
+    <div className="fixed inset-0 z-(--z-sheet) lg:hidden" role="dialog" aria-modal="true" aria-label={job.title}>
       <div className="absolute inset-0 bg-black/40" style={{ animation: 'rdFade .2s ease' }} onClick={onClose} aria-hidden="true" />
       <div
         ref={panel}
@@ -494,5 +498,6 @@ function BottomSheet({ job, onClose }: { job: CardJob; onClose: () => void }) {
         </div>
       </div>
     </div>
+    </Portal>
   );
 }

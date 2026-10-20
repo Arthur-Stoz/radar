@@ -60,7 +60,7 @@ app/              Next.js routes (/, /search, /job/[id], /go/[id], /status, /abo
 components/       UI (search bar, CV button/panel, filters, cards, preview, sheet)
 lib/              search engine, query parser, synonyms, gazetteer, pay/tags parsers, CV profile, data sync
 ingest/           connectors (ingest/sources), normalization, dedup, embeddings, SQLite build
-public/cv-worker.js  on-device embedding worker; public/vendor + public/models are generated
+public/cv-worker.js  on-device embedding worker; app/cv-assets serves pdf.js, mammoth, transformers.js and the model at runtime
 scripts/          eval, lighthouse, asset preparation, helpers
 tests/            unit + connector tests (fixtures/), e2e/
 .github/workflows ingest.yml (every 4 h), ci.yml (checks + e2e + Lighthouse + eval)
